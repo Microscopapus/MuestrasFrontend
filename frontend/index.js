@@ -15,6 +15,7 @@ const API = {
 
 let muestras = [];
 
+
 // ─────────────────────────────────────────────────────────────
 //  PANTALLAS
 // ─────────────────────────────────────────────────────────────
@@ -26,49 +27,16 @@ function mostrarPantalla(id) {
 
 // ─────────────────────────────────────────────────────────────
 //  CARGAR MUESTRAS
-//
-//  Respuesta del backend:
-//  {
-//    "success": true,
-//    "data": {
-//      "total": 4,
-//      "muestras": [
-//        {
-//          "id": 1,
-//          "nombre": "Célula vegetal",
-//          "descripcion": "Muestra observada en laboratorio",
-//          "imagenes": [
-//            { "url": "https://..." }   ← con imagen
-//          ]
-//        },
-//        {
-//          "id": 2,
-//          "nombre": "Bacteria",
-//          "descripcion": "Muestra con tinción",
-//          "imagenes": []               ← sin imagen
-//        },
-//        {
-//          "id": 3,
-//          "nombre": "Tejido muscular",
-//          "descripcion": "Corte longitudinal",
-//          "imagenes": [
-//            { "url": "https://..." },  ← con varias imágenes
-//            { "url": "https://..." }      (se usa la primera)
-//          ]
-//        }
-//      ]
-//    }
-//  }
 // ─────────────────────────────────────────────────────────────
 async function cargarMuestras() {
   mostrarPantalla('pantalla-cargando');
 
   try {
-    const res = await fetch(API.muestras);
-    if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
-
+    const res  = await fetch(API.muestras);
     const json = await res.json();
-    if (!json.success) throw new Error(json.mensaje || 'El servidor devolvió un error.');
+    // { success, tipo, mensaje, data: { total, muestras: [...] } }
+
+    if (!json.success) throw new Error(json.mensaje);
 
     const raw = json.data?.muestras || [];
 
@@ -152,12 +120,10 @@ function seleccionar(id) {
   document.getElementById('card-' + id).classList.add('activo');
 
   document.getElementById('detalle-vacio').style.display = 'none';
-  const det = document.getElementById('detalle-muestra');
-  det.style.display = 'flex';
+  document.getElementById('detalle-muestra').style.display = 'flex';
 
   const contenedor = document.getElementById('detalle-imagen');
   contenedor.innerHTML = '';
-
   if (m.imagen) {
     const img = document.createElement('img');
     img.src = m.imagen;
@@ -173,7 +139,4 @@ function seleccionar(id) {
   cerrarMenu();
 }
 
-// ─────────────────────────────────────────────────────────────
-//  INIT
-// ─────────────────────────────────────────────────────────────
 cargarMuestras();
