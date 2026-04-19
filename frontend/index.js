@@ -3,23 +3,20 @@ function verificarSesion() {
   if (!token) window.location.href = 'login.html';
 }
 verificarSesion();
-// ─────────────────────────────────────────────────────────────
-//  DB CONFIG — conecta aquí tu base de datos cuando esté lista
-// ─────────────────────────────────────────────────────────────
-const DB_CONFIG = {
-  // Cambia esta URL por la de tu backend/API cuando esté lista
-  endpoint: '/muestras',
 
-  // Ejemplos según tu stack:
-  // Express + MySQL:  'http://localhost:3000/api/muestras'
-  // FastAPI:          'http://localhost:8000/muestras'
-  // Supabase REST:    'https://xxxx.supabase.co/rest/v1/muestras'
-  // Firebase:         'https://tu-proyecto.firebaseio.com/muestras.json'
+// ─────────────────────────────────────────────────────────────
+//  CONFIG — solo cambia BASE_URL si cambia el dominio
+// ─────────────────────────────────────────────────────────────
+const BASE_URL = 'https://microscopiobackend-production.up.railway.app';
+
+const API = {
+  muestras: `${BASE_URL}/api/muestras/obtener_muestras?page=1&size=10`,
 };
+
 let muestras = [];
 
 // ─────────────────────────────────────────────────────────────
-//  PANTALLAS — solo una visible a la vez
+//  PANTALLAS
 // ─────────────────────────────────────────────────────────────
 function mostrarPantalla(id) {
   ['pantalla-cargando', 'pantalla-error', 'pantalla-contenido']
@@ -28,39 +25,75 @@ function mostrarPantalla(id) {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  FETCH AL BACKEND
+//  CARGAR MUESTRAS
+//
+//  Respuesta del backend:
+//  {
+//    "success": true,
+//    "data": {
+//      "total": 4,
+//      "muestras": [
+//        {
+//          "id": 1,
+//          "nombre": "Célula vegetal",
+//          "descripcion": "Muestra observada en laboratorio",
+//          "imagenes": [
+//            { "url": "https://..." }   ← con imagen
+//          ]
+//        },
+//        {
+//          "id": 2,
+//          "nombre": "Bacteria",
+//          "descripcion": "Muestra con tinción",
+//          "imagenes": []               ← sin imagen
+//        },
+//        {
+//          "id": 3,
+//          "nombre": "Tejido muscular",
+//          "descripcion": "Corte longitudinal",
+//          "imagenes": [
+//            { "url": "https://..." },  ← con varias imágenes
+//            { "url": "https://..." }      (se usa la primera)
+//          ]
+//        }
+//      ]
+//    }
+//  }
 // ─────────────────────────────────────────────────────────────
 async function cargarMuestras() {
   mostrarPantalla('pantalla-cargando');
 
   try {
-    const res = await fetch(DB_CONFIG.endpoint);
+    const res = await fetch(API.muestras);
     if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
 
-    const data = await res.json();
-    const raw  = Array.isArray(data) ? data : (data.muestras || []);
+    const json = await res.json();
+    if (!json.success) throw new Error(json.mensaje || 'El servidor devolvió un error.');
 
-    // Mezclar datos del server con paleta visual local
+    const raw = json.data?.muestras || [];
+
     muestras = raw.map(m => ({
-      ...(visuales[m.id] || visuales.eritrocitos),
-      ...m,
+      id:          m.id,
+      nombre:      m.nombre      || 'Sin nombre',
+      categoria:   m.categoria   || '',
+      descripcion: m.descripcion || '',
+      imagen:      m.imagenes?.[0]?.url || null,
     }));
 
   } catch (err) {
-    // Sin backend → usar datos locales y avisar
-    console.warn('Backend no disponible:', err.message);
-    muestras = muestrasLocal.map(m => ({ ...visuales[m.id], ...m }));
-    document.getElementById('error-msg').textContent = err.message;
+    console.warn('Error al cargar:', err.message);
+    document.getElementById('error-msg').textContent = 'La conexión falló, intenta de nuevo.';
     mostrarPantalla('pantalla-error');
-    return; // No seguir al contenido
+    return;
   }
 
   buildGrid();
   mostrarPantalla('pantalla-contenido');
 }
 
-
-//menu
+// ─────────────────────────────────────────────────────────────
+//  GRID DEL MENÚ
+// ─────────────────────────────────────────────────────────────
 function buildGrid() {
   const grid = document.getElementById('menu-grid');
   grid.innerHTML = '';
@@ -73,18 +106,15 @@ function buildGrid() {
 
     if (m.imagen) {
       const img = document.createElement('img');
-      img.src = m.imagen; img.alt = m.nombre; img.className = 'card-img';
+      img.src = m.imagen;
+      img.alt = m.nombre;
+      img.className = 'card-img';
       card.appendChild(img);
-    } else {
-      const cv = document.createElement('canvas');
-      cv.width = cv.height = 80;
-      card.appendChild(cv);
-      setTimeout(() => dibujarMuestra(cv, m, 0.7), 0);
     }
 
     const nombre = document.createElement('div');
     nombre.className = 'card-nombre';
-    nombre.textContent = m.nombre.length > 12 ? m.nombre.slice(0,11)+'…' : m.nombre;
+    nombre.textContent = m.nombre.length > 12 ? m.nombre.slice(0, 11) + '…' : m.nombre;
 
     const cat = document.createElement('div');
     cat.className = 'card-cat';
@@ -119,7 +149,7 @@ function seleccionar(id) {
   if (!m) return;
 
   document.querySelectorAll('.menu-card').forEach(c => c.classList.remove('activo'));
-  document.getElementById('card-'+id).classList.add('activo');
+  document.getElementById('card-' + id).classList.add('activo');
 
   document.getElementById('detalle-vacio').style.display = 'none';
   const det = document.getElementById('detalle-muestra');
@@ -127,22 +157,18 @@ function seleccionar(id) {
 
   const contenedor = document.getElementById('detalle-imagen');
   contenedor.innerHTML = '';
+
   if (m.imagen) {
     const img = document.createElement('img');
-    img.src = m.imagen; img.alt = m.nombre;
+    img.src = m.imagen;
+    img.alt = m.nombre;
     img.style.cssText = 'width:220px;height:220px;border-radius:50%;object-fit:cover;';
     contenedor.appendChild(img);
-  } else {
-    const cv = document.createElement('canvas');
-    cv.width = cv.height = 260;
-    cv.style.cssText = 'width:220px;height:220px;border-radius:50%;';
-    contenedor.appendChild(cv);
-    dibujarMuestra(cv, m, 2.2);
   }
 
   document.getElementById('detalle-nombre').textContent = m.nombre;
   document.getElementById('detalle-cat').textContent    = m.categoria;
-  document.getElementById('detalle-desc').textContent   = m.descripcion || '';
+  document.getElementById('detalle-desc').textContent   = m.descripcion;
 
   cerrarMenu();
 }
