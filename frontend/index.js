@@ -1,3 +1,8 @@
+function verificarSesion() {
+  const token = localStorage.getItem('token');
+  if (!token) window.location.href = 'login.html';
+}
+verificarSesion();
 // ─────────────────────────────────────────────────────────────
 //  DB CONFIG — conecta aquí tu base de datos cuando esté lista
 // ─────────────────────────────────────────────────────────────
@@ -11,12 +16,6 @@ const DB_CONFIG = {
   // Supabase REST:    'https://xxxx.supabase.co/rest/v1/muestras'
   // Firebase:         'https://tu-proyecto.firebaseio.com/muestras.json'
 };
-
-// ─────────────────────────────────────────────────────────────
-//  Datos visuales locales (paleta de colores para cada tipo)
-//  Cuando el backend responda, se mezclan con sus datos reales
-// ─────────────────────────────────────────────────────────────
-
 let muestras = [];
 
 // ─────────────────────────────────────────────────────────────
