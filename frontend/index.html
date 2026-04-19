@@ -9,8 +9,10 @@
 <body>
 
 <header class="topbar">
-  <button class="menu-btn" onclick="abrirMenu()">☰</button>
+  
   <h1>MUESTRAS</h1>
+  <button class="menu-btn" onclick="abrirMenu()">☰</button>
+ <button class="logout-btn" onclick="cerrarSesion()">Salir ➔</button>
 </header>
 
 <div class="overlay" id="overlay" onclick="cerrarMenu()"></div>
@@ -56,5 +58,7 @@
 </div>
 
 <script src="index.js"></script>
+
+<script src="auth.js"></script>
 </body>
 </html>
