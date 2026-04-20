@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────
 //  CONFIG — solo cambia BASE_URL si cambia el dominio
 // ─────────────────────────────────────────────────────────────
-const BASE_URL = 'https://microscopiobackend-production.up.railway.app';
+const BASE_URL = 'https://microscopiobackend-production.up.railway.app/api/auth/register/email';
 
 const AUTH_API = {
   login:    `${BASE_URL}/api/auth/login`,
