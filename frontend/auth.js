@@ -119,7 +119,7 @@ async function registrar() {
     const res  = await fetch(AUTH_API.register, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({/*nombre*/ email, password }),
+      body:    JSON.stringify({nombre, email, password }),
     });
     const texto = await res.text();
     const json  = JSON.parse(texto);
