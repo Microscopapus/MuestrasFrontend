@@ -147,12 +147,12 @@ async function registrar() {
 //  y pon tu Client ID en GOOGLE_CLIENT_ID arriba
 // ─────────────────────────────────────────────────────────────
 function loginGoogle() {
-  // TODO: descomentar cuando tengas el Client ID
-  // google.accounts.id.initialize({
-  //   client_id: GOOGLE_CLIENT_ID,
-  //   callback: handleGoogleResponse,
-  // });
-  // google.accounts.id.prompt();
+ 
+  google.accounts.id.initialize({
+   client_id: GOOGLE_CLIENT_ID,
+   callback: handleGoogleResponse,
+ });
+ google.accounts.id.prompt();
   alert('Google login: configura tu Client ID primero.');
 }
 
