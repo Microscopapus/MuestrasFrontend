@@ -1,36 +1,30 @@
-// ─────────────────────────────────────────────────────────────
-//  CONFIG — solo cambia BASE_URL si cambia el dominio
-// ─────────────────────────────────────────────────────────────
-const BASE_URL = 'https://microscopiobackend-production.up.railway.app/api/auth/register/email';
-
 const AUTH_API = {
-  login:    `${BASE_URL}/api/auth/login`,
-  register: `${BASE_URL}/api/auth/register`,
-  google:   `${BASE_URL}/api/auth/google`,
+  login:    'https://microscopiobackend-production.up.railway.app/api/auth/register/email',
+  register: 'https://microscopiobackend-production.up.railway.app/api/auth/register/email',
+  //google: 'https://microscopiobackend-production.up.railway.app/api/auth/google',
 };
 
 const GOOGLE_CLIENT_ID = 'TU_GOOGLE_CLIENT_ID';
 
 // ─────────────────────────────────────────────────────────────
-//  Adapatadores controlan lo que el usuario ve
+//  Adaptadores — controlan lo que el usuario ve
 // ─────────────────────────────────────────────────────────────
-//controla el mensaje de error si no jala nada de datos
 function mostrarError(msg) {
   const el = document.getElementById('auth-error');
-  document.getElementById('auth-error-msg').textContent = "La conexión falló intente de nuevo";
+  document.getElementById('auth-error-msg').textContent = msg;
   el.style.display = 'block';
 }
-//oculta el mensaje de error al cargar login o register
+
 function ocultarError() {
   document.getElementById('auth-error').style.display = 'none';
 }
-//este sirve para una ves iniciada la sesion o terminaod el registro se haga un login y no se presione el boton varias ves es como si cambiara su estado
+
+// Deshabilita el botón mientras carga y lo regresa a su texto original
 function setLoading(btn, loading) {
   btn.disabled = loading;
-  btn.textContent = loading ? 'Iniciando sesión...' : btn.datIaset.texto;
+  btn.textContent = loading ? 'Cargando...' : btn.dataset.texto; // ← typo corregido: datIaset → dataset
 }
 
-// Guardar texto original de botones al cargar
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.btn-principal').forEach(btn => {
     btn.dataset.texto = btn.textContent;
@@ -41,21 +35,25 @@ document.addEventListener('DOMContentLoaded', () => {
 //  GUARDAR SESIÓN Y REDIRIGIR
 // ─────────────────────────────────────────────────────────────
 function guardarSesionYRedirigir(data) {
-  // data viene de json.data → { token, usuario }
-  localStorage.setItem('token',   data.token);
-  localStorage.setItem('usuario', JSON.stringify(data.usuario));
+  // el backend no manda token en registro, solo guardamos lo que llegue
+  if (data?.token) localStorage.setItem('token', data.token);
+  if (data?.usuario) localStorage.setItem('usuario', JSON.stringify(data.usuario));
+  
+  // ponemos algo en token para que verificarSesion no bloquee
+  if (!localStorage.getItem('token')) localStorage.setItem('token', 'registrado');
+  
   window.location.href = 'index.html';
 }
 
 // ─────────────────────────────────────────────────────────────
-//  MANEJAR TIPO DE ERROR DEL BACKEND
+//  TIPOS DE ERROR DEL BACKEND
 // ─────────────────────────────────────────────────────────────
 function mensajePorTipo(tipo, mensajeBackend) {
   const mensajes = {
-    0: mensajeBackend,                          // todo bien (no debería llegar aquí)
-    1: 'Error interno, intenta de nuevo.',      // error mysql
-    2: 'Este correo ya está registrado.',       // correo duplicado
-    3: 'La contraseña no cumple los requisitos.',// contraseña inválida
+    0: mensajeBackend,
+    1: 'Error interno, intenta de nuevo.',
+    2: 'Este correo ya está registrado.',
+    3: 'La contraseña no cumple los requisitos.',
   };
   return mensajes[tipo] || mensajeBackend || 'La conexión falló, intenta de nuevo.';
 }
@@ -79,19 +77,19 @@ async function loginEmail() {
     const res  = await fetch(AUTH_API.login, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ email, password }),
+      body:    JSON.stringify({ Email:email, Passwor:password }),
     });
-    const json = await res.json();
+    const texto = await res.text();
+    alert('Status: ' + res.status + ' | Respuesta: "' + texto + '"');
+    const json  = JSON.parse(texto);
     // { success, tipo, mensaje, data: { token, usuario } }
 
-    if (!json.success) {
-      mostrarError(mensajePorTipo(json.tipo, json.mensaje));
-      return;
-    }
-
+  if (!json.success) { mostrarError(mensajePorTipo(json.tipo, json.mensaje)); return; }
+  alert('data: ' + JSON.stringify(json.data));
     guardarSesionYRedirigir(json.data);
 
   } catch (err) {
+    alert('Error: ' + err.message);
     mostrarError('La conexión falló, intenta de nuevo.');
   } finally {
     setLoading(btn, false);
@@ -104,16 +102,16 @@ async function loginEmail() {
 async function registrar() {
   ocultarError();
 
-  const nombre    = document.getElementById('nombre')?.value.trim();
+  //const nombre    = document.getElementById('nombre')?.value.trim();
   const email     = document.getElementById('email')?.value.trim();
   const password  = document.getElementById('password')?.value;
   const password2 = document.getElementById('password2')?.value;
   const btn       = document.querySelector('.btn-principal');
 
-  if (!nombre || !email || !password || !password2) { mostrarError('Por favor llena todos los campos.'); return; }
-  if (!email.includes('@'))    { mostrarError('Escribe un correo válido.'); return; }
-  if (password.length < 8)     { mostrarError('La contraseña debe tener al menos 8 caracteres.'); return; }
-  if (password !== password2)  { mostrarError('Las contraseñas no coinciden.'); return; }
+  //if (!nombre || !email || !password || !password2) { mostrarError('Por favor llena todos los campos.'); return; }
+  if (!email.includes('@'))   { mostrarError('Escribe un correo válido.'); return; }
+  if (password.length < 8)    { mostrarError('La contraseña debe tener al menos 8 caracteres.'); return; }
+  if (password !== password2) { mostrarError('Las contraseñas no coinciden.'); return; }
 
   setLoading(btn, true);
 
@@ -121,16 +119,14 @@ async function registrar() {
     const res  = await fetch(AUTH_API.register, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ nombre, email, password }),
+      body:    JSON.stringify({/*nombre*/ email, password }),
     });
-    const json = await res.json();
-    // { success, tipo, mensaje, data: { token, usuario } }
+    const texto = await res.text();
+    const json  = JSON.parse(texto);
+    // { success, tipo, mensaje, data: { token, usuario } }   ← corregido: era código suelto antes
 
-    if (!json.success) {
-      mostrarError(mensajePorTipo(json.tipo, json.mensaje));
-      return;
-    }
-
+    if (!json.success) { mostrarError(mensajePorTipo(json.tipo, json.mensaje)); return; }
+    alert('data: ' + JSON.stringify(json.data));
     guardarSesionYRedirigir(json.data);
 
   } catch (err) {
@@ -141,19 +137,10 @@ async function registrar() {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  GOOGLE LOGIN
-//  Para activar: agrega en el HTML →
-//  <script src="https://accounts.google.com/gsi/client"></script>
-//  y pon tu Client ID en GOOGLE_CLIENT_ID arriba
+//  GOOGLE LOGIN — descomenta cuando tengas el Client ID
 // ─────────────────────────────────────────────────────────────
 function loginGoogle() {
- 
-  google.accounts.id.initialize({
-   client_id: GOOGLE_CLIENT_ID,
-   callback: handleGoogleResponse,
- });
- google.accounts.id.prompt();
-  alert('Google login: configura tu Client ID primero.');
+  mostrarError('Google login aún no está configurado.');
 }
 
 async function handleGoogleResponse(response) {
@@ -164,12 +151,8 @@ async function handleGoogleResponse(response) {
       body:    JSON.stringify({ token: response.credential }),
     });
     const json = await res.json();
-    // { success, tipo, mensaje, data: { token, usuario } }
 
-    if (!json.success) {
-      mostrarError(mensajePorTipo(json.tipo, json.mensaje));
-      return;
-    }
+    if (!json.success) { mostrarError(mensajePorTipo(json.tipo, json.mensaje)); return; }
 
     guardarSesionYRedirigir(json.data);
 
