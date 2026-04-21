@@ -1,7 +1,7 @@
 const AUTH_API = {
-  login:    'https://microscopiobackend-production.up.railway.app/api/auth/register/email',
+  login:    'https://microscopiobackend-production.up.railway.app/api/api/Auth/login/email',
   register: 'https://microscopiobackend-production.up.railway.app/api/auth/register/email',
-  //google: 'https://microscopiobackend-production.up.railway.app/api/auth/google',
+ google: 'https://microscopiobackend-production.up.railway.app/api/Auth/login/google',
 };
 
 const GOOGLE_CLIENT_ID = 'TU_GOOGLE_CLIENT_ID';
@@ -9,12 +9,13 @@ const GOOGLE_CLIENT_ID = 'TU_GOOGLE_CLIENT_ID';
 // ─────────────────────────────────────────────────────────────
 //  Adaptadores — controlan lo que el usuario ve
 // ─────────────────────────────────────────────────────────────
+//pone el texto del error en el div rojo y lo hace visible. Se llama cuando algo falla.
 function mostrarError(msg) {
   const el = document.getElementById('auth-error');
   document.getElementById('auth-error-msg').textContent = msg;
   el.style.display = 'block';
 }
-
+//esconde el div rojo. Se llama al inicio de cada intento para limpiar el error anterior antes de intentar de nuevo.
 function ocultarError() {
   document.getElementById('auth-error').style.display = 'none';
 }
@@ -24,7 +25,7 @@ function setLoading(btn, loading) {
   btn.disabled = loading;
   btn.textContent = loading ? 'Cargando...' : btn.dataset.texto; // ← typo corregido: datIaset → dataset
 }
-
+//guarda el texto original de cada botón ("Iniciar sesión", "Crear cuenta") en btn.dataset.texto antes de que se pueda cambiar, para que setLoading sepa a qué texto regresar después del "Cargando...".
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.btn-principal').forEach(btn => {
     btn.dataset.texto = btn.textContent;
@@ -35,13 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
 //  GUARDAR SESIÓN Y REDIRIGIR
 // ─────────────────────────────────────────────────────────────
 function guardarSesionYRedirigir(data) {
-  // el backend no manda token en registro, solo guardamos lo que llegue
-  if (data?.token) localStorage.setItem('token', data.token);
-  if (data?.usuario) localStorage.setItem('usuario', JSON.stringify(data.usuario));
-  
-  // ponemos algo en token para que verificarSesion no bloquee
-  if (!localStorage.getItem('token')) localStorage.setItem('token', 'registrado');
-  
+ localStorage.setItem('token', data.token);
+ localStorage.setItem('usuario', JSON.stringify(data.usuario));
   window.location.href = 'index.html';
 }
 
@@ -140,8 +136,8 @@ async function registrar() {
 //  GOOGLE LOGIN — descomenta cuando tengas el Client ID
 // ─────────────────────────────────────────────────────────────
 function loginGoogle() {
-  mostrarError('Google login aún no está configurado.');
-}
+ /* mostrarError('Google login aún no está configurado.');
+}*/
 
 async function handleGoogleResponse(response) {
   try {
@@ -159,6 +155,7 @@ async function handleGoogleResponse(response) {
   } catch (err) {
     mostrarError('La conexión falló, intenta de nuevo.');
   }
+}
 }
 
 // ─────────────────────────────────────────────────────────────
