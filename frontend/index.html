@@ -2,63 +2,9 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Muestras</title>
-  <link rel="stylesheet" href="index.css">
+  <meta http-equiv="refresh" content="0; url=login.html">
+  <title>Redirigiendo...</title>
 </head>
 <body>
-
-<header class="topbar">
-  
-  <h1>MUESTRAS</h1>
-  <button class="menu-btn" onclick="abrirMenu()">☰</button>
- <button class="logout-btn" onclick="cerrarSesion()">Salir ➔</button>
-</header>
-
-<div class="overlay" id="overlay" onclick="cerrarMenu()"></div>
-
-<!-- MENÚ LATERAL -->
-<nav id="menu">
-  <div class="menu-header">
-    <span>Muestras</span>
-    <button class="close-btn" onclick="cerrarMenu()">✕</button>
-  </div>
-  <div class="menu-grid" id="menu-grid"></div>
-</nav>
-
-<!-- ══ PANTALLA: CARGANDO ══ -->
-<div class="pantalla" id="pantalla-cargando">
-  <div class="spinner-grande"></div>
-  <p>Cargando catálogo...</p>
-</div>
-
-<!-- ══ PANTALLA: ERROR ══ -->
-<div class="pantalla" id="pantalla-error">
-  <div class="error-icono-grande">⚠️</div>
-  <h2>No se pudo cargar el catálogo</h2>
-  <div id="error-msg"></div>
-  <button class="btn-reintentar" onclick="cargarMuestras()">↺ Reintentar</button>
-</div>
-
-<!-- ══ PANTALLA: CONTENIDO ══ -->
-<div class="pantalla" id="pantalla-contenido">
-  <!-- Estado vacío -->
-  <div class="detalle-vacio" id="detalle-vacio">
-    <div class="vacio-icono">🔬</div>
-    <p>Abre el menú y selecciona<br>una muestra para verla aquí</p>
-  </div>
-
-  <!-- Detalle de muestra -->
-  <div id="detalle-muestra">
-    <div id="detalle-imagen"></div>
-    <h2 id="detalle-nombre"></h2>
-    <span class="badge" id="detalle-cat"></span>
-    <p id="detalle-desc"></p>
-  </div>
-</div>
-
-<script src="index.js"></script>
-
-<script src="auth.js"></script>
 </body>
 </html>

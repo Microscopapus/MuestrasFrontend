@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function guardarSesionYRedirigir(data) {
   localStorage.setItem('token',   data.token);
   localStorage.setItem('usuario', JSON.stringify(data.usuario));
-  window.location.href = 'index.html';
+  window.location.href = 'panpri.html';
 }
 
 // ─────────────────────────────────────────────────────────────
