@@ -116,7 +116,7 @@ async function registrar() {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ name: nombre, email, password }),
-      //                        ↑ el backend espera "name" no "nombre"
+                           
     });
     const texto = await res.text();
     const json  = JSON.parse(texto);
@@ -146,8 +146,7 @@ async function handleGoogleResponse(response) {
     const res   = await fetch(AUTH_API.google, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ idToken: response.credential }),
-      //                        ↑ el backend espera "idToken"
+      body:    JSON.stringify({ idToken: response.credential }),           
     });
     const texto = await res.text();
     const json  = JSON.parse(texto);
