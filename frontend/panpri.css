@@ -86,7 +86,7 @@ body {
   right:0;
   width:320px;
   height:100%;
-  background: var(--fondo-claro);
+  background: #0891b2;
   z-index:1000;
   display:flex;
   flex-direction:column;
@@ -135,7 +135,7 @@ body {
 
 /* CARDS */
 .menu-card {
-  background:white;
+  background:var(--fondo-claro);
   border-radius:12px;
   padding:8px 4px 10px;
   cursor:pointer;
