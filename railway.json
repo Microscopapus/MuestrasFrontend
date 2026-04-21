@@ -1,8 +1,9 @@
 {
   "build": {
-    "builder": "NIXPACKS"
+    "builder": "NIXPACKS",
+    "buildCommand": "npm install -g serve"
   },
   "deploy": {
-    "startCommand": "npx serve -s . -l $PORT"
+    "startCommand": "serve -s . -p $PORT"
   }
 }
