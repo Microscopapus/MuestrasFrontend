@@ -160,7 +160,7 @@ async function handleGoogleResponse(response) {
 function cerrarSesion() {
   localStorage.removeItem('token');
   localStorage.removeItem('usuario');
-  window.location.href = 'login.html';
+  window.location.href = 'index.html';
 }
 // ─────────────────────────────────────────────────────────────
 //  GOOGLE LOGIN
