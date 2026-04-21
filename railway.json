@@ -3,6 +3,6 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "python3 -m http.server $PORT"
+    "startCommand": "npx serve -s . -l $PORT"
   }
 }
