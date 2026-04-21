@@ -27,7 +27,7 @@ body {
   z-index: 100;
 }
 .topbar h1 { font-size: 18px; font-weight: 700; color: rgba(166,23,23,0.9); }
-.menu-btn  { background:none; border:none; color:rgb(191,22,22); font-size:24px; cursor:pointer; }
+.menu-btn  { background:none; border:none; color:rgb(191,22,22); font-size:24px; cursor:pointer; margin-left: 1200px;}
 
 /* ── OVERLAY ── */
 .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:999; }
@@ -182,3 +182,14 @@ body {
 #detalle-desc { font-size:13px; color:#666; line-height:1.6; }
 
 body.menu-abierto { overflow:hidden; }
+.logout-btn{
+margin-top:8px;
+  background:rgba(180,40,10,0.1);
+  border:1px solid rgba(180,40,10,0.35);
+  color:#8b1a0a;
+  border-radius:10px;
+  padding:2px 20px;
+  font-size:14px;
+  cursor:pointer;
+  transition:background .2s;
+}
