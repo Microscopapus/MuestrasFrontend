@@ -98,13 +98,13 @@ async function loginEmail() {
 async function registrar() {
   ocultarError();
 
-  //const nombre    = document.getElementById('nombre')?.value.trim();
+  const nombre    = document.getElementById('nombre')?.value.trim();
   const email     = document.getElementById('email')?.value.trim();
   const password  = document.getElementById('password')?.value;
   const password2 = document.getElementById('password2')?.value;
   const btn       = document.querySelector('.btn-principal');
 
-  //if (!nombre || !email || !password || !password2) { mostrarError('Por favor llena todos los campos.'); return; }
+  if (!nombre || !email || !password || !password2) { mostrarError('Por favor llena todos los campos.'); return; }
   if (!email.includes('@'))   { mostrarError('Escribe un correo válido.'); return; }
   if (password.length < 8)    { mostrarError('La contraseña debe tener al menos 8 caracteres.'); return; }
   if (password !== password2) { mostrarError('Las contraseñas no coinciden.'); return; }
@@ -136,8 +136,6 @@ async function registrar() {
 //  GOOGLE LOGIN — descomenta cuando tengas el Client ID
 // ─────────────────────────────────────────────────────────────
 function loginGoogle() {
- /* mostrarError('Google login aún no está configurado.');
-}*/
 
 async function handleGoogleResponse(response) {
   try {
