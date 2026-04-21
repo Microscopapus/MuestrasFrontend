@@ -2,7 +2,7 @@
   "name": "tu-app",
   "version": "1.0.0",
   "scripts": {
-    "start": "serve -s . -p $PORT"
+    "start": "serve -s frontend -p $PORT"
   },
   "dependencies": {
     "serve": "^14.0.0"
