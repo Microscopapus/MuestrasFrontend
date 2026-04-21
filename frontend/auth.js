@@ -4,7 +4,7 @@ const AUTH_API = {
   google:   'https://microscopiobackend-production.up.railway.app/api/Auth/login/google',
 };
 
-const GOOGLE_CLIENT_ID = 'TU_GOOGLE_CLIENT_ID';
+const GOOGLE_CLIENT_ID = '30335745792-2elqg0tt0s9iq9u0hd6flgbstldbjrg1.apps.googleusercontent.com';
 
 // pone el texto del error en el div rojo y lo hace visible
 function mostrarError(msg) {
@@ -133,13 +133,7 @@ async function registrar() {
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-//  GOOGLE LOGIN
-//  Request body: { idToken }
-// ─────────────────────────────────────────────────────────────
-function loginGoogle() {
-  mostrarError('Google login aún no está configurado.');
-}
+
 
 async function handleGoogleResponse(response) {
   try {
@@ -168,3 +162,17 @@ function cerrarSesion() {
   localStorage.removeItem('usuario');
   window.location.href = 'login.html';
 }
+// ─────────────────────────────────────────────────────────────
+//  GOOGLE LOGIN
+//  Request body: { idToken }
+// ─────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback:  handleGoogleResponse,
+  });
+  google.accounts.id.renderButton(
+    document.getElementById('btn-google-container'),
+    { theme: 'outline', size: 'large', width: 300 }
+  );
+});
