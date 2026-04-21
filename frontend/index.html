@@ -8,40 +8,58 @@
 </head>
 <body>
 
-<div class="pantalla-auth">
-  <div class="card-auth">
+<div class="pantalla-auth split">
 
-    <div class="auth-logo">🔬</div>
-    <h1>MUESTRAS</h1>
-    <p class="auth-subtitulo">Inicia sesión para continuar</p>
-
-    <!-- MENSAJE DE ERROR -->
-    <div class="auth-error" id="auth-error" style="display:none">
-      <span id="auth-error-msg"></span>
+  <!-- 🖼 IMAGEN -->
+  <div class="lado lado-img">
+    <div class="img-box">
+      <img src="imglog.png" alt="login">
     </div>
-
-    <!-- FORMULARIO -->
-    <div class="auth-form">
-      <div class="campo">
-        <label for="email">Correo electrónico</label>
-        <input type="email" id="email" placeholder="tu@correo.com" autocomplete="email">
-      </div>
-      <div class="campo">
-        <label for="password">Contraseña</label>
-        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
-      </div>
-      <button class="btn-principal" onclick="loginEmail()">Iniciar sesión</button>
-    </div>
-
-    <div class="separador"><span>o</span></div>
-
-    <!-- GOOGLE -->
-   <div id="btn-google-container"></div>
-
-    <p class="auth-link">¿No tienes cuenta? <a href="register.html">Crear cuenta</a></p>
-
   </div>
+
+  <!-- 🧾 FORM (TU MISMA CARD) -->
+  <div class="lado lado-formlog">
+    <div class="card-auth">
+
+      <!-- CAMBIAMOS SOLO ESTO -->
+      <div class="logo-box">
+        <img src="imglogo.png" class="logo-img">
+      </div>
+
+      <h1>MUESTRAS</h1>
+      <p class="auth-subtitulo">Inicia sesión para continuar</p>
+
+      <div class="auth-error" id="auth-error" style="display:none">
+        <span id="auth-error-msg"></span>
+      </div>
+
+      <div class="auth-form">
+        <div class="campo">
+          <label for="email">Correo electrónico</label>
+          <input type="email" id="email" placeholder="tu@correo.com" autocomplete="email">
+        </div>
+
+        <div class="campo">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+
+        <button class="btn-principal" onclick="loginEmail()">Iniciar sesión</button>
+      </div>
+
+      <div class="separador"><span>o</span></div>
+
+     <div id="btn-google-container"></div>
+
+      <p class="auth-link">
+        ¿No tienes cuenta? <a href="register.html">Crear cuenta</a>
+      </p>
+
+    </div>
+  </div>
+
 </div>
+
 <script src="https://accounts.google.com/gsi/client"></script>
 <script src="auth.js"></script>
 </body>
