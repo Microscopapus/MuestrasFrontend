@@ -1,8 +1,0 @@
-{
-  "build": {
-    "builder": "DOCKERFILE"
-  },
-  "deploy": {
-    "startCommand": "serve -s . -p $PORT"
-  }
-}
