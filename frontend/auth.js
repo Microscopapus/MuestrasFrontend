@@ -1,6 +1,6 @@
 const AUTH_API = {
   login:    'https://microscopiobackend-production.up.railway.app/api/api/Auth/login/email',
-  register: 'https://microscopiobackend-production.up.railway.app/api/auth/register/email',
+  register: 'https://microscopiobackend-production.up.railway.app/api/Auth/register/email',
  google: 'https://microscopiobackend-production.up.railway.app/api/Auth/login/google',
 };
 
