@@ -41,7 +41,7 @@ function guardarSesionYRedirigir(data) {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  TIPOS DE ERROR DEL BACKEND
+//  TIPOS DE ERROR — solo para registro
 // ─────────────────────────────────────────────────────────────
 function mensajePorTipo(tipo, mensajeBackend) {
   const mensajes = {
@@ -80,7 +80,11 @@ async function loginEmail() {
     const json  = JSON.parse(texto);
     // { success, tipo, mensaje, data: { token, usuario } }
 
-    if (!json.success) { mostrarError(mensajePorTipo(json.tipo, json.mensaje)); return; }
+    if (!json.success) {
+      // login muestra el mensaje del backend directo, sin interpretar tipos
+      mostrarError(json.mensaje || 'Correo o contraseña incorrectos.');
+      return;
+    }
 
     guardarSesionYRedirigir(json.data);
 
@@ -116,13 +120,16 @@ async function registrar() {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ name: nombre, email, password }),
-                           
     });
     const texto = await res.text();
     const json  = JSON.parse(texto);
     // { success, tipo, mensaje, data: { token, usuario } }
 
-    if (!json.success) { mostrarError(mensajePorTipo(json.tipo, json.mensaje)); return; }
+    if (!json.success) {
+      // registro interpreta los tipos de error del backend
+      mostrarError(mensajePorTipo(json.tipo, json.mensaje));
+      return;
+    }
 
     guardarSesionYRedirigir(json.data);
 
@@ -133,19 +140,24 @@ async function registrar() {
   }
 }
 
-
-
+// ─────────────────────────────────────────────────────────────
+//  GOOGLE LOGIN
+//  Request body: { idToken }
+// ─────────────────────────────────────────────────────────────
 async function handleGoogleResponse(response) {
   try {
     const res   = await fetch(AUTH_API.google, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ idToken: response.credential }),           
+      body:    JSON.stringify({ idToken: response.credential }),
     });
     const texto = await res.text();
     const json  = JSON.parse(texto);
 
-    if (!json.success) { mostrarError(mensajePorTipo(json.tipo, json.mensaje)); return; }
+    if (!json.success) {
+      mostrarError(json.mensaje || 'Error al iniciar sesión con Google.');
+      return;
+    }
 
     guardarSesionYRedirigir(json.data);
 
@@ -154,18 +166,6 @@ async function handleGoogleResponse(response) {
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-//  CERRAR SESIÓN
-// ─────────────────────────────────────────────────────────────
-function cerrarSesion() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('usuario');
-  window.location.href = 'index.html';
-}
-// ─────────────────────────────────────────────────────────────
-//  GOOGLE LOGIN
-//  Request body: { idToken }
-// ─────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   google.accounts.id.initialize({
     client_id: GOOGLE_CLIENT_ID,
@@ -176,3 +176,12 @@ document.addEventListener('DOMContentLoaded', () => {
     { theme: 'outline', size: 'large', width: 300 }
   );
 });
+
+// ─────────────────────────────────────────────────────────────
+//  CERRAR SESIÓN
+// ─────────────────────────────────────────────────────────────
+function cerrarSesion() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('usuario');
+  window.location.href = 'index.html';
+}
