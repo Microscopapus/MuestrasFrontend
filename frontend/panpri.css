@@ -7,7 +7,6 @@
   --terciario: #034850;
   --acento: #3CA6A6;
   --fondo-claro: #F2E3D5;
-
   --texto: #012E40;
   --muted: #6b8a93;
 
@@ -19,6 +18,8 @@
 
 /* BODY */
 body {
+   background-repeat: no-repeat;
+   background-size: cover;
   font-family: Arial, sans-serif;
   background: linear-gradient(135deg, var(--primario), var(--acento));
   color: white;
@@ -50,7 +51,7 @@ body {
   border:none;
   color: var(--fondo-claro);
   font-size:24px;
-  margin-left: 1255px;
+  margin-left: 1230px;
   cursor:pointer;
 }
 
