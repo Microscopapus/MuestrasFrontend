@@ -508,16 +508,16 @@ async function editarMuestra() {
 // ─────────────────────────────────────────────────────────────
 //  CRUD — ELIMINAR MUESTRA
 // ─────────────────────────────────────────────────────────────
-function confirmarEliminar() {
-  if (!muestraActual) return;
-  if (!esMiMuestra(muestraActual)) {
-    mostrarToast('No tienes permiso para eliminar esta muestra');
-    return;
-  }
+// function confirmarEliminar() {
+//   if (!muestraActual) return;
+//   if (!esMiMuestra(muestraActual)) {
+//     mostrarToast('No tienes permiso para eliminar esta muestra');
+//     return;
+//   }
 
-  document.getElementById('eliminar-nombre-label').textContent = `"${muestraActual.nombre}"`;
-  abrirModal('modal-eliminar');
-}
+//   document.getElementById('eliminar-nombre-label').textContent = `"${muestraActual.nombre}"`;
+//   abrirModal('modal-eliminar');
+// }
 
 async function eliminarMuestra() {
   if (!muestraActual) return;
