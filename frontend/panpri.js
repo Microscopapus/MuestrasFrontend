@@ -35,7 +35,7 @@ function getToken() {
 
 function authHeaders(json = false) {
   const token = getToken();
-  const h = { 'Authorization': `Bearer ${token}` };
+  const h = { 'token': token }; 
   if (json) h['Content-Type'] = 'application/json';
   return h;
 }
