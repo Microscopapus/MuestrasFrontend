@@ -27,8 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// FIX: location.replace() en vez de location.href — reemplaza el login en el
-// historial del navegador para que no haya a dónde "regresar" con la flechita
 function guardarSesionYRedirigir(data) {
   localStorage.setItem('token',   data.token);
   localStorage.setItem('usuario', JSON.stringify(data.usuario));
@@ -156,5 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
 function cerrarSesion() {
   localStorage.removeItem('token');
   localStorage.removeItem('usuario');
-  window.location.href = 'index.html';
+   window.location.replace('index.html');
 }
+
+// function SesionYRedirigir(data) {
+//   localStorage.setItem('token',   data.token);
+//   localStorage.setItem('usuario', JSON.stringify(data.usuario));
+//   window.location.replace('panpri.html');
+// }
