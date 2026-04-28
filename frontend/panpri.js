@@ -9,7 +9,7 @@
 //  ENDPOINTS
 // ─────────────────────────────────────────────────────────────
 const API = {
-  muestras:         'https://microscopiobackend-production.up.railway.app/api/muestras/obtener_muestras',
+  muestras:         'https://microscopiobackend-production.up.railway.app/api/muestras/obtener_muestra',
   subirMuestra:     'https://microscopiobackend-production.up.railway.app/api/Muestras/subir_muestra',
   subirImagen:      'https://microscopiobackend-production.up.railway.app/api/Muestras/subir_imagen',
   editarMuestra:    'https://microscopiobackend-production.up.railway.app/api/Muestras/editar_muestra',
