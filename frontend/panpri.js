@@ -423,10 +423,6 @@ async function subirMuestra() {
     mostrarToast('Error al crear muestra: ' + err.message);
     return;
   }
-
-  // PENDIENTE: verificar si subir_muestra ya acepta la imagen o si siempre
-  // hay que usar subir_imagen por separado. Si subir_muestra ya la maneja,
-  // se puede eliminar este bloque completo.
   if (imgFile && idMuestraCreada) {
     try {
       const fdImg = new FormData();
