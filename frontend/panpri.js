@@ -77,6 +77,8 @@ function mostrarPantalla(id) {
 // ─────────────────────────────────────────────────────────────
 //  CARGAR MUESTRAS
 // ─────────────────────────────────────────────────────────────
+//  CARGAR MUESTRAS
+// ─────────────────────────────────────────────────────────────
 async function cargarMuestras() {
   mostrarPantalla('pantalla-cargando');
 
@@ -89,6 +91,11 @@ async function cargarMuestras() {
     if (!json.success) throw new Error(json.mensaje);
 
     const raw = json.data?.muestras || [];
+
+    // 🔍 DEBUG TEMPORAL — abre la consola y mira qué campos trae el backend
+    if (raw.length > 0) console.log('[DEBUG] Primera muestra raw:', raw[0]);
+    console.log('[DEBUG] usuarioActual desde token:', usuarioActual);
+
     muestras = raw.map(m => ({
       id:          m.id,
       nombre:      m.nombre      || 'Sin nombre',
@@ -97,8 +104,10 @@ async function cargarMuestras() {
       categoria:   '',
       descripcion: m.descripcion || '',
       imagen:      m.imagenes?.[0]?.url || null,
-      // Guardamos el id del dueño para comparar con usuarioActual
-      userId:      m.userId || m.idUsuario || m.creadorId || m.usuarioId || null,
+      // Guardamos todos los posibles nombres del campo dueño
+      userId:      m.userId ?? m.idUsuario ?? m.creadorId ?? m.usuarioId
+               ?? m.id_usuario ?? m.IdUsuario ?? m.CreadorId ?? null,
+      _raw: m, // ← guardamos el objeto completo por si acaso
     }));
   } catch (err) {
     document.getElementById('error-msg').textContent = 'La conexión falló, intenta de nuevo.';
@@ -109,6 +118,28 @@ async function cargarMuestras() {
   await cargarFavoritos();
   buildGrid();
   mostrarPantalla('pantalla-contenido');
+}
+
+// Retorna true si la muestra pertenece al usuario logueado
+function esMiMuestra(muestra) {
+  if (!usuarioActual) {
+    console.warn('[DEBUG] esMiMuestra: usuarioActual es null — revisa el claim del JWT');
+    return false;
+  }
+
+  // Intentamos con el campo ya mapeado
+  let dueno = muestra.userId;
+
+  // Si sigue null, buscamos en el objeto crudo directamente
+  if ((dueno === null || dueno === undefined) && muestra._raw) {
+    const raw = muestra._raw;
+    dueno = raw.userId ?? raw.idUsuario ?? raw.creadorId ?? raw.usuarioId
+          ?? raw.id_usuario ?? raw.IdUsuario ?? raw.CreadorId;
+    console.log('[DEBUG] esMiMuestra — campos del raw:', Object.keys(raw));
+  }
+
+  console.log('[DEBUG] esMiMuestra → dueno:', dueno, '| usuarioActual:', usuarioActual);
+  return String(dueno) === String(usuarioActual);
 }
 
 // ─────────────────────────────────────────────────────────────
