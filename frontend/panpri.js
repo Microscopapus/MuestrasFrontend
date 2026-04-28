@@ -10,6 +10,7 @@
 // ─────────────────────────────────────────────────────────────
 const API = {
   muestras:         'https://microscopiobackend-production.up.railway.app/api/muestras/obtener_muestras',
+  obtener:          'https://microscopiobackend-production.up.railway.app/api/muestras/obtener_muestra',
   subirMuestra:     'https://microscopiobackend-production.up.railway.app/api/Muestras/subir_muestra',
   subirImagen:      'https://microscopiobackend-production.up.railway.app/api/Muestras/subir_imagen',
   editarMuestra:    'https://microscopiobackend-production.up.railway.app/api/Muestras/editar_muestra',
@@ -339,35 +340,83 @@ function cerrarTodo() {
 // ─────────────────────────────────────────────────────────────
 //  SELECCIONAR MUESTRA
 // ─────────────────────────────────────────────────────────────
-function seleccionar(id) {
-  const m = muestras.find(x => x.id === id);
-  if (!m) return;
-  muestraActual = m;
+// function seleccionar(id) {
+//   const m = muestras.find(x => x.id === id);
+//   if (!m) return;
+//   muestraActual = m;
 
-  document.querySelectorAll('.menu-card').forEach(c => c.classList.remove('activo'));
-  document.getElementById('card-' + id)?.classList.add('activo');
+//   document.querySelectorAll('.menu-card').forEach(c => c.classList.remove('activo'));
+//   document.getElementById('card-' + id)?.classList.add('activo');
 
-  document.getElementById('detalle-vacio').style.display   = 'none';
-  document.getElementById('detalle-muestra').style.display = 'flex';
+//   document.getElementById('detalle-vacio').style.display   = 'none';
+//   document.getElementById('detalle-muestra').style.display = 'flex';
 
-  const contenedor     = document.getElementById('detalle-imagen');
-  contenedor.innerHTML = '';
-  if (m.imagen) {
-    const img = document.createElement('img');
-    img.src   = m.imagen;
-    img.alt   = m.nombre;
-    contenedor.appendChild(img);
+//   const contenedor     = document.getElementById('detalle-imagen');
+//   contenedor.innerHTML = '';
+//   if (m.imagen) {
+//     const img = document.createElement('img');
+//     img.src   = m.imagen;
+//     img.alt   = m.nombre;
+//     contenedor.appendChild(img);
+//   }
+
+//   document.getElementById('detalle-nombre').textContent = m.nombre;
+//   // PENDIENTE: mostrar categoría cuando la BD la soporte
+//   // document.getElementById('detalle-cat').textContent = m.categoria || '—';
+//   document.getElementById('detalle-desc').textContent = m.descripcion;
+
+//   // Botones siempre visibles — la verificación de propiedad ocurre
+//   // dentro de abrirModalEditar() y confirmarEliminar()
+
+//   cerrarMenu();
+// }
+
+async function seleccionar(id) {
+  try {
+    const res  = await fetch(`${API.obtener}?id=${id}`, {
+      headers: authHeaders()
+    });
+    const json = await res.json();
+
+    if (!json.success) throw new Error(json.mensaje);
+
+    const m = json.data;
+
+    // 👇 AQUÍ VIENE LA CLAVE
+    muestraActual = {
+      id:          m.id,
+      nombre:      m.nombre || 'Sin nombre',
+     // categoria:   '', // 👈 RESPETANDO TU ANOTACIÓN
+      descripcion: m.descripcion || '',
+      imagen:      m.imagenes?.[0]?.url || null,
+      userId:      m.userId || m.idUsuario || m.creadorId || m.usuarioId || null
+    };
+
+    // UI (igual que ya lo tenías)
+    document.querySelectorAll('.menu-card').forEach(c => c.classList.remove('activo'));
+    document.getElementById('card-' + id)?.classList.add('activo');
+
+    document.getElementById('detalle-vacio').style.display   = 'none';
+    document.getElementById('detalle-muestra').style.display = 'flex';
+
+    const contenedor     = document.getElementById('detalle-imagen');
+    contenedor.innerHTML = '';
+
+    if (muestraActual.imagen) {
+      const img = document.createElement('img');
+      img.src   = muestraActual.imagen;
+      img.alt   = muestraActual.nombre;
+      contenedor.appendChild(img);
+    }
+
+    document.getElementById('detalle-nombre').textContent = muestraActual.nombre;
+    document.getElementById('detalle-desc').textContent   = muestraActual.descripcion;
+
+    cerrarMenu();
+
+  } catch (err) {
+    mostrarToast('Error al cargar la muestra');
   }
-
-  document.getElementById('detalle-nombre').textContent = m.nombre;
-  // PENDIENTE: mostrar categoría cuando la BD la soporte
-  // document.getElementById('detalle-cat').textContent = m.categoria || '—';
-  document.getElementById('detalle-desc').textContent = m.descripcion;
-
-  // Botones siempre visibles — la verificación de propiedad ocurre
-  // dentro de abrirModalEditar() y confirmarEliminar()
-
-  cerrarMenu();
 }
 
 // ─────────────────────────────────────────────────────────────
