@@ -8,31 +8,47 @@
 </head>
 <body>
 
+<!-- ══ TOPBAR ══ -->
 <header class="topbar">
-  
   <h1>MUESTRAS</h1>
-  <button class="menu-btn" onclick="abrirMenu()">☰</button>
- <button class="logout-btn" onclick="cerrarSesion()">Salir ➔</button>
+  <div class="topbar-actions">
+    <button class="icon-btn" id="btn-fav-topbar" title="Mis favoritos" onclick="abrirFavoritos()">★</button>
+    <button class="icon-btn" title="Nueva muestra" onclick="abrirModalCrear()">＋</button>
+    <button class="icon-btn" title="Catálogo" onclick="abrirMenu()">☰</button>
+    <button class="logout-btn" onclick="cerrarSesion()">Salir ➔</button>
+  </div>
 </header>
 
-<div class="overlay" id="overlay" onclick="cerrarMenu()"></div>
+<!-- Overlay general -->
+<div class="overlay" id="overlay" onclick="cerrarTodo()"></div>
 
-<!-- MENÚ LATERAL -->
+<!-- ══ MENÚ LATERAL: Catálogo ══ -->
 <nav id="menu">
   <div class="menu-header">
-    <span>Muestras</span>
+    <span>🔬 Catálogo</span>
     <button class="close-btn" onclick="cerrarMenu()">✕</button>
   </div>
   <div class="menu-grid" id="menu-grid"></div>
 </nav>
 
-<!-- ══ PANTALLA: CARGANDO ══ -->
+<!-- ══ PANEL FAVORITOS ══ -->
+<aside id="panel-favoritos">
+  <div class="menu-header">
+    <span>★ Favoritos</span>
+    <button class="close-btn" onclick="cerrarFavoritos()">✕</button>
+  </div>
+  <div class="fav-search-wrap">
+    <input type="text" id="fav-search" placeholder="Buscar favorito…" oninput="filtrarFavoritos()" autocomplete="off" />
+  </div>
+  <div id="fav-lista"></div>
+</aside>
+
+<!-- ══ PANTALLAS ══ -->
 <div class="pantalla" id="pantalla-cargando">
   <div class="spinner-grande"></div>
-  <p>Cargando catálogo...</p>
+  <p>Cargando catálogo…</p>
 </div>
 
-<!-- ══ PANTALLA: ERROR ══ -->
 <div class="pantalla" id="pantalla-error">
   <div class="error-icono-grande">⚠️</div>
   <h2>No se pudo cargar el catálogo</h2>
@@ -40,7 +56,6 @@
   <button class="btn-reintentar" onclick="cargarMuestras()">↺ Reintentar</button>
 </div>
 
-<!-- ══ PANTALLA: CONTENIDO ══ -->
 <div class="pantalla" id="pantalla-contenido">
   <!-- Estado vacío -->
   <div class="detalle-vacio" id="detalle-vacio">
@@ -54,11 +69,91 @@
     <h2 id="detalle-nombre"></h2>
     <span class="badge" id="detalle-cat"></span>
     <p id="detalle-desc"></p>
+    <div class="detalle-acciones">
+      <button class="btn-accion btn-editar" onclick="abrirModalEditar()">✏️ Editar</button>
+      <button class="btn-accion btn-eliminar" onclick="confirmarEliminar()">🗑️ Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MODALES ══════════════ -->
+
+<!-- Modal: Crear muestra -->
+<div class="modal-backdrop" id="modal-crear">
+  <div class="modal">
+    <div class="modal-header">
+      <span>➕ Nueva muestra</span>
+      <button class="close-btn" onclick="cerrarModal('modal-crear')">✕</button>
+    </div>
+    <div class="modal-body">
+      <label>Nombre *</label>
+      <input type="text" id="crear-nombre" placeholder="Nombre de la muestra" />
+
+      <label>Descripción</label>
+      <textarea id="crear-desc" placeholder="Descripción de la muestra…"></textarea>
+
+      <!-- Categorías: pendiente hasta tener el endpoint disponible -->
+      <!--
+      <label>Categorías</label>
+      <input type="text" id="crear-cat" placeholder="Categorías" />
+      -->
+
+      <label>Imagen</label>
+      <input type="file" id="crear-img" accept="image/*" />
+      <div id="crear-preview" class="img-preview"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="cerrarModal('modal-crear')">Cancelar</button>
+      <button class="btn-confirm" onclick="subirMuestra()">Subir muestra</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Editar muestra -->
+<div class="modal-backdrop" id="modal-editar">
+  <div class="modal">
+    <div class="modal-header">
+      <span>✏️ Editar muestra</span>
+      <button class="close-btn" onclick="cerrarModal('modal-editar')">✕</button>
+    </div>
+    <div class="modal-body">
+      <label>Nombre *</label>
+      <input type="text" id="editar-nombre" placeholder="Nombre" />
+
+      <label>Descripción</label>
+      <textarea id="editar-desc" placeholder="Descripción…"></textarea>
+
+      <!-- Categorías: pendiente hasta tener el endpoint disponible -->
+      <!--
+      <label>Categorías</label>
+      <input type="text" id="editar-cat" placeholder="Categorías" />
+      -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="cerrarModal('modal-editar')">Cancelar</button>
+      <button class="btn-confirm" onclick="editarMuestra()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Confirmar eliminación -->
+<div class="modal-backdrop" id="modal-eliminar">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span>🗑️ Eliminar muestra</span>
+      <button class="close-btn" onclick="cerrarModal('modal-eliminar')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="confirm-text">¿Seguro que deseas eliminar <strong id="eliminar-nombre-label"></strong>? Esta acción no se puede deshacer.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="cerrarModal('modal-eliminar')">Cancelar</button>
+      <button class="btn-danger" onclick="eliminarMuestra()">Sí, eliminar</button>
+    </div>
   </div>
 </div>
 
 <script src="panpri.js"></script>
-
 <script src="auth.js"></script>
 </body>
 </html>
