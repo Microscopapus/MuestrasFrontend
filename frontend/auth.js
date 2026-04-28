@@ -31,18 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// ─────────────────────────────────────────────────────────────
-//  GUARDAR SESIÓN Y REDIRIGIR
-// ─────────────────────────────────────────────────────────────
+// redirige a la panpri
 function guardarSesionYRedirigir(data) {
   localStorage.setItem('token',   data.token);
   localStorage.setItem('usuario', JSON.stringify(data.usuario));
   window.location.href = 'panpri.html';
 }
 
-// ─────────────────────────────────────────────────────────────
-//  TIPOS DE ERROR — solo para registro
-// ─────────────────────────────────────────────────────────────
+
 function mensajePorTipo(tipo, mensajeBackend) {
   const mensajes = {
     0: mensajeBackend,
@@ -54,10 +50,7 @@ function mensajePorTipo(tipo, mensajeBackend) {
   return mensajes[tipo] || mensajeBackend || 'La conexión falló, intenta de nuevo.';
 }
 
-// ─────────────────────────────────────────────────────────────
-//  LOGIN
-//  Request body: { email, password }
-// ─────────────────────────────────────────────────────────────
+//login
 async function loginEmail() {
   ocultarError();
 
@@ -94,11 +87,7 @@ async function loginEmail() {
     setLoading(btn, false);
   }
 }
-
-// ─────────────────────────────────────────────────────────────
-//  REGISTRO
-//  Request body: { name, email, password }
-// ─────────────────────────────────────────────────────────────
+//registro
 async function registrar() {
   ocultarError();
 
@@ -140,10 +129,7 @@ async function registrar() {
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-//  GOOGLE LOGIN
-//  Request body: { idToken }
-// ─────────────────────────────────────────────────────────────
+//para el google
 async function handleGoogleResponse(response) {
   try {
     const res   = await fetch(AUTH_API.google, {
