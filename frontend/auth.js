@@ -6,38 +6,34 @@ const AUTH_API = {
 
 const GOOGLE_CLIENT_ID = '30335745792-2elqg0tt0s9iq9u0hd6flgbstldbjrg1.apps.googleusercontent.com';
 
-// pone el texto del error en el div rojo y lo hace visible
 function mostrarError(msg) {
   const el = document.getElementById('auth-error');
   document.getElementById('auth-error-msg').textContent = msg;
   el.style.display = 'block';
 }
 
-// esconde el div rojo al inicio de cada intento
 function ocultarError() {
   document.getElementById('auth-error').style.display = 'none';
 }
 
-// deshabilita el botón mientras carga y lo regresa a su texto original
 function setLoading(btn, loading) {
   btn.disabled = loading;
   btn.textContent = loading ? 'Cargando...' : btn.dataset.texto;
 }
 
-// guarda el texto original de cada botón antes de que cambie
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.btn-principal').forEach(btn => {
     btn.dataset.texto = btn.textContent;
   });
 });
 
-// redirige a la panpri
+// FIX: location.replace() en vez de location.href — reemplaza el login en el
+// historial del navegador para que no haya a dónde "regresar" con la flechita
 function guardarSesionYRedirigir(data) {
   localStorage.setItem('token',   data.token);
   localStorage.setItem('usuario', JSON.stringify(data.usuario));
-  window.location.href = 'panpri.html';
+  window.location.replace('panpri.html');
 }
-
 
 function mensajePorTipo(tipo, mensajeBackend) {
   const mensajes = {
@@ -50,7 +46,6 @@ function mensajePorTipo(tipo, mensajeBackend) {
   return mensajes[tipo] || mensajeBackend || 'La conexión falló, intenta de nuevo.';
 }
 
-//login
 async function loginEmail() {
   ocultarError();
 
@@ -71,23 +66,20 @@ async function loginEmail() {
     });
     const texto = await res.text();
     const json  = JSON.parse(texto);
-    // { success, tipo, mensaje, data: { token, usuario } }
 
     if (!json.success) {
-      // login muestra el mensaje del backend directo, sin interpretar tipos
       mostrarError(json.mensaje || 'Correo o contraseña incorrectos.');
       return;
     }
 
     guardarSesionYRedirigir(json.data);
-
   } catch (err) {
     mostrarError('La conexión falló, intenta de nuevo.');
   } finally {
     setLoading(btn, false);
   }
 }
-//registro
+
 async function registrar() {
   ocultarError();
 
@@ -112,16 +104,13 @@ async function registrar() {
     });
     const texto = await res.text();
     const json  = JSON.parse(texto);
-    // { success, tipo, mensaje, data: { token, usuario } }
 
     if (!json.success) {
-      // registro interpreta los tipos de error del backend
       mostrarError(mensajePorTipo(json.tipo, json.mensaje));
       return;
     }
 
     guardarSesionYRedirigir(json.data);
-
   } catch (err) {
     mostrarError('La conexión falló, intenta de nuevo.');
   } finally {
@@ -129,7 +118,6 @@ async function registrar() {
   }
 }
 
-//para el google
 async function handleGoogleResponse(response) {
   try {
     const res   = await fetch(AUTH_API.google, {
@@ -146,7 +134,6 @@ async function handleGoogleResponse(response) {
     }
 
     guardarSesionYRedirigir(json.data);
-
   } catch (err) {
     mostrarError('La conexión falló, intenta de nuevo.');
   }

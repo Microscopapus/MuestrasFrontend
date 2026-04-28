@@ -6,15 +6,6 @@
 })();
 
 // ─────────────────────────────────────────────────────────────
-//  BLOQUEAR BOTÓN ATRÁS — va aquí porque panpri.js solo corre
-//  en panpri.html, así siempre hay token cuando esto se ejecuta
-// ─────────────────────────────────────────────────────────────
-history.pushState(null, '', window.location.href);
-window.addEventListener('popstate', function () {
-  history.pushState(null, '', window.location.href);
-});
-
-// ─────────────────────────────────────────────────────────────
 //  ENDPOINTS
 // ─────────────────────────────────────────────────────────────
 const API = {
@@ -50,15 +41,16 @@ function authHeaders(json = false) {
   return h;
 }
 
-// Decodifica el payload del JWT para obtener el userId del usuario logueado
-// No valida la firma (eso lo hace el backend), solo lee los claims
+// Decodifica el payload del JWT para obtener el userId del usuario logueado.
+// El backend emite el claim como "id_usuario" (User.FindFirst("id_usuario")).
 function getUserIdDesdeToken() {
   try {
     const token   = getToken();
     const payload = token.split('.')[1];
     const decoded = JSON.parse(atob(payload));
-    // El claim puede llamarse sub, id, userId, nameid o Id según el backend
-    return decoded.sub || decoded.id || decoded.userId || decoded.nameid || decoded.Id || null;
+    // FIX: "id_usuario" es el claim que usa el backend — va primero
+    return decoded.id_usuario || decoded.sub || decoded.id || decoded.userId
+        || decoded.nameid   || decoded.Id  || null;
   } catch {
     return null;
   }
@@ -123,7 +115,6 @@ async function cargarMuestras() {
 // ─────────────────────────────────────────────────────────────
 async function cargarFavoritos() {
   try {
-    // GET no debe llevar body — los parámetros van en la URL
     const res  = await fetch(`${API.obtenerFavoritos}?page=1&size=100`, {
       method:  'GET',
       headers: authHeaders(),
@@ -145,8 +136,6 @@ function esFavorito(id) {
 // ─────────────────────────────────────────────────────────────
 async function agregarFavorito(id, e) {
   if (e) e.stopPropagation();
-
-  // Evitar doble click si ya es favorito
   if (esFavorito(id)) return;
 
   try {
@@ -172,8 +161,6 @@ async function agregarFavorito(id, e) {
 // ─────────────────────────────────────────────────────────────
 async function eliminarFavoritoById(id, e) {
   if (e) e.stopPropagation();
-
-  // Evitar doble click si ya no es favorito
   if (!esFavorito(id)) return;
 
   try {
@@ -195,7 +182,7 @@ async function eliminarFavoritoById(id, e) {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  FAVORITOS — TOGGLE (decide cuál llamar según estado actual)
+//  FAVORITOS — TOGGLE
 // ─────────────────────────────────────────────────────────────
 function toggleFavorito(id, e) {
   if (e) e.stopPropagation();
@@ -262,9 +249,6 @@ function renderFavLista(filtro = '') {
   `).join('');
 }
 
-// ─────────────────────────────────────────────────────────────
-//  FAVORITOS — QUITAR DESDE EL PANEL (sin evento de click de card)
-// ─────────────────────────────────────────────────────────────
 async function quitarFavDesdePanel(id) {
   try {
     const res  = await fetch(API.eliminarFavorito, {
@@ -296,7 +280,6 @@ function buildGrid() {
     card.id        = 'card-' + m.id;
     card.onclick   = () => seleccionar(m.id);
 
-    // Estrella favorito — visible para todos
     const star      = document.createElement('button');
     star.className  = 'card-star' + (esFavorito(m.id) ? ' favorito' : '');
     star.innerHTML  = '★';
@@ -304,7 +287,6 @@ function buildGrid() {
     star.onclick    = (e) => toggleFavorito(m.id, e);
     card.appendChild(star);
 
-    // Imagen o placeholder
     if (m.imagen) {
       const img     = document.createElement('img');
       img.src       = m.imagen;
@@ -380,19 +362,16 @@ function seleccionar(id) {
   document.getElementById('detalle-nombre').textContent = m.nombre;
   // PENDIENTE: mostrar categoría cuando la BD la soporte
   // document.getElementById('detalle-cat').textContent = m.categoria || '—';
-  document.getElementById('detalle-desc').textContent   = m.descripcion;
+  document.getElementById('detalle-desc').textContent = m.descripcion;
 
-  // Los botones editar/eliminar siempre se muestran al seleccionar una muestra.
-  // La verificación de propiedad ocurre dentro de cada acción (abrirModalEditar,
-  // confirmarEliminar) y muestra "no tienes permiso" si no eres el dueño.
+  // Botones siempre visibles — la verificación de propiedad ocurre
+  // dentro de abrirModalEditar() y confirmarEliminar()
 
   cerrarMenu();
 }
 
 // ─────────────────────────────────────────────────────────────
 //  CRUD — CREAR MUESTRA
-//  Flujo: 1) subir_muestra con nombre y descripción
-//         2) con el id retornado, subir_imagen con el archivo
 // ─────────────────────────────────────────────────────────────
 function abrirModalCrear() {
   document.getElementById('crear-nombre').value      = '';
@@ -403,7 +382,6 @@ function abrirModalCrear() {
   abrirModal('modal-crear');
 }
 
-// Preview de imagen al seleccionar archivo
 document.getElementById('crear-img').addEventListener('change', function () {
   const file = this.files[0];
   if (!file) return;
@@ -417,18 +395,14 @@ async function subirMuestra() {
   const objetivo = parseInt(document.getElementById('crear-objetivo').value, 10);
   const imgFile  = document.getElementById('crear-img').files[0];
 
-  if (!nombre) { mostrarToast('El nombre es obligatorio'); return; }
+  if (!nombre)       { mostrarToast('El nombre es obligatorio'); return; }
   if (isNaN(objetivo)) { mostrarToast('El objetivo es obligatorio'); return; }
 
-  // ── Paso 1: crear la muestra con nombre y descripción ──
   const fd = new FormData();
   fd.append('Nombre', nombre);
   fd.append('Descripcion', desc);
   // PENDIENTE: agregar categoría cuando la BD la soporte
   // fd.append('Categorias', categoriaId);
-
-  // Si el backend acepta la imagen directo en subir_muestra la mandamos aquí
-  // Si no, se sube por separado en el paso 2 via subir_imagen
   if (imgFile) fd.append('Imagenes', imgFile);
 
   let idMuestraCreada = null;
@@ -436,7 +410,7 @@ async function subirMuestra() {
   try {
     const res  = await fetch(API.subirMuestra, {
       method:  'POST',
-      headers: authHeaders(), // sin Content-Type para que FormData ponga boundary
+      headers: authHeaders(),
       body:    fd,
     });
     const json = await res.json();
@@ -444,17 +418,14 @@ async function subirMuestra() {
 
     idMuestraCreada = json.data?.id || json.data?.idMuestra || null;
     mostrarToast('✅ Muestra creada');
-
   } catch (err) {
     mostrarToast('Error al crear muestra: ' + err.message);
     return;
   }
 
-  // ── Paso 2: subir imagen por separado si el paso 1 no la aceptó ──
-  // Solo se ejecuta si hay archivo Y el backend retornó un id de muestra
   // PENDIENTE: verificar si subir_muestra ya acepta la imagen o si siempre
   // hay que usar subir_imagen por separado. Si subir_muestra ya la maneja,
-  // se puede eliminar este paso 2 completo.
+  // se puede eliminar este bloque completo.
   if (imgFile && idMuestraCreada) {
     try {
       const fdImg = new FormData();
@@ -464,16 +435,14 @@ async function subirMuestra() {
 
       const resImg  = await fetch(API.subirImagen, {
         method:  'POST',
-        headers: authHeaders(), // sin Content-Type para que FormData ponga boundary
+        headers: authHeaders(),
         body:    fdImg,
       });
       const jsonImg = await resImg.json();
       if (!jsonImg.success) throw new Error(jsonImg.mensaje);
 
       mostrarToast('✅ Imagen subida correctamente');
-
     } catch (err) {
-      // La muestra ya se creó, solo falló la imagen — avisamos sin revertir
       mostrarToast('Muestra creada pero falló la imagen: ' + err.message);
     }
   }
@@ -487,8 +456,6 @@ async function subirMuestra() {
 // ─────────────────────────────────────────────────────────────
 function abrirModalEditar() {
   if (!muestraActual) return;
-
-  // Protección: solo el dueño puede editar
   if (!esMiMuestra(muestraActual)) {
     mostrarToast('No tienes permiso para editar esta muestra');
     return;
@@ -497,14 +464,12 @@ function abrirModalEditar() {
   document.getElementById('editar-nombre').value = muestraActual.nombre;
   document.getElementById('editar-desc').value   = muestraActual.descripcion;
   // PENDIENTE: cargar categoría cuando la BD la soporte
-  // document.getElementById('editar-categoria').value = muestraActual.categoria;
+  // document.getElementById('editar-cat').value = muestraActual.categoria;
   abrirModal('modal-editar');
 }
 
 async function editarMuestra() {
   if (!muestraActual) return;
-
-  // Protección: solo el dueño puede editar
   if (!esMiMuestra(muestraActual)) {
     mostrarToast('No tienes permiso para editar esta muestra');
     return;
@@ -513,7 +478,7 @@ async function editarMuestra() {
   const nombre = document.getElementById('editar-nombre').value.trim();
   const desc   = document.getElementById('editar-desc').value.trim();
   // PENDIENTE: leer categoría cuando la BD la soporte
-  // const categoria = document.getElementById('editar-categoria').value;
+  // const categoria = document.getElementById('editar-cat').value;
 
   if (!nombre) { mostrarToast('El nombre es obligatorio'); return; }
 
@@ -548,8 +513,6 @@ async function editarMuestra() {
 // ─────────────────────────────────────────────────────────────
 function confirmarEliminar() {
   if (!muestraActual) return;
-
-  // Protección: solo el dueño puede eliminar
   if (!esMiMuestra(muestraActual)) {
     mostrarToast('No tienes permiso para eliminar esta muestra');
     return;
@@ -561,8 +524,6 @@ function confirmarEliminar() {
 
 async function eliminarMuestra() {
   if (!muestraActual) return;
-
-  // Protección: solo el dueño puede eliminar
   if (!esMiMuestra(muestraActual)) {
     mostrarToast('No tienes permiso para eliminar esta muestra');
     return;
@@ -602,7 +563,6 @@ function cerrarModal(id) {
   document.getElementById(id).classList.remove('activo');
 }
 
-// Cerrar modal al hacer click en el backdrop
 document.querySelectorAll('.modal-backdrop').forEach(bd => {
   bd.addEventListener('click', function (e) {
     if (e.target === this) this.classList.remove('activo');
