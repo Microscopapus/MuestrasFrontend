@@ -82,15 +82,14 @@ async function cargarMuestras() {
 // ─────────────────────────────────────────────────────────────
 async function cargarFavoritos() {
   try {
-    const res  = await fetch(API.obtenerFavoritos, {
+    // GET no debe llevar body — los parámetros van en la URL
+    const res  = await fetch(`${API.obtenerFavoritos}?page=1&size=100`, {
       method:  'GET',
-      headers: authHeaders(true),
-      body:    JSON.stringify({ page: 1, size: 100 }),
+      headers: authHeaders(),
     });
     const json = await res.json();
-    // Intentamos leer el array de ids desde la respuesta
-    const raw = json.data?.muestras || json.data || [];
-    favoritos = Array.isArray(raw) ? raw.map(m => (typeof m === 'object' ? m.id : m)) : [];
+    const raw  = json.data?.muestras || json.data || [];
+    favoritos  = Array.isArray(raw) ? raw.map(m => (typeof m === 'object' ? m.id : m)) : [];
   } catch {
     favoritos = [];
   }
@@ -101,35 +100,67 @@ function esFavorito(id) {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  FAVORITOS — TOGGLE (desde estrella de card)
+//  FAVORITOS — AGREGAR
 // ─────────────────────────────────────────────────────────────
-async function toggleFavorito(id, e) {
+async function agregarFavorito(id, e) {
   e.stopPropagation();
-  const yaEsFav = esFavorito(id);
-  const url     = yaEsFav ? API.eliminarFavorito : API.agregarFavorito;
-  const method  = yaEsFav ? 'DELETE' : 'POST';
+
+  // Evitar doble click si ya es favorito
+  if (esFavorito(id)) return;
 
   try {
-    const res  = await fetch(url, {
-      method,
+    const res  = await fetch(API.agregarFavorito, {
+      method:  'POST',
       headers: authHeaders(true),
       body:    JSON.stringify({ idMuestra: id }),
     });
     const json = await res.json();
     if (!json.success) throw new Error(json.mensaje);
 
-    if (yaEsFav) {
-      favoritos = favoritos.filter(f => f !== id);
-      mostrarToast('Quitado de favoritos');
-    } else {
-      favoritos.push(id);
-      mostrarToast('★ Agregado a favoritos');
-    }
-
+    favoritos.push(id);
+    mostrarToast('★ Agregado a favoritos');
     actualizarEstrellas();
-    renderFavLista();   // refresca panel si está abierto
+    renderFavLista();
   } catch (err) {
-    mostrarToast('Error al actualizar favorito');
+    mostrarToast('Error al agregar favorito');
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+//  FAVORITOS — ELIMINAR
+// ─────────────────────────────────────────────────────────────
+async function eliminarFavorito(id, e) {
+  e.stopPropagation();
+
+  // Evitar doble click si ya no es favorito
+  if (!esFavorito(id)) return;
+
+  try {
+    const res  = await fetch(API.eliminarFavorito, {
+      method:  'DELETE',
+      headers: authHeaders(true),
+      body:    JSON.stringify({ idMuestra: id }),
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.mensaje);
+
+    favoritos = favoritos.filter(f => f !== id);
+    mostrarToast('Quitado de favoritos');
+    actualizarEstrellas();
+    renderFavLista();
+  } catch (err) {
+    mostrarToast('Error al quitar favorito');
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+//  FAVORITOS — TOGGLE (decide cuál llamar según estado actual)
+// ─────────────────────────────────────────────────────────────
+function toggleFavorito(id, e) {
+  if (esFavorito(id)) {
+    eliminarFavorito(id, e);
+  } else {
+    agregarFavorito(id, e);
   }
 }
 
@@ -189,6 +220,9 @@ function renderFavLista(filtro = '') {
   `).join('');
 }
 
+// ─────────────────────────────────────────────────────────────
+//  FAVORITOS — QUITAR DESDE EL PANEL (sin evento de click de card)
+// ─────────────────────────────────────────────────────────────
 async function quitarFavDesdePanel(id) {
   try {
     const res  = await fetch(API.eliminarFavorito, {
@@ -337,7 +371,7 @@ async function subirMuestra() {
   const fd = new FormData();
   fd.append('Nombre', nombre);
   fd.append('Descripcion', desc);
-  // fd.append('Categorias', categoriaId);  // pendiente hasta tener el endpoint
+  // fd.append('Categorias', categoriaId);  // pendiente hasta agregar el campo
   if (imgFile) fd.append('Imagenes', imgFile);
 
   try {
