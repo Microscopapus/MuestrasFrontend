@@ -171,3 +171,15 @@ function cerrarSesion() {
   localStorage.removeItem('usuario');
   window.location.href = 'index.html';
 }
+
+// ─────────────────────────────────────────────────────────────
+//  BLOQUEAR BOTÓN ATRÁS cuando el usuario está autenticado.
+//  Solo aplica si hay token activo (es decir, en panpri.html).
+//  En el login/registro el back funciona con normalidad.
+// ─────────────────────────────────────────────────────────────
+if (localStorage.getItem('token')) {
+  history.pushState(null, '', window.location.href);
+  window.addEventListener('popstate', function () {
+    history.pushState(null, '', window.location.href);
+  });
+}
