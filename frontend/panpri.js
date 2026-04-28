@@ -11,6 +11,7 @@
 const API = {
   muestras:         'https://microscopiobackend-production.up.railway.app/api/muestras/obtener_muestras',
   subirMuestra:     'https://microscopiobackend-production.up.railway.app/api/Muestras/subir_muestra',
+  subirImagen:      'https://microscopiobackend-production.up.railway.app/api/Muestras/subir_imagen',
   editarMuestra:    'https://microscopiobackend-production.up.railway.app/api/Muestras/editar_muestra',
   eliminarMuestra:  'https://microscopiobackend-production.up.railway.app/api/Muestras/eliminar_muestra',
   obtenerFavoritos: 'https://microscopiobackend-production.up.railway.app/api/Muestras/obtener_favoritos',
@@ -89,7 +90,9 @@ async function cargarMuestras() {
     muestras = raw.map(m => ({
       id:          m.id,
       nombre:      m.nombre      || 'Sin nombre',
-      categoria:   m.categoria   || '',
+      // PENDIENTE: categoría — la BD aún no la acepta, descomentar cuando esté lista
+      // categoria:   m.categoria   || '',
+      categoria:   '',
       descripcion: m.descripcion || '',
       imagen:      m.imagenes?.[0]?.url || null,
       // Guardamos el id del dueño para comparar con usuarioActual
@@ -244,7 +247,7 @@ function renderFavLista(filtro = '') {
         <div class="fav-item-nombre">${m.nombre}</div>
         <div class="fav-item-cat">${m.categoria || '—'}</div>
       </div>
-      <button class="fav-item-quitar" title="Quitar de favoritos"
+      <button class="fav-item-quitar"
         onclick="event.stopPropagation(); quitarFavDesdePanel(${m.id})">✕</button>
     </div>
   `).join('');
@@ -289,7 +292,6 @@ function buildGrid() {
     star.className  = 'card-star' + (esFavorito(m.id) ? ' favorito' : '');
     star.innerHTML  = '★';
     star.dataset.id = m.id;
-    star.title      = 'Marcar / quitar favorito';
     star.onclick    = (e) => toggleFavorito(m.id, e);
     card.appendChild(star);
 
@@ -312,12 +314,13 @@ function buildGrid() {
     nombre.className   = 'card-nombre';
     nombre.textContent = m.nombre.length > 13 ? m.nombre.slice(0, 12) + '…' : m.nombre;
 
-    const cat       = document.createElement('div');
-    cat.className   = 'card-cat';
-    cat.textContent = m.categoria;
+    // PENDIENTE: mostrar categoría cuando la BD la soporte
+    // const cat       = document.createElement('div');
+    // cat.className   = 'card-cat';
+    // cat.textContent = m.categoria;
+    // card.appendChild(cat);
 
     card.appendChild(nombre);
-    card.appendChild(cat);
     grid.appendChild(card);
   });
 }
@@ -366,7 +369,8 @@ function seleccionar(id) {
   }
 
   document.getElementById('detalle-nombre').textContent = m.nombre;
-  document.getElementById('detalle-cat').textContent    = m.categoria || '—';
+  // PENDIENTE: mostrar categoría cuando la BD la soporte
+  // document.getElementById('detalle-cat').textContent = m.categoria || '—';
   document.getElementById('detalle-desc').textContent   = m.descripcion;
 
   // Mostrar u ocultar botones de editar/eliminar según si es dueño
@@ -380,6 +384,8 @@ function seleccionar(id) {
 
 // ─────────────────────────────────────────────────────────────
 //  CRUD — CREAR MUESTRA
+//  Flujo: 1) subir_muestra con nombre y descripción
+//         2) con el id retornado, subir_imagen con el archivo
 // ─────────────────────────────────────────────────────────────
 function abrirModalCrear() {
   document.getElementById('crear-nombre').value      = '';
@@ -404,27 +410,67 @@ async function subirMuestra() {
 
   if (!nombre) { mostrarToast('El nombre es obligatorio'); return; }
 
+  // ── Paso 1: crear la muestra con nombre y descripción ──
   const fd = new FormData();
   fd.append('Nombre', nombre);
   fd.append('Descripcion', desc);
-  // fd.append('Categorias', categoriaId);  // pendiente hasta agregar el campo
+  // PENDIENTE: agregar categoría cuando la BD la soporte
+  // fd.append('Categorias', categoriaId);
+
+  // Si el backend acepta la imagen directo en subir_muestra la mandamos aquí
+  // Si no, se sube por separado en el paso 2 via subir_imagen
   if (imgFile) fd.append('Imagenes', imgFile);
+
+  let idMuestraCreada = null;
 
   try {
     const res  = await fetch(API.subirMuestra, {
       method:  'POST',
-      headers: authHeaders(),   // sin Content-Type para que FormData ponga boundary
+      headers: authHeaders(), // sin Content-Type para que FormData ponga boundary
       body:    fd,
     });
     const json = await res.json();
     if (!json.success) throw new Error(json.mensaje);
 
-    mostrarToast('✅ Muestra subida correctamente');
-    cerrarModal('modal-crear');
-    await cargarMuestras();
+    idMuestraCreada = json.data?.id || json.data?.idMuestra || null;
+    mostrarToast('✅ Muestra creada');
+
   } catch (err) {
-    mostrarToast('Error al subir: ' + err.message);
+    mostrarToast('Error al crear muestra: ' + err.message);
+    return;
   }
+
+  // ── Paso 2: subir imagen por separado si el paso 1 no la aceptó ──
+  // Solo se ejecuta si hay archivo Y el backend retornó un id de muestra
+  // PENDIENTE: verificar si subir_muestra ya acepta la imagen o si siempre
+  // hay que usar subir_imagen por separado. Si subir_muestra ya la maneja,
+  // se puede eliminar este paso 2 completo.
+  if (imgFile && idMuestraCreada) {
+    try {
+      const fdImg = new FormData();
+      fdImg.append('idMuestra', idMuestraCreada);
+      fdImg.append('Imagen', imgFile);
+      // PENDIENTE: agregar objetivo (4, 10, 40, 100) cuando la BD lo soporte
+      // fdImg.append('Objetivo', objetivo);
+
+      const resImg  = await fetch(API.subirImagen, {
+        method:  'POST',
+        headers: authHeaders(), // sin Content-Type para que FormData ponga boundary
+        body:    fdImg,
+      });
+      const jsonImg = await resImg.json();
+      if (!jsonImg.success) throw new Error(jsonImg.mensaje);
+
+      mostrarToast('✅ Imagen subida correctamente');
+
+    } catch (err) {
+      // La muestra ya se creó, solo falló la imagen — avisamos sin revertir
+      mostrarToast('Muestra creada pero falló la imagen: ' + err.message);
+    }
+  }
+
+  cerrarModal('modal-crear');
+  await cargarMuestras();
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -441,6 +487,8 @@ function abrirModalEditar() {
 
   document.getElementById('editar-nombre').value = muestraActual.nombre;
   document.getElementById('editar-desc').value   = muestraActual.descripcion;
+  // PENDIENTE: cargar categoría cuando la BD la soporte
+  // document.getElementById('editar-categoria').value = muestraActual.categoria;
   abrirModal('modal-editar');
 }
 
@@ -455,6 +503,8 @@ async function editarMuestra() {
 
   const nombre = document.getElementById('editar-nombre').value.trim();
   const desc   = document.getElementById('editar-desc').value.trim();
+  // PENDIENTE: leer categoría cuando la BD la soporte
+  // const categoria = document.getElementById('editar-categoria').value;
 
   if (!nombre) { mostrarToast('El nombre es obligatorio'); return; }
 
@@ -466,8 +516,10 @@ async function editarMuestra() {
         idMuestra:   muestraActual.id,
         nombre,
         descripcion: desc,
-        // categorias: [],   // pendiente
-        // imagenes:   [],   // pendiente
+        // PENDIENTE: enviar categorías cuando la BD las soporte
+        // categorias: [categoria],
+        // PENDIENTE: enviar imágenes cuando el flujo de edición las soporte
+        // imagenes: [],
       }),
     });
     const json = await res.json();
