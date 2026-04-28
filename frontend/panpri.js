@@ -373,7 +373,7 @@ function seleccionar(id) {
   // document.getElementById('detalle-cat').textContent = m.categoria || '—';
   document.getElementById('detalle-desc').textContent   = m.descripcion;
 
-  // Mostrar u ocultar botones de editar/eliminar según si es dueño
+  // FIX: mostrar u ocultar botones de editar/eliminar según si es dueño
   const acciones = document.getElementById('detalle-acciones-crud');
   if (acciones) {
     acciones.style.display = esMiMuestra(m) ? 'flex' : 'none';
@@ -390,6 +390,7 @@ function seleccionar(id) {
 function abrirModalCrear() {
   document.getElementById('crear-nombre').value      = '';
   document.getElementById('crear-desc').value        = '';
+  document.getElementById('crear-objetivo').value    = '';  // FIX: limpiar campo objetivo
   document.getElementById('crear-img').value         = '';
   document.getElementById('crear-preview').innerHTML = '';
   abrirModal('modal-crear');
@@ -404,11 +405,15 @@ document.getElementById('crear-img').addEventListener('change', function () {
 });
 
 async function subirMuestra() {
-  const nombre  = document.getElementById('crear-nombre').value.trim();
-  const desc    = document.getElementById('crear-desc').value.trim();
-  const imgFile = document.getElementById('crear-img').files[0];
+  const nombre   = document.getElementById('crear-nombre').value.trim();
+  const desc     = document.getElementById('crear-desc').value.trim();
+  // FIX: leer el campo Objetivo del formulario
+  const objetivo = parseInt(document.getElementById('crear-objetivo').value, 10);
+  const imgFile  = document.getElementById('crear-img').files[0];
 
   if (!nombre) { mostrarToast('El nombre es obligatorio'); return; }
+  // FIX: validar que Objetivo sea un número válido
+  if (isNaN(objetivo)) { mostrarToast('El objetivo es obligatorio'); return; }
 
   // ── Paso 1: crear la muestra con nombre y descripción ──
   const fd = new FormData();
@@ -448,9 +453,10 @@ async function subirMuestra() {
   if (imgFile && idMuestraCreada) {
     try {
       const fdImg = new FormData();
-      fdImg.append('idMuestra', idMuestraCreada);
-      fdImg.append('Imagen', imgFile);
-      fdImg.append('Objetivo', objetivo);
+      // FIX: nombres de campo según el Swagger del endpoint subir_imagen
+      fdImg.append('IdMuestra', idMuestraCreada);
+      fdImg.append('Objetivo',  objetivo);
+      fdImg.append('File',      imgFile);
 
       const resImg  = await fetch(API.subirImagen, {
         method:  'POST',
