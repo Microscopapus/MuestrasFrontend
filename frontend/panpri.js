@@ -451,19 +451,19 @@ async function subirMuestra() {
 // ─────────────────────────────────────────────────────────────
 //  CRUD — EDITAR MUESTRA
 // ─────────────────────────────────────────────────────────────
-function abrirModalEditar() {
-  if (!muestraActual) return;
-  if (!esMiMuestra(muestraActual)) {
-    mostrarToast('No tienes permiso para editar esta muestra');
-    return;
-  }
+// function abrirModalEditar() {
+//   if (!muestraActual) return;
+//   if (!esMiMuestra(muestraActual)) {
+//     mostrarToast('No tienes permiso para editar esta muestra');
+//     return;
+//   }
 
-  document.getElementById('editar-nombre').value = muestraActual.nombre;
-  document.getElementById('editar-desc').value   = muestraActual.descripcion;
-  // PENDIENTE: cargar categoría cuando la BD la soporte
-  // document.getElementById('editar-cat').value = muestraActual.categoria;
-  abrirModal('modal-editar');
-}
+//   document.getElementById('editar-nombre').value = muestraActual.nombre;
+//   document.getElementById('editar-desc').value   = muestraActual.descripcion;
+//   // PENDIENTE: cargar categoría cuando la BD la soporte
+//   // document.getElementById('editar-cat').value = muestraActual.categoria;
+//   abrirModal('modal-editar');
+// }
 
 async function editarMuestra() {
   if (!muestraActual) return;
@@ -508,16 +508,16 @@ async function editarMuestra() {
 // ─────────────────────────────────────────────────────────────
 //  CRUD — ELIMINAR MUESTRA
 // ─────────────────────────────────────────────────────────────
-// function confirmarEliminar() {
-//   if (!muestraActual) return;
-//   if (!esMiMuestra(muestraActual)) {
-//     mostrarToast('No tienes permiso para eliminar esta muestra');
-//     return;
-//   }
+function confirmarEliminar() {
+  if (!muestraActual) return;
+  if (!esMiMuestra(muestraActual)) {
+    mostrarToast('No tienes permiso para eliminar esta muestra');
+    return;
+  }
 
-//   document.getElementById('eliminar-nombre-label').textContent = `"${muestraActual.nombre}"`;
-//   abrirModal('modal-eliminar');
-// }
+  document.getElementById('eliminar-nombre-label').textContent = `"${muestraActual.nombre}"`;
+  abrirModal('modal-eliminar');
+}
 
 async function eliminarMuestra() {
   if (!muestraActual) return;
