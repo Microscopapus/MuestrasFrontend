@@ -451,19 +451,20 @@ async function subirMuestra() {
 // ─────────────────────────────────────────────────────────────
 //  CRUD — EDITAR MUESTRA
 // ─────────────────────────────────────────────────────────────
-// function abrirModalEditar() {
-//   if (!muestraActual) return;
-//   if (!esMiMuestra(muestraActual)) {
-//     mostrarToast('No tienes permiso para editar esta muestra');
-//     return;
-//   }
+   function abrirModalEditar() {
+  //   if (!muestraActual) return;
+  //   if (!esMiMuestra(muestraActual)) {
+  //     mostrarToast('No tienes permiso para editar esta muestra');
+  //     return;
+  //   }
 
-//   document.getElementById('editar-nombre').value = muestraActual.nombre;
-//   document.getElementById('editar-desc').value   = muestraActual.descripcion;
-//   // PENDIENTE: cargar categoría cuando la BD la soporte
-//   // document.getElementById('editar-cat').value = muestraActual.categoria;
-//   abrirModal('modal-editar');
-// }
+    document.getElementById('editar-nombre').value = muestraActual.nombre;
+    document.getElementById('editar-desc').value   = muestraActual.descripcion;
+    document.getElementById('editar-objetivo').value = muestraActual.objetivo;
+   // PENDIENTE: cargar categoría cuando la BD la soporte
+    // document.getElementById('editar-cat').value = muestraActual.categoria;
+    abrirModal('modal-editar');
+  }
 
 async function editarMuestra() {
   if (!muestraActual) return;
