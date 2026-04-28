@@ -69,7 +69,8 @@
     <h2 id="detalle-nombre"></h2>
     <span class="badge" id="detalle-cat"></span>
     <p id="detalle-desc"></p>
-    <div class="detalle-acciones">
+    <!-- FIX: id agregado para que el JS pueda mostrar/ocultar según ownership -->
+    <div class="detalle-acciones" id="detalle-acciones-crud">
       <button class="btn-accion btn-editar" onclick="abrirModalEditar()">✏️ Editar</button>
       <button class="btn-accion btn-eliminar" onclick="confirmarEliminar()">🗑️ Eliminar</button>
     </div>
@@ -97,6 +98,10 @@
       <label>Categorías</label>
       <input type="text" id="crear-cat" placeholder="Categorías" />
       -->
+
+      <!-- FIX: campo Objetivo requerido por el endpoint subir_imagen -->
+      <label>Objetivo *</label>
+      <input type="number" id="crear-objetivo" placeholder="Objetivo (número)" min="0" />
 
       <label>Imagen</label>
       <input type="file" id="crear-img" accept="image/*" />
