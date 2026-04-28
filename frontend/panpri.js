@@ -450,8 +450,7 @@ async function subirMuestra() {
       const fdImg = new FormData();
       fdImg.append('idMuestra', idMuestraCreada);
       fdImg.append('Imagen', imgFile);
-      // PENDIENTE: agregar objetivo (4, 10, 40, 100) cuando la BD lo soporte
-      // fdImg.append('Objetivo', objetivo);
+      fdImg.append('Objetivo', objetivo);
 
       const resImg  = await fetch(API.subirImagen, {
         method:  'POST',
