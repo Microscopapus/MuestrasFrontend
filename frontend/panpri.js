@@ -24,6 +24,7 @@ const API = {
 let muestras      = [];
 let favoritos     = [];   // array de ids
 let muestraActual = null;
+let usuarioActual = null; // id del usuario logueado, extraído del token
 
 // ─────────────────────────────────────────────────────────────
 //  UTILS AUTH
@@ -33,9 +34,32 @@ function getToken() {
 }
 
 function authHeaders(json = false) {
-  const h = { 'Authorization': `Bearer ${getToken()}` };
+  const token = getToken();
+  const h = { 'Authorization': `Bearer ${token}` };
   if (json) h['Content-Type'] = 'application/json';
   return h;
+}
+
+// Decodifica el payload del JWT para obtener el userId del usuario logueado
+// No valida la firma (eso lo hace el backend), solo lee los claims
+function getUserIdDesdeToken() {
+  try {
+    const token   = getToken();
+    const payload = token.split('.')[1];
+    const decoded = JSON.parse(atob(payload));
+    // El claim puede llamarse sub, id, userId, nameid o Id según el backend
+    return decoded.sub || decoded.id || decoded.userId || decoded.nameid || decoded.Id || null;
+  } catch {
+    return null;
+  }
+}
+
+// Retorna true si la muestra pertenece al usuario logueado
+function esMiMuestra(muestra) {
+  if (!usuarioActual) return false;
+  // El campo puede llamarse userId, idUsuario, creadorId según lo que devuelva el backend
+  const dueno = muestra.userId || muestra.idUsuario || muestra.creadorId || muestra.usuarioId;
+  return String(dueno) === String(usuarioActual);
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -53,6 +77,9 @@ function mostrarPantalla(id) {
 async function cargarMuestras() {
   mostrarPantalla('pantalla-cargando');
 
+  // Extraer userId del token antes de cualquier otra cosa
+  usuarioActual = getUserIdDesdeToken();
+
   try {
     const res  = await fetch(`${API.muestras}?page=1&size=100`, { headers: authHeaders() });
     const json = await res.json();
@@ -65,6 +92,8 @@ async function cargarMuestras() {
       categoria:   m.categoria   || '',
       descripcion: m.descripcion || '',
       imagen:      m.imagenes?.[0]?.url || null,
+      // Guardamos el id del dueño para comparar con usuarioActual
+      userId:      m.userId || m.idUsuario || m.creadorId || m.usuarioId || null,
     }));
   } catch (err) {
     document.getElementById('error-msg').textContent = 'La conexión falló, intenta de nuevo.';
@@ -103,7 +132,7 @@ function esFavorito(id) {
 //  FAVORITOS — AGREGAR
 // ─────────────────────────────────────────────────────────────
 async function agregarFavorito(id, e) {
-  e.stopPropagation();
+  if (e) e.stopPropagation();
 
   // Evitar doble click si ya es favorito
   if (esFavorito(id)) return;
@@ -129,8 +158,8 @@ async function agregarFavorito(id, e) {
 // ─────────────────────────────────────────────────────────────
 //  FAVORITOS — ELIMINAR
 // ─────────────────────────────────────────────────────────────
-async function eliminarFavorito(id, e) {
-  e.stopPropagation();
+async function eliminarFavoritoById(id, e) {
+  if (e) e.stopPropagation();
 
   // Evitar doble click si ya no es favorito
   if (!esFavorito(id)) return;
@@ -157,8 +186,9 @@ async function eliminarFavorito(id, e) {
 //  FAVORITOS — TOGGLE (decide cuál llamar según estado actual)
 // ─────────────────────────────────────────────────────────────
 function toggleFavorito(id, e) {
+  if (e) e.stopPropagation();
   if (esFavorito(id)) {
-    eliminarFavorito(id, e);
+    eliminarFavoritoById(id, e);
   } else {
     agregarFavorito(id, e);
   }
@@ -194,8 +224,8 @@ function filtrarFavoritos() {
 }
 
 function renderFavLista(filtro = '') {
-  const lista      = document.getElementById('fav-lista');
-  const fq         = filtro.toLowerCase();
+  const lista       = document.getElementById('fav-lista');
+  const fq          = filtro.toLowerCase();
   const favMuestras = muestras.filter(m =>
     esFavorito(m.id) && m.nombre.toLowerCase().includes(fq)
   );
@@ -249,18 +279,18 @@ function buildGrid() {
   grid.innerHTML = '';
 
   muestras.forEach(m => {
-    const card = document.createElement('div');
+    const card     = document.createElement('div');
     card.className = 'menu-card';
     card.id        = 'card-' + m.id;
     card.onclick   = () => seleccionar(m.id);
 
-    // Estrella favorito
-    const star         = document.createElement('button');
-    star.className     = 'card-star' + (esFavorito(m.id) ? ' favorito' : '');
-    star.innerHTML     = '★';
-    star.dataset.id    = m.id;
-    star.title         = 'Marcar / quitar favorito';
-    star.onclick       = (e) => toggleFavorito(m.id, e);
+    // Estrella favorito — visible para todos
+    const star      = document.createElement('button');
+    star.className  = 'card-star' + (esFavorito(m.id) ? ' favorito' : '');
+    star.innerHTML  = '★';
+    star.dataset.id = m.id;
+    star.title      = 'Marcar / quitar favorito';
+    star.onclick    = (e) => toggleFavorito(m.id, e);
     card.appendChild(star);
 
     // Imagen o placeholder
@@ -272,18 +302,18 @@ function buildGrid() {
       img.loading   = 'lazy';
       card.appendChild(img);
     } else {
-      const ph     = document.createElement('div');
-      ph.className = 'card-placeholder';
+      const ph       = document.createElement('div');
+      ph.className   = 'card-placeholder';
       ph.textContent = '🔬';
       card.appendChild(ph);
     }
 
-    const nombre     = document.createElement('div');
-    nombre.className = 'card-nombre';
+    const nombre       = document.createElement('div');
+    nombre.className   = 'card-nombre';
     nombre.textContent = m.nombre.length > 13 ? m.nombre.slice(0, 12) + '…' : m.nombre;
 
-    const cat     = document.createElement('div');
-    cat.className = 'card-cat';
+    const cat       = document.createElement('div');
+    cat.className   = 'card-cat';
     cat.textContent = m.categoria;
 
     card.appendChild(nombre);
@@ -323,21 +353,27 @@ function seleccionar(id) {
   document.querySelectorAll('.menu-card').forEach(c => c.classList.remove('activo'));
   document.getElementById('card-' + id)?.classList.add('activo');
 
-  document.getElementById('detalle-vacio').style.display    = 'none';
-  document.getElementById('detalle-muestra').style.display  = 'flex';
+  document.getElementById('detalle-vacio').style.display   = 'none';
+  document.getElementById('detalle-muestra').style.display = 'flex';
 
-  const contenedor = document.getElementById('detalle-imagen');
+  const contenedor     = document.getElementById('detalle-imagen');
   contenedor.innerHTML = '';
   if (m.imagen) {
-    const img   = document.createElement('img');
-    img.src     = m.imagen;
-    img.alt     = m.nombre;
+    const img = document.createElement('img');
+    img.src   = m.imagen;
+    img.alt   = m.nombre;
     contenedor.appendChild(img);
   }
 
   document.getElementById('detalle-nombre').textContent = m.nombre;
   document.getElementById('detalle-cat').textContent    = m.categoria || '—';
   document.getElementById('detalle-desc').textContent   = m.descripcion;
+
+  // Mostrar u ocultar botones de editar/eliminar según si es dueño
+  const acciones = document.getElementById('detalle-acciones-crud');
+  if (acciones) {
+    acciones.style.display = esMiMuestra(m) ? 'flex' : 'none';
+  }
 
   cerrarMenu();
 }
@@ -346,9 +382,9 @@ function seleccionar(id) {
 //  CRUD — CREAR MUESTRA
 // ─────────────────────────────────────────────────────────────
 function abrirModalCrear() {
-  document.getElementById('crear-nombre').value  = '';
-  document.getElementById('crear-desc').value    = '';
-  document.getElementById('crear-img').value     = '';
+  document.getElementById('crear-nombre').value      = '';
+  document.getElementById('crear-desc').value        = '';
+  document.getElementById('crear-img').value         = '';
   document.getElementById('crear-preview').innerHTML = '';
   abrirModal('modal-crear');
 }
@@ -396,6 +432,13 @@ async function subirMuestra() {
 // ─────────────────────────────────────────────────────────────
 function abrirModalEditar() {
   if (!muestraActual) return;
+
+  // Protección: solo el dueño puede editar
+  if (!esMiMuestra(muestraActual)) {
+    mostrarToast('No tienes permiso para editar esta muestra');
+    return;
+  }
+
   document.getElementById('editar-nombre').value = muestraActual.nombre;
   document.getElementById('editar-desc').value   = muestraActual.descripcion;
   abrirModal('modal-editar');
@@ -403,6 +446,13 @@ function abrirModalEditar() {
 
 async function editarMuestra() {
   if (!muestraActual) return;
+
+  // Protección: solo el dueño puede editar
+  if (!esMiMuestra(muestraActual)) {
+    mostrarToast('No tienes permiso para editar esta muestra');
+    return;
+  }
+
   const nombre = document.getElementById('editar-nombre').value.trim();
   const desc   = document.getElementById('editar-desc').value.trim();
 
@@ -437,12 +487,26 @@ async function editarMuestra() {
 // ─────────────────────────────────────────────────────────────
 function confirmarEliminar() {
   if (!muestraActual) return;
+
+  // Protección: solo el dueño puede eliminar
+  if (!esMiMuestra(muestraActual)) {
+    mostrarToast('No tienes permiso para eliminar esta muestra');
+    return;
+  }
+
   document.getElementById('eliminar-nombre-label').textContent = `"${muestraActual.nombre}"`;
   abrirModal('modal-eliminar');
 }
 
 async function eliminarMuestra() {
   if (!muestraActual) return;
+
+  // Protección: solo el dueño puede eliminar
+  if (!esMiMuestra(muestraActual)) {
+    mostrarToast('No tienes permiso para eliminar esta muestra');
+    return;
+  }
+
   const idEliminar = muestraActual.id;
 
   try {
@@ -491,8 +555,8 @@ let _toastTimer;
 function mostrarToast(msg) {
   let t = document.getElementById('_toast');
   if (!t) {
-    t    = document.createElement('div');
-    t.id = '_toast';
+    t           = document.createElement('div');
+    t.id        = '_toast';
     t.className = 'toast';
     document.body.appendChild(t);
   }
