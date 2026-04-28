@@ -452,11 +452,11 @@ async function subirMuestra() {
 //  CRUD — EDITAR MUESTRA
 // ─────────────────────────────────────────────────────────────
    function abrirModalEditar() {
-  //   if (!muestraActual) return;
-  //   if (!esMiMuestra(muestraActual)) {
-  //     mostrarToast('No tienes permiso para editar esta muestra');
-  //     return;
-  //   }
+     if (!muestraActual) return;
+    if (!esMiMuestra(muestraActual)) {
+      mostrarToast('No tienes permiso para editar esta muestra');
+     return;
+    }
 
     document.getElementById('editar-nombre').value = muestraActual.nombre;
     document.getElementById('editar-desc').value   = muestraActual.descripcion;
