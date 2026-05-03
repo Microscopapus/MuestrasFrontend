@@ -28,6 +28,18 @@
     <span>🔬 Catálogo</span>
     <button class="close-btn" onclick="cerrarMenu()">✕</button>
   </div>
+
+  <!-- Búsqueda por categoría -->
+  <div class="menu-search-wrap">
+    <input
+      type="text"
+      id="cat-filtro"
+      placeholder="Filtrar por categoría…"
+      oninput="onCatFiltroInput(this.value)"
+      autocomplete="off"
+    />
+  </div>
+
   <div class="menu-grid" id="menu-grid"></div>
 </nav>
 
@@ -69,9 +81,8 @@
     <h2 id="detalle-nombre"></h2>
     <span class="badge" id="detalle-cat"></span>
     <p id="detalle-desc"></p>
-    <!-- FIX: id agregado para que el JS pueda mostrar/ocultar según ownership -->
     <div class="detalle-acciones" id="detalle-acciones-crud">
-      <button class="btn-accion btn-editar" onclick="abrirModalEditar()">✏️ Editar</button>
+      <button class="btn-accion btn-editar"   onclick="abrirModalEditar()">✏️ Editar</button>
       <button class="btn-accion btn-eliminar" onclick="confirmarEliminar()">🗑️ Eliminar</button>
     </div>
   </div>
@@ -87,28 +98,35 @@
       <button class="close-btn" onclick="cerrarModal('modal-crear')">✕</button>
     </div>
     <div class="modal-body">
+
       <label>Nombre *</label>
       <input type="text" id="crear-nombre" placeholder="Nombre de la muestra" />
 
       <label>Descripción</label>
       <textarea id="crear-desc" placeholder="Descripción de la muestra…"></textarea>
 
-      <!-- Categorías: pendiente hasta tener el endpoint disponible -->
-      <!--
-      <label>Categorías</label>
-      <input type="text" id="crear-cat" placeholder="Categorías" />
-      -->
+      <label>Categoría</label>
+      <div class="autocomplete-wrap">
+        <input
+          type="text"
+          id="crear-cat-texto"
+          placeholder="Escribe para buscar categoría…"
+          oninput="sugerirCat('crear')"
+          autocomplete="off"
+        />
+        <div class="autocomplete-list" id="crear-cat-lista"></div>
+      </div>
 
-      <!-- FIX: campo Objetivo requerido por el endpoint subir_imagen -->
       <label>Objetivo *</label>
-      <input type="text" id="crear-objetivo" placeholder="Objetivo " />
+      <input type="number" id="crear-objetivo" placeholder="Objetivo" min="0" />
 
       <label>Imagen</label>
       <input type="file" id="crear-img" accept="image/*" />
       <div id="crear-preview" class="img-preview"></div>
+
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="cerrarModal('modal-crear')">Cancelar</button>
+      <button class="btn-cancel"  onclick="cerrarModal('modal-crear')">Cancelar</button>
       <button class="btn-confirm" onclick="subirMuestra()">Subir muestra</button>
     </div>
   </div>
@@ -122,20 +140,28 @@
       <button class="close-btn" onclick="cerrarModal('modal-editar')">✕</button>
     </div>
     <div class="modal-body">
+
       <label>Nombre *</label>
       <input type="text" id="editar-nombre" placeholder="Nombre" />
 
       <label>Descripción</label>
       <textarea id="editar-desc" placeholder="Descripción…"></textarea>
 
-      <!-- Categorías: pendiente hasta tener el endpoint disponible -->
-      <!--
-      <label>Categorías</label>
-      <input type="text" id="editar-cat" placeholder="Categorías" />
-      -->
+      <label>Categoría</label>
+      <div class="autocomplete-wrap">
+        <input
+          type="text"
+          id="editar-cat-texto"
+          placeholder="Escribe para buscar categoría…"
+          oninput="sugerirCat('editar')"
+          autocomplete="off"
+        />
+        <div class="autocomplete-list" id="editar-cat-lista"></div>
+      </div>
+
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="cerrarModal('modal-editar')">Cancelar</button>
+      <button class="btn-cancel"  onclick="cerrarModal('modal-editar')">Cancelar</button>
       <button class="btn-confirm" onclick="editarMuestra()">Guardar cambios</button>
     </div>
   </div>

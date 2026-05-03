@@ -1,32 +1,35 @@
 // ─────────────────────────────────────────────────────────────
-//  SESIÓN
-// ─────────────────────────────────────────────────────────────
-(function verificarSesion() {
-  if (!localStorage.getItem('token')) window.location.href = 'login.html';
-})();
-
-// ─────────────────────────────────────────────────────────────
 //  ENDPOINTS
 // ─────────────────────────────────────────────────────────────
 const API = {
-  muestras:         'https://microscopiobackend-production.up.railway.app/api/muestras/obtener_muestras',
-  obtener:          'https://microscopiobackend-production.up.railway.app/api/muestras/obtener_muestra',
-  subirMuestra:     'https://microscopiobackend-production.up.railway.app/api/Muestras/subir_muestra',
-  subirImagen:      'https://microscopiobackend-production.up.railway.app/api/Muestras/subir_imagen',
-  editarMuestra:    'https://microscopiobackend-production.up.railway.app/api/Muestras/editar_muestra',
-  eliminarMuestra:  'https://microscopiobackend-production.up.railway.app/api/Muestras/eliminar_muestra',
-  obtenerFavoritos: 'https://microscopiobackend-production.up.railway.app/api/Muestras/obtener_favoritos',
-  agregarFavorito:  'https://microscopiobackend-production.up.railway.app/api/Muestras/agregar_favorito',
-  eliminarFavorito: 'https://microscopiobackend-production.up.railway.app/api/Muestras/eliminar_favorito',
+  muestras:          'https://microscopiobackend-production.up.railway.app/api/muestras/obtener_muestras',
+  obtener:           'https://microscopiobackend-production.up.railway.app/api/muestras/obtener_muestra',
+  subirMuestra:      'https://microscopiobackend-production.up.railway.app/api/Muestras/subir_muestra',
+  subirImagen:       'https://microscopiobackend-production.up.railway.app/api/Muestras/subir_imagen',
+  editarMuestra:     'https://microscopiobackend-production.up.railway.app/api/Muestras/editar_muestra',
+  eliminarMuestra:   'https://microscopiobackend-production.up.railway.app/api/Muestras/eliminar_muestra',
+  obtenerFavoritos:  'https://microscopiobackend-production.up.railway.app/api/Muestras/obtener_favoritos',
+  agregarFavorito:   'https://microscopiobackend-production.up.railway.app/api/Muestras/agregar_favorito',
+  eliminarFavorito:  'https://microscopiobackend-production.up.railway.app/api/Muestras/eliminar_favorito',
+  obtenerCategorias: 'https://microscopiobackend-production.up.railway.app/api/Muestras/obtener_categorias',
+  catalogoFiltrado:  'https://microscopiobackend-production.up.railway.app/api/Muestras/obtener_catalogo_muestras_filtrado',
 };
 
 // ─────────────────────────────────────────────────────────────
 //  ESTADO GLOBAL
 // ─────────────────────────────────────────────────────────────
 let muestras      = [];
-let favoritos     = [];   // array de ids
+let categorias    = [];   // [{ id, nombre }] — se carga al inicio
+let favoritos     = [];
 let muestraActual = null;
-let usuarioActual = null; // id del usuario logueado, extraído del token
+let usuarioActual = null;
+
+// IDs de categoría seleccionados en los modales
+let crearCatId    = null;
+let editarCatId   = null;
+
+// Timer para debounce del filtro de catálogo
+let _filtroTimer  = null;
 
 // ─────────────────────────────────────────────────────────────
 //  UTILS AUTH
@@ -42,14 +45,11 @@ function authHeaders(json = false) {
   return h;
 }
 
-// Decodifica el payload del JWT para obtener el userId del usuario logueado.
-// El backend emite el claim como "id_usuario" (User.FindFirst("id_usuario")).
 function getUserIdDesdeToken() {
   try {
     const token   = getToken();
     const payload = token.split('.')[1];
     const decoded = JSON.parse(atob(payload));
-    // FIX: "id_usuario" es el claim que usa el backend — va primero
     return decoded.id_usuario || decoded.sub || decoded.id || decoded.userId
         || decoded.nameid   || decoded.Id  || null;
   } catch {
@@ -57,11 +57,19 @@ function getUserIdDesdeToken() {
   }
 }
 
-// Retorna true si la muestra pertenece al usuario logueado
 function esMiMuestra(muestra) {
-  if (!usuarioActual) return false;
-  // El campo puede llamarse userId, idUsuario, creadorId según lo que devuelva el backend
-  const dueno = muestra.userId || muestra.idUsuario || muestra.creadorId || muestra.usuarioId;
+  if (!usuarioActual) {
+    console.warn('[DEBUG] esMiMuestra: usuarioActual es null — revisa el claim del JWT');
+    return false;
+  }
+  let dueno = muestra.userId;
+  if ((dueno === null || dueno === undefined) && muestra._raw) {
+    const raw = muestra._raw;
+    dueno = raw.userId ?? raw.idUsuario ?? raw.creadorId ?? raw.usuarioId
+          ?? raw.id_usuario ?? raw.IdUsuario ?? raw.CreadorId;
+    console.log('[DEBUG] esMiMuestra — campos del raw:', Object.keys(raw));
+  }
+  console.log('[DEBUG] esMiMuestra → dueno:', dueno, '| usuarioActual:', usuarioActual);
   return String(dueno) === String(usuarioActual);
 }
 
@@ -75,14 +83,37 @@ function mostrarPantalla(id) {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  CARGAR MUESTRAS
+//  CARGAR CATEGORÍAS (POST sin parámetros)
+// ─────────────────────────────────────────────────────────────
+async function cargarCategorias() {
+  try {
+    const res  = await fetch(API.obtenerCategorias, {
+      method:  'POST',
+      headers: authHeaders(true),
+      body:    JSON.stringify({}),
+    });
+    const json = await res.json();
+
+    // Intentamos varias formas en que el backend puede devolver el array
+    const raw = json.data?.categorias || json.data || json.categorias || [];
+    categorias = Array.isArray(raw)
+      ? raw.map(c => ({
+          id:     c.id   ?? c.Id   ?? c.idCategoria ?? null,
+          nombre: c.nombre ?? c.name ?? c.Nombre    ?? '',
+        })).filter(c => c.id !== null && c.nombre !== '')
+      : [];
+    console.log('[DEBUG] Categorías cargadas:', categorias);
+  } catch (err) {
+    console.warn('[DEBUG] No se pudieron cargar categorías:', err);
+    categorias = [];
+  }
+}
+
 // ─────────────────────────────────────────────────────────────
 //  CARGAR MUESTRAS
 // ─────────────────────────────────────────────────────────────
 async function cargarMuestras() {
   mostrarPantalla('pantalla-cargando');
-
-  // Extraer userId del token antes de cualquier otra cosa
   usuarioActual = getUserIdDesdeToken();
 
   try {
@@ -92,55 +123,130 @@ async function cargarMuestras() {
 
     const raw = json.data?.muestras || [];
 
-    // 🔍 DEBUG TEMPORAL — abre la consola y mira qué campos trae el backend
     if (raw.length > 0) console.log('[DEBUG] Primera muestra raw:', raw[0]);
     console.log('[DEBUG] usuarioActual desde token:', usuarioActual);
 
-    muestras = raw.map(m => ({
-      id:          m.id,
-      nombre:      m.nombre      || 'Sin nombre',
-      // PENDIENTE: categoría — la BD aún no la acepta, descomentar cuando esté lista
-      // categoria:   m.categoria   || '',
-      categoria:   '',
-      descripcion: m.descripcion || '',
-      imagen:      m.imagenes?.[0]?.url || null,
-      // Guardamos todos los posibles nombres del campo dueño
-      userId:      m.userId ?? m.idUsuario ?? m.creadorId ?? m.usuarioId
-               ?? m.id_usuario ?? m.IdUsuario ?? m.CreadorId ?? null,
-      _raw: m, // ← guardamos el objeto completo por si acaso
-    }));
+    muestras = mapearMuestras(raw);
   } catch (err) {
     document.getElementById('error-msg').textContent = 'La conexión falló, intenta de nuevo.';
     mostrarPantalla('pantalla-error');
     return;
   }
 
-  await cargarFavoritos();
+  await Promise.all([cargarFavoritos(), cargarCategorias()]);
   buildGrid();
   mostrarPantalla('pantalla-contenido');
 }
 
-// Retorna true si la muestra pertenece al usuario logueado
-function esMiMuestra(muestra) {
-  if (!usuarioActual) {
-    console.warn('[DEBUG] esMiMuestra: usuarioActual es null — revisa el claim del JWT');
-    return false;
-  }
-
-  // Intentamos con el campo ya mapeado
-  let dueno = muestra.userId;
-
-  // Si sigue null, buscamos en el objeto crudo directamente
-  if ((dueno === null || dueno === undefined) && muestra._raw) {
-    const raw = muestra._raw;
-    dueno = raw.userId ?? raw.idUsuario ?? raw.creadorId ?? raw.usuarioId
-          ?? raw.id_usuario ?? raw.IdUsuario ?? raw.CreadorId;
-    console.log('[DEBUG] esMiMuestra — campos del raw:', Object.keys(raw));
-  }
-
-  console.log('[DEBUG] esMiMuestra → dueno:', dueno, '| usuarioActual:', usuarioActual);
-  return String(dueno) === String(usuarioActual);
+// Mapea el raw del backend al modelo interno
+function mapearMuestras(raw) {
+  return raw.map(m => ({
+    id:          m.id,
+    nombre:      m.nombre      || 'Sin nombre',
+    categoria:   m.categoria   || m.Categoria   || '',
+    descripcion: m.descripcion || '',
+    imagen:      m.imagenes?.[0]?.url || null,
+    userId:      m.userId ?? m.idUsuario ?? m.creadorId ?? m.usuarioId
+              ?? m.id_usuario ?? m.IdUsuario ?? m.CreadorId ?? null,
+    _raw: m,
+  }));
 }
+
+// ─────────────────────────────────────────────────────────────
+//  FILTRAR CATÁLOGO POR CATEGORÍA
+// ─────────────────────────────────────────────────────────────
+function onCatFiltroInput(valor) {
+  clearTimeout(_filtroTimer);
+  _filtroTimer = setTimeout(() => filtrarCatalogo(valor), 280);
+}
+
+async function filtrarCatalogo(texto) {
+  const q = texto.trim().toLowerCase();
+
+  // Sin texto → mostrar todo el catálogo normal
+  if (!q) {
+    buildGrid(muestras);
+    return;
+  }
+
+  // Buscar categorías cuyo nombre coincida con el texto
+  const catsFiltradas = categorias.filter(c => c.nombre.toLowerCase().includes(q));
+
+  // Si no hay categorías que coincidan (o no hay categorías en BD) → grid vacío
+  if (!catsFiltradas.length) {
+    buildGrid([]);
+    return;
+  }
+
+  // Llamar al endpoint de filtrado con los IDs encontrados
+  try {
+    const params = new URLSearchParams({ page: 1, size: 100 });
+    catsFiltradas.forEach(c => params.append('categorias', c.id));
+
+    const res  = await fetch(`${API.catalogoFiltrado}?${params}`, { headers: authHeaders() });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.mensaje);
+
+    const raw      = json.data?.muestras || json.data || [];
+    const filtradas = mapearMuestras(raw);
+    buildGrid(filtradas);
+  } catch (err) {
+    console.warn('[DEBUG] Error al filtrar catálogo:', err);
+    buildGrid([]);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+//  AUTOCOMPLETE DE CATEGORÍAS (crear / editar)
+// ─────────────────────────────────────────────────────────────
+function sugerirCat(prefijo) {
+  const input  = document.getElementById(`${prefijo}-cat-texto`);
+  const lista  = document.getElementById(`${prefijo}-cat-lista`);
+  const q      = input.value.trim().toLowerCase();
+
+  // Resetear el ID seleccionado si el usuario está editando el texto
+  if (prefijo === 'crear') crearCatId = null;
+  else editarCatId = null;
+
+  if (!q || !categorias.length) {
+    lista.innerHTML = '';
+    lista.classList.remove('visible');
+    return;
+  }
+
+  const coincidencias = categorias.filter(c => c.nombre.toLowerCase().includes(q));
+
+  if (!coincidencias.length) {
+    lista.innerHTML = '';
+    lista.classList.remove('visible');
+    return;
+  }
+
+  lista.innerHTML = coincidencias.map(c =>
+    `<div class="autocomplete-item"
+          onmousedown="event.preventDefault()"
+          onclick="seleccionarCat('${prefijo}', ${c.id}, '${c.nombre.replace(/'/g, "\\'")}')">
+       ${c.nombre}
+     </div>`
+  ).join('');
+  lista.classList.add('visible');
+}
+
+function seleccionarCat(prefijo, id, nombre) {
+  document.getElementById(`${prefijo}-cat-texto`).value = nombre;
+  document.getElementById(`${prefijo}-cat-lista`).classList.remove('visible');
+  if (prefijo === 'crear') crearCatId = id;
+  else                     editarCatId = id;
+}
+
+function cerrarAutocompletes() {
+  document.querySelectorAll('.autocomplete-list').forEach(l => l.classList.remove('visible'));
+}
+
+// Cierra el autocomplete al hacer click fuera
+document.addEventListener('click', function (e) {
+  if (!e.target.closest('.autocomplete-wrap')) cerrarAutocompletes();
+});
 
 // ─────────────────────────────────────────────────────────────
 //  FAVORITOS — CARGAR
@@ -169,7 +275,6 @@ function esFavorito(id) {
 async function agregarFavorito(id, e) {
   if (e) e.stopPropagation();
   if (esFavorito(id)) return;
-
   try {
     const res  = await fetch(API.agregarFavorito, {
       method:  'POST',
@@ -178,12 +283,11 @@ async function agregarFavorito(id, e) {
     });
     const json = await res.json();
     if (!json.success) throw new Error(json.mensaje);
-
     favoritos.push(id);
     mostrarToast('★ Agregado a favoritos');
     actualizarEstrellas();
     renderFavLista();
-  } catch (err) {
+  } catch {
     mostrarToast('Error al agregar favorito');
   }
 }
@@ -194,7 +298,6 @@ async function agregarFavorito(id, e) {
 async function eliminarFavoritoById(id, e) {
   if (e) e.stopPropagation();
   if (!esFavorito(id)) return;
-
   try {
     const res  = await fetch(API.eliminarFavorito, {
       method:  'DELETE',
@@ -203,12 +306,11 @@ async function eliminarFavoritoById(id, e) {
     });
     const json = await res.json();
     if (!json.success) throw new Error(json.mensaje);
-
     favoritos = favoritos.filter(f => f !== id);
     mostrarToast('Quitado de favoritos');
     actualizarEstrellas();
     renderFavLista();
-  } catch (err) {
+  } catch {
     mostrarToast('Error al quitar favorito');
   }
 }
@@ -218,11 +320,7 @@ async function eliminarFavoritoById(id, e) {
 // ─────────────────────────────────────────────────────────────
 function toggleFavorito(id, e) {
   if (e) e.stopPropagation();
-  if (esFavorito(id)) {
-    eliminarFavoritoById(id, e);
-  } else {
-    agregarFavorito(id, e);
-  }
+  esFavorito(id) ? eliminarFavoritoById(id, e) : agregarFavorito(id, e);
 }
 
 function actualizarEstrellas() {
@@ -302,11 +400,16 @@ async function quitarFavDesdePanel(id) {
 // ─────────────────────────────────────────────────────────────
 //  GRID DEL MENÚ
 // ─────────────────────────────────────────────────────────────
-function buildGrid() {
+function buildGrid(lista = muestras) {
   const grid = document.getElementById('menu-grid');
   grid.innerHTML = '';
 
-  muestras.forEach(m => {
+  if (!lista.length) {
+    grid.innerHTML = '<p class="grid-vacio">Sin resultados</p>';
+    return;
+  }
+
+  lista.forEach(m => {
     const card     = document.createElement('div');
     card.className = 'menu-card';
     card.id        = 'card-' + m.id;
@@ -336,14 +439,15 @@ function buildGrid() {
     const nombre       = document.createElement('div');
     nombre.className   = 'card-nombre';
     nombre.textContent = m.nombre.length > 13 ? m.nombre.slice(0, 12) + '…' : m.nombre;
-
-    // PENDIENTE: mostrar categoría cuando la BD la soporte
-    // const cat       = document.createElement('div');
-    // cat.className   = 'card-cat';
-    // cat.textContent = m.categoria;
-    // card.appendChild(cat);
-
     card.appendChild(nombre);
+
+    if (m.categoria) {
+      const cat       = document.createElement('div');
+      cat.className   = 'card-cat';
+      cat.textContent = m.categoria;
+      card.appendChild(cat);
+    }
+
     grid.appendChild(card);
   });
 }
@@ -352,6 +456,11 @@ function buildGrid() {
 //  MENÚ (catálogo)
 // ─────────────────────────────────────────────────────────────
 function abrirMenu() {
+  // Limpiar filtro al abrir
+  const input = document.getElementById('cat-filtro');
+  if (input) input.value = '';
+  buildGrid(muestras);
+
   document.getElementById('menu').classList.add('activo');
   document.getElementById('overlay').classList.add('activo');
   document.body.classList.add('menu-abierto');
@@ -372,6 +481,7 @@ function cerrarTodo() {
 //  SELECCIONAR MUESTRA
 // ─────────────────────────────────────────────────────────────
 function seleccionar(id) {
+  // Buscar en el catálogo completo (no en el filtrado temporal)
   const m = muestras.find(x => x.id === id);
   if (!m) return;
   muestraActual = m;
@@ -392,12 +502,16 @@ function seleccionar(id) {
   }
 
   document.getElementById('detalle-nombre').textContent = m.nombre;
-  // PENDIENTE: mostrar categoría cuando la BD la soporte
-  // document.getElementById('detalle-cat').textContent = m.categoria || '—';
-  document.getElementById('detalle-desc').textContent = m.descripcion;
+  document.getElementById('detalle-desc').textContent   = m.descripcion;
 
-  // Botones siempre visibles — la verificación de propiedad ocurre
-  // dentro de abrirModalEditar() y confirmarEliminar()
+  // Mostrar badge de categoría si existe
+  const badge = document.getElementById('detalle-cat');
+  if (m.categoria) {
+    badge.textContent = m.categoria;
+    badge.style.display = '';
+  } else {
+    badge.style.display = 'none';
+  }
 
   cerrarMenu();
 }
@@ -411,6 +525,9 @@ function abrirModalCrear() {
   document.getElementById('crear-objetivo').value    = '';
   document.getElementById('crear-img').value         = '';
   document.getElementById('crear-preview').innerHTML = '';
+  document.getElementById('crear-cat-texto').value   = '';
+  document.getElementById('crear-cat-lista').classList.remove('visible');
+  crearCatId = null;
   abrirModal('modal-crear');
 }
 
@@ -427,15 +544,14 @@ async function subirMuestra() {
   const objetivo = parseInt(document.getElementById('crear-objetivo').value, 10);
   const imgFile  = document.getElementById('crear-img').files[0];
 
-  if (!nombre)       { mostrarToast('El nombre es obligatorio'); return; }
+  if (!nombre)        { mostrarToast('El nombre es obligatorio'); return; }
   if (isNaN(objetivo)) { mostrarToast('El objetivo es obligatorio'); return; }
 
   const fd = new FormData();
-  fd.append('Nombre', nombre);
+  fd.append('Nombre',      nombre);
   fd.append('Descripcion', desc);
-  // PENDIENTE: agregar categoría cuando la BD la soporte
-  // fd.append('Categorias', categoriaId);
-  if (imgFile) fd.append('Imagenes', imgFile);
+  if (crearCatId !== null) fd.append('Categorias', crearCatId);
+  if (imgFile)             fd.append('Imagenes',   imgFile);
 
   let idMuestraCreada = null;
 
@@ -447,13 +563,13 @@ async function subirMuestra() {
     });
     const json = await res.json();
     if (!json.success) throw new Error(json.mensaje);
-
     idMuestraCreada = json.data?.id || json.data?.idMuestra || null;
     mostrarToast('✅ Muestra creada');
   } catch (err) {
     mostrarToast('Error al crear muestra: ' + err.message);
     return;
   }
+
   if (imgFile && idMuestraCreada) {
     try {
       const fdImg = new FormData();
@@ -468,7 +584,6 @@ async function subirMuestra() {
       });
       const jsonImg = await resImg.json();
       if (!jsonImg.success) throw new Error(jsonImg.mensaje);
-
       mostrarToast('✅ Imagen subida correctamente');
     } catch (err) {
       mostrarToast('Muestra creada pero falló la imagen: ' + err.message);
@@ -482,20 +597,26 @@ async function subirMuestra() {
 // ─────────────────────────────────────────────────────────────
 //  CRUD — EDITAR MUESTRA
 // ─────────────────────────────────────────────────────────────
-   function abrirModalEditar() {
-     if (!muestraActual) return;
-    if (!esMiMuestra(muestraActual)) {
-      mostrarToast('No tienes permiso para editar esta muestra');
-     return;
-    }
-
-    document.getElementById('editar-nombre').value = muestraActual.nombre;
-    document.getElementById('editar-desc').value   = muestraActual.descripcion;
-    document.getElementById('editar-objetivo').value = muestraActual.objetivo;
-   // PENDIENTE: cargar categoría cuando la BD la soporte
-    // document.getElementById('editar-cat').value = muestraActual.categoria;
-    abrirModal('modal-editar');
+function abrirModalEditar() {
+  if (!muestraActual) return;
+  if (!esMiMuestra(muestraActual)) {
+    mostrarToast('No tienes permiso para editar esta muestra');
+    return;
   }
+
+  document.getElementById('editar-nombre').value   = muestraActual.nombre;
+  document.getElementById('editar-desc').value     = muestraActual.descripcion;
+  document.getElementById('editar-cat-texto').value = muestraActual.categoria || '';
+  document.getElementById('editar-cat-lista').classList.remove('visible');
+
+  // Si la muestra ya tiene categoría, intentamos recuperar su ID
+  const catExistente = categorias.find(
+    c => c.nombre.toLowerCase() === (muestraActual.categoria || '').toLowerCase()
+  );
+  editarCatId = catExistente ? catExistente.id : null;
+
+  abrirModal('modal-editar');
+}
 
 async function editarMuestra() {
   if (!muestraActual) return;
@@ -506,8 +627,6 @@ async function editarMuestra() {
 
   const nombre = document.getElementById('editar-nombre').value.trim();
   const desc   = document.getElementById('editar-desc').value.trim();
-  // PENDIENTE: leer categoría cuando la BD la soporte
-  // const categoria = document.getElementById('editar-cat').value;
 
   if (!nombre) { mostrarToast('El nombre es obligatorio'); return; }
 
@@ -519,10 +638,8 @@ async function editarMuestra() {
         idMuestra:   muestraActual.id,
         nombre,
         descripcion: desc,
-        // PENDIENTE: enviar categorías cuando la BD las soporte
-        // categorias: [categoria],
-        // PENDIENTE: enviar imágenes cuando el flujo de edición las soporte
-        // imagenes: [],
+        categorias:  editarCatId ? [editarCatId] : [],
+        imagenes:    [],
       }),
     });
     const json = await res.json();
@@ -546,7 +663,6 @@ function confirmarEliminar() {
     mostrarToast('No tienes permiso para eliminar esta muestra');
     return;
   }
-
   document.getElementById('eliminar-nombre-label').textContent = `"${muestraActual.nombre}"`;
   abrirModal('modal-eliminar');
 }
@@ -590,11 +706,15 @@ function abrirModal(id) {
 
 function cerrarModal(id) {
   document.getElementById(id).classList.remove('activo');
+  cerrarAutocompletes();
 }
 
 document.querySelectorAll('.modal-backdrop').forEach(bd => {
   bd.addEventListener('click', function (e) {
-    if (e.target === this) this.classList.remove('activo');
+    if (e.target === this) {
+      this.classList.remove('activo');
+      cerrarAutocompletes();
+    }
   });
 });
 

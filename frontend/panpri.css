@@ -114,6 +114,44 @@ body {
 #menu.activo { transform: translateX(0); }
 
 /* ════════════════════════════════
+   BÚSQUEDA DEL MENÚ CATÁLOGO
+════════════════════════════════ */
+.menu-search-wrap {
+  padding: 10px 14px;
+  background: rgba(0,0,0,0.12);
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.menu-search-wrap input {
+  width: 100%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: white;
+  border-radius: 10px;
+  padding: 9px 13px;
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+}
+
+.menu-search-wrap input::placeholder { color: rgba(255,255,255,0.4); }
+
+.menu-search-wrap input:focus {
+  border-color: var(--acento);
+  background: rgba(255,255,255,0.12);
+}
+
+/* Texto vacío en el grid filtrado */
+.grid-vacio {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: rgba(255,255,255,0.4);
+  font-size: 13px;
+  padding: 30px 0;
+}
+
+/* ════════════════════════════════
    PANEL FAVORITOS
 ════════════════════════════════ */
 #panel-favoritos {
@@ -305,6 +343,65 @@ body {
 .card-star.favorito { color: #f5c518; }
 
 /* ════════════════════════════════
+   AUTOCOMPLETE DE CATEGORÍAS
+════════════════════════════════ */
+.autocomplete-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.autocomplete-wrap input {
+  width: 100%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 10px;
+  color: white;
+  padding: 9px 12px;
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+}
+
+.autocomplete-wrap input::placeholder { color: rgba(255,255,255,0.35); }
+
+.autocomplete-wrap input:focus {
+  border-color: var(--acento);
+}
+
+.autocomplete-list {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--primario);
+  border: 1px solid rgba(60,166,166,0.4);
+  border-radius: 10px;
+  z-index: 50;
+  max-height: 160px;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.autocomplete-list.visible { display: block; }
+
+.autocomplete-item {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.85);
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: background 0.15s;
+}
+
+.autocomplete-item:last-child { border-bottom: none; }
+
+.autocomplete-item:hover {
+  background: rgba(60,166,166,0.25);
+  color: white;
+}
+
+/* ════════════════════════════════
    PANTALLAS
 ════════════════════════════════ */
 .pantalla {
@@ -447,7 +544,7 @@ body {
   border-radius: 16px;
   width: 100%;
   max-width: 440px;
-  overflow: hidden;
+  overflow: visible; /* permite que el autocomplete sobresalga */
 }
 
 .modal-sm { max-width: 340px; }
@@ -458,6 +555,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-radius: 16px 16px 0 0;
 }
 .modal-header span { font-size: 15px; font-weight: 700; color: white; }
 
@@ -477,6 +575,7 @@ body {
 }
 
 .modal-body input[type="text"],
+.modal-body input[type="number"],
 .modal-body textarea,
 .modal-body input[type="file"] {
   background: rgba(255,255,255,0.08);
@@ -503,6 +602,10 @@ body {
   padding: 7px 10px;
 }
 
+/* ocultar flechas nativas de number en algunos navegadores */
+.modal-body input[type="number"]::-webkit-inner-spin-button,
+.modal-body input[type="number"]::-webkit-outer-spin-button { opacity: 1; }
+
 .img-preview {
   display: flex;
   justify-content: center;
@@ -528,6 +631,7 @@ body {
   justify-content: flex-end;
   gap: 10px;
   background: rgba(0,0,0,0.08);
+  border-radius: 0 0 16px 16px;
 }
 
 .btn-cancel {
@@ -598,6 +702,8 @@ body.menu-abierto { overflow: hidden; }
   #detalle-imagen img { width: 160px; height: 160px; }
   #detalle-muestra h2 { font-size: 19px; }
   .modal              { border-radius: 12px; }
+  .modal-header       { border-radius: 12px 12px 0 0; }
+  .modal-footer       { border-radius: 0 0 12px 12px; }
 }
 
 @media (max-width: 360px) {
