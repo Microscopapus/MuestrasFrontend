@@ -31,6 +31,10 @@ let editarCatId   = null;
 // Timer para debounce del filtro de catálogo
 let _filtroTimer  = null;
 
+// Chips de categorías seleccionadas en el filtro del catálogo
+// [{ id, nombre }]
+let filtroChips   = [];
+
 // ─────────────────────────────────────────────────────────────
 //  UTILS AUTH
 // ─────────────────────────────────────────────────────────────
@@ -197,37 +201,92 @@ function mapearMuestras(raw) {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  FILTRAR CATÁLOGO POR CATEGORÍA
+//  FILTRAR CATÁLOGO — SISTEMA DE CHIPS MULTI-CATEGORÍA
 // ─────────────────────────────────────────────────────────────
+
+// Muestra el autocomplete del filtro mientras el usuario escribe
 function onCatFiltroInput(valor) {
   clearTimeout(_filtroTimer);
-  _filtroTimer = setTimeout(() => filtrarCatalogo(valor), 280);
+  _filtroTimer = setTimeout(() => mostrarSugerenciasFiltro(valor), 200);
 }
 
-async function filtrarCatalogo(texto) {
-  const q = texto.trim().toLowerCase();
+function mostrarSugerenciasFiltro(texto) {
+  const lista = document.getElementById('cat-filtro-lista');
+  const q     = texto.trim().toLowerCase();
 
-  // Sin texto → mostrar todo el catálogo normal
-  if (!q) {
+  if (!q || !categorias.length) {
+    lista.innerHTML = '';
+    lista.classList.remove('visible');
+    return;
+  }
+
+  // Excluir las que ya están como chip
+  const yaSeleccionadas = new Set(filtroChips.map(c => c.id));
+  const coincidencias   = categorias.filter(
+    c => c.nombre.toLowerCase().includes(q) && !yaSeleccionadas.has(c.id)
+  );
+
+  if (!coincidencias.length) {
+    lista.innerHTML = '';
+    lista.classList.remove('visible');
+    return;
+  }
+
+  lista.innerHTML = coincidencias.map(c =>
+    `<div class="autocomplete-item"
+          onmousedown="event.preventDefault()"
+          onclick="agregarChipFiltro(${c.id}, '${c.nombre.replace(/'/g, "\\'")}')">
+       ${c.nombre}
+     </div>`
+  ).join('');
+  lista.classList.add('visible');
+}
+
+// Agrega un chip al filtro y lanza la búsqueda
+function agregarChipFiltro(id, nombre) {
+  // Evitar duplicados
+  if (filtroChips.some(c => c.id === id)) return;
+
+  filtroChips.push({ id, nombre });
+  document.getElementById('cat-filtro').value = '';
+  document.getElementById('cat-filtro-lista').classList.remove('visible');
+  renderChipsFiltro();
+  ejecutarFiltroCatalogo();
+  console.log('[DEBUG] agregarChipFiltro — chips actuales:', filtroChips);
+}
+
+// Elimina un chip y re-lanza la búsqueda
+function quitarChipFiltro(id) {
+  filtroChips = filtroChips.filter(c => c.id !== id);
+  renderChipsFiltro();
+  ejecutarFiltroCatalogo();
+  console.log('[DEBUG] quitarChipFiltro — chips actuales:', filtroChips);
+}
+
+// Dibuja los chips en el contenedor del HTML
+function renderChipsFiltro() {
+  const contenedor = document.getElementById('cat-chips');
+  if (!contenedor) return;
+  contenedor.innerHTML = filtroChips.map(c =>
+    `<span class="cat-chip">
+       ${c.nombre}
+       <button onmousedown="event.preventDefault()" onclick="quitarChipFiltro(${c.id})">✕</button>
+     </span>`
+  ).join('');
+}
+
+// Llama al endpoint con todos los IDs de chips, o muestra todo si no hay chips
+async function ejecutarFiltroCatalogo() {
+  // Sin chips → todo el catálogo
+  if (!filtroChips.length) {
     buildGrid(muestras);
     return;
   }
 
-  // Buscar categorías cuyo nombre coincida con el texto
-  const catsFiltradas = categorias.filter(c => c.nombre.toLowerCase().includes(q));
-  console.log('[DEBUG] filtrarCatalogo — texto:', q, '| cats encontradas:', catsFiltradas);
-
-  // Si no hay categorías que coincidan (o no hay categorías en BD) → grid vacío
-  if (!catsFiltradas.length) {
-    buildGrid([]);
-    return;
-  }
-
-  // Llamar al endpoint de filtrado con los IDs encontrados
   try {
     const params = new URLSearchParams({ page: 1, size: 100 });
-    catsFiltradas.forEach(c => params.append('categorias', c.id));
-    console.log('[DEBUG] filtrarCatalogo — params:', params.toString());
+    filtroChips.forEach(c => params.append('categorias', c.id));
+    console.log('[DEBUG] ejecutarFiltroCatalogo — params:', params.toString());
 
     const res  = await fetch(`${API.catalogoFiltrado}?${params}`, { headers: authHeaders() });
     const json = await res.json();
@@ -517,6 +576,10 @@ function buildGrid(lista = muestras) {
 function abrirMenu() {
   const input = document.getElementById('cat-filtro');
   if (input) input.value = '';
+  // Limpiar chips y autocomplete al abrir
+  filtroChips = [];
+  renderChipsFiltro();
+  document.getElementById('cat-filtro-lista')?.classList.remove('visible');
   buildGrid(muestras);
 
   document.getElementById('menu').classList.add('activo');

@@ -29,15 +29,22 @@
     <button class="close-btn" onclick="cerrarMenu()">✕</button>
   </div>
 
-  <!-- Búsqueda por categoría -->
+  <!-- Búsqueda por categoría con chips -->
   <div class="menu-search-wrap">
-    <input
-      type="text"
-      id="cat-filtro"
-      placeholder="Filtrar por categoría…"
-      oninput="onCatFiltroInput(this.value)"
-      autocomplete="off"
-    />
+    <!-- Chips de categorías seleccionadas -->
+    <div id="cat-chips" class="cat-chips-container"></div>
+
+    <!-- Input + autocomplete -->
+    <div class="autocomplete-wrap">
+      <input
+        type="text"
+        id="cat-filtro"
+        placeholder="Filtrar por categoría…"
+        oninput="onCatFiltroInput(this.value)"
+        autocomplete="off"
+      />
+      <div class="autocomplete-list" id="cat-filtro-lista"></div>
+    </div>
   </div>
 
   <div class="menu-grid" id="menu-grid"></div>

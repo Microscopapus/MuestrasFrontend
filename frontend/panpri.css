@@ -121,9 +121,61 @@ body {
   background: rgba(0,0,0,0.12);
   flex-shrink: 0;
   border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.menu-search-wrap input {
+/* ── CHIPS DE CATEGORÍAS SELECCIONADAS ── */
+.cat-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  /* Oculto si no hay chips — el gap no ocupa espacio cuando está vacío */
+}
+
+.cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--acento);
+  color: white;
+  border-radius: 20px;
+  padding: 4px 10px 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  animation: chipIn 0.15s ease;
+}
+
+@keyframes chipIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.cat-chip button {
+  background: rgba(255,255,255,0.25);
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 1;
+  padding: 0;
+}
+
+.cat-chip button:hover {
+  background: rgba(255,255,255,0.45);
+}
+
+/* Input del filtro */
+.menu-search-wrap .autocomplete-wrap input {
   width: 100%;
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.18);
@@ -135,9 +187,9 @@ body {
   font-family: inherit;
 }
 
-.menu-search-wrap input::placeholder { color: rgba(255,255,255,0.4); }
+.menu-search-wrap .autocomplete-wrap input::placeholder { color: rgba(255,255,255,0.4); }
 
-.menu-search-wrap input:focus {
+.menu-search-wrap .autocomplete-wrap input:focus {
   border-color: var(--acento);
   background: rgba(255,255,255,0.12);
 }
@@ -544,7 +596,7 @@ body {
   border-radius: 16px;
   width: 100%;
   max-width: 440px;
-  overflow: visible; /* permite que el autocomplete sobresalga */
+  overflow: visible;
 }
 
 .modal-sm { max-width: 340px; }
@@ -602,7 +654,6 @@ body {
   padding: 7px 10px;
 }
 
-/* ocultar flechas nativas de number en algunos navegadores */
 .modal-body input[type="number"]::-webkit-inner-spin-button,
 .modal-body input[type="number"]::-webkit-outer-spin-button { opacity: 1; }
 
