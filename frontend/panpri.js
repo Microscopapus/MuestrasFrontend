@@ -88,9 +88,8 @@ function mostrarPantalla(id) {
 async function cargarCategorias() {
   try {
     const res  = await fetch(API.obtenerCategorias, {
-      method:  'POST',
-      headers: authHeaders(true),
-      body:    JSON.stringify({}),
+      method:  'GET',
+      headers: authHeaders(),
     });
     const json = await res.json();
     console.log('[DEBUG] obtenerCategorias — respuesta completa:', json);
