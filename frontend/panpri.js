@@ -601,6 +601,15 @@ function cerrarTodo() {
 // ─────────────────────────────────────────────────────────────
 //  SELECCIONAR MUESTRA
 // ─────────────────────────────────────────────────────────────
+function actualizarBotonesCrud(m) {
+  const btnEditar   = document.querySelector('.btn-editar');
+  const btnEliminar = document.querySelector('.btn-eliminar');
+  const tienePermiso = m && usuarioActual && esMiMuestra(m);
+
+  if (btnEditar)   btnEditar.style.display   = tienePermiso ? '' : 'none';
+  if (btnEliminar) btnEliminar.style.display = tienePermiso ? '' : 'none';
+}
+
 function seleccionar(id) {
   const m = muestras.find(x => x.id === id);
   if (!m) return;
@@ -634,6 +643,7 @@ function seleccionar(id) {
     badge.style.display = 'none';
   }
 
+  actualizarBotonesCrud(m);
   cerrarMenu();
 }
 
