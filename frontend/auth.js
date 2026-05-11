@@ -138,14 +138,17 @@ async function handleGoogleResponse(response) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  google.accounts.id.initialize({
-    client_id: GOOGLE_CLIENT_ID,
-    callback:  handleGoogleResponse,
-  });
-  google.accounts.id.renderButton(
-    document.getElementById('btn-google-container'),
-    { theme: 'outline', size: 'large', width: 300 }
-  );
+  const googleBtnContainer = document.getElementById('btn-google-container');
+  if (googleBtnContainer && typeof google !== 'undefined') {
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback:  handleGoogleResponse,
+    });
+    google.accounts.id.renderButton(
+      googleBtnContainer,
+      { theme: 'outline', size: 'large', width: 300 }
+    );
+  }
 });
 
 // ─────────────────────────────────────────────────────────────

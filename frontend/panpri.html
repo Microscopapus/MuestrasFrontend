@@ -131,11 +131,13 @@
 
         <div class="imagen-item">
           <input type="number"
+                id="crear-objetivo"
                 class="crear-objetivo"
                 placeholder="Objetivo"
                 min="0" />
 
           <input type="file"
+                id="crear-img"
                 class="crear-img"
                 accept="image/*" />
         </div>
@@ -145,6 +147,8 @@
       <button type="button" onclick="agregarCampoImagen()">
         + Agregar otra imagen
       </button>
+
+      <div id="crear-preview"></div>
 
     </div>
     <div class="modal-footer">

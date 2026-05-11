@@ -663,13 +663,6 @@ function abrirModalCrear() {
   abrirModal('modal-crear');
 }
 
-document.getElementById('crear-img').addEventListener('change', function () {
-  const file = this.files[0];
-  if (!file) return;
-  const url = URL.createObjectURL(file);
-  document.getElementById('crear-preview').innerHTML = `<img src="${url}" alt="preview">`;
-});
-
 async function subirMuestra() {
 
   const nombre = document.getElementById('crear-nombre').value.trim();
@@ -984,4 +977,17 @@ function mostrarToast(msg) {
 // ─────────────────────────────────────────────────────────────
 //  INIT
 // ─────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Event listener for crear-img
+  const crearImgInput = document.getElementById('crear-img');
+  if (crearImgInput) {
+    crearImgInput.addEventListener('change', function () {
+      const file = this.files[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      document.getElementById('crear-preview').innerHTML = `<img src="${url}" alt="preview">`;
+    });
+  }
+});
+
 cargarMuestras();
