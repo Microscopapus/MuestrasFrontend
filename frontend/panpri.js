@@ -652,15 +652,76 @@ function seleccionar(id) {
 //  Son 2 llamadas separadas: subirMuestra + subirImagen
 // ─────────────────────────────────────────────────────────────
 function abrirModalCrear() {
-  document.getElementById('crear-nombre').value      = '';
-  document.getElementById('crear-desc').value        = '';
-  document.getElementById('crear-objetivo').value    = '';
-  document.getElementById('crear-img').value         = '';
-  document.getElementById('crear-preview').innerHTML = '';
-  document.getElementById('crear-cat-texto').value   = '';
+  document.getElementById('crear-nombre').value    = '';
+  document.getElementById('crear-desc').value      = '';
+  document.getElementById('crear-cat-texto').value = '';
   document.getElementById('crear-cat-lista').classList.remove('visible');
   crearCatId = null;
+
+  const container = document.getElementById('imagenes-container');
+  if (container) {
+    container.innerHTML = '';
+    container.appendChild(crearBloqueImagen());
+  }
+
   abrirModal('modal-crear');
+}
+
+function crearBloqueImagen() {
+  const bloque = document.createElement('div');
+  bloque.className = 'imagen-item';
+  bloque.innerHTML = `
+    <div class="imagen-preview">🔍</div>
+    <div class="imagen-item-controls">
+      <input type="number"
+             class="crear-objetivo"
+             placeholder="Objetivo"
+             min="0" />
+
+      <label class="file-label">
+        <span>Seleccionar imagen</span>
+        <input type="file"
+               class="crear-img"
+               accept="image/*" />
+      </label>
+
+      <button type="button" class="btn-remove-img">
+        ✕ Quitar imagen
+      </button>
+    </div>
+  `;
+
+  prepararCampoImagen(bloque);
+  return bloque;
+}
+
+function prepararCampoImagen(bloque) {
+  const fileInput = bloque.querySelector('.crear-img');
+  const preview   = bloque.querySelector('.imagen-preview');
+  const remover   = bloque.querySelector('.btn-remove-img');
+
+  if (fileInput) {
+    fileInput.addEventListener('change', function () {
+      const archivo = this.files[0];
+      if (!archivo) {
+        preview.innerHTML = '🔍';
+        return;
+      }
+      const url = URL.createObjectURL(archivo);
+      preview.innerHTML = `<img src="${url}" alt="Vista previa" />`;
+    });
+  }
+
+  if (remover) {
+    remover.addEventListener('click', function () {
+      const contenedor = document.getElementById('imagenes-container');
+      if (!contenedor) return;
+      bloque.remove();
+      if (!contenedor.querySelector('.imagen-item')) {
+        contenedor.appendChild(crearBloqueImagen());
+      }
+    });
+  }
 }
 
 async function subirMuestra() {
@@ -793,26 +854,8 @@ async function subirMuestra() {
 
 function agregarCampoImagen() {
   const container = document.getElementById('imagenes-container');
-
-  const div = document.createElement('div');
-  div.className = 'imagen-item';
-
-  div.innerHTML = `
-    <input type="number"
-           class="crear-objetivo"
-           placeholder="Objetivo"
-           min="0" />
-
-    <input type="file"
-           class="crear-img"
-           accept="image/*" />
-
-    <button type="button" onclick="this.parentElement.remove()">
-      ❌
-    </button>
-  `;
-
-  container.appendChild(div);
+  if (!container) return;
+  container.appendChild(crearBloqueImagen());
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -978,15 +1021,14 @@ function mostrarToast(msg) {
 //  INIT
 // ─────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // Event listener for crear-img
-  const crearImgInput = document.getElementById('crear-img');
-  if (crearImgInput) {
-    crearImgInput.addEventListener('change', function () {
-      const file = this.files[0];
-      if (!file) return;
-      const url = URL.createObjectURL(file);
-      document.getElementById('crear-preview').innerHTML = `<img src="${url}" alt="preview">`;
-    });
+  const container = document.getElementById('imagenes-container');
+  if (!container) return;
+
+  const items = container.querySelectorAll('.imagen-item');
+  if (items.length) {
+    items.forEach(prepararCampoImagen);
+  } else {
+    container.appendChild(crearBloqueImagen());
   }
 });
 

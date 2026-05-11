@@ -657,6 +657,84 @@ body {
 .modal-body input[type="number"]::-webkit-inner-spin-button,
 .modal-body input[type="number"]::-webkit-outer-spin-button { opacity: 1; }
 
+.imagen-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+.imagen-preview {
+  min-width: 86px;
+  min-height: 86px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.04);
+  border: 1px dashed rgba(255,255,255,0.18);
+  border-radius: 14px;
+  color: rgba(255,255,255,0.55);
+  font-size: 24px;
+  overflow: hidden;
+}
+
+.imagen-preview img {
+  width: 86px;
+  height: 86px;
+  object-fit: cover;
+  display: block;
+}
+
+.imagen-item-controls {
+  flex: 1;
+  display: grid;
+  gap: 8px;
+}
+
+.file-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  color: white;
+  overflow: hidden;
+}
+
+.file-label span {
+  font-size: 13px;
+}
+
+.file-label input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.btn-remove-img {
+  align-self: flex-start;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 10px;
+  color: white;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-remove-img:hover {
+  background: rgba(255,255,255,0.16);
+}
+
 .img-preview {
   display: flex;
   justify-content: center;

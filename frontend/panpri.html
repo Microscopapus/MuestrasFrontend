@@ -128,27 +128,31 @@
       <label>Imágenes</label>
 
       <div id="imagenes-container">
-
         <div class="imagen-item">
-          <input type="number"
-                id="crear-objetivo"
-                class="crear-objetivo"
-                placeholder="Objetivo"
-                min="0" />
+          <div class="imagen-preview">🔍</div>
+          <div class="imagen-item-controls">
+            <input type="number"
+                   class="crear-objetivo"
+                   placeholder="Objetivo"
+                   min="0" />
 
-          <input type="file"
-                id="crear-img"
-                class="crear-img"
-                accept="image/*" />
+            <label class="file-label">
+              <span>Seleccionar imagen</span>
+              <input type="file"
+                     class="crear-img"
+                     accept="image/*" />
+            </label>
+
+            <button type="button" class="btn-remove-img">
+              ✕ Quitar imagen
+            </button>
+          </div>
         </div>
-
       </div>
 
       <button type="button" onclick="agregarCampoImagen()">
         + Agregar otra imagen
       </button>
-
-      <div id="crear-preview"></div>
 
     </div>
     <div class="modal-footer">
