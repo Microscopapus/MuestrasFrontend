@@ -671,70 +671,155 @@ document.getElementById('crear-img').addEventListener('change', function () {
 });
 
 async function subirMuestra() {
-  const nombre   = document.getElementById('crear-nombre').value.trim();
-  const desc     = document.getElementById('crear-desc').value.trim();
-  const objetivo = parseInt(document.getElementById('crear-objetivo').value, 10);
-  const imgFile  = document.getElementById('crear-img').files[0];
 
-  if (!nombre)         { mostrarToast('El nombre es obligatorio'); return; }
-  if (isNaN(objetivo)) { mostrarToast('El objetivo es obligatorio'); return; }
+  const nombre = document.getElementById('crear-nombre').value.trim();
+  const desc   = document.getElementById('crear-desc').value.trim();
 
-  // ── Llamada 1: subir_muestra (multipart/form-data) ──
+  if (!nombre) {
+    mostrarToast('El nombre es obligatorio');
+    return;
+  }
+
+  // ─────────────────────────────
+  // Crear muestra
+  // ─────────────────────────────
+
   const fd = new FormData();
-  fd.append('Nombre',      nombre);
-  fd.append('Descripcion', desc);
-  // El campo en el backend se llama "Categorias" (plural, array)
-  if (crearCatId !== null) fd.append('Categorias', crearCatId);
 
-  console.log('[DEBUG] subirMuestra — FormData Nombre:', nombre, '| Descripcion:', desc, '| Categorias:', crearCatId);
+  fd.append('Nombre', nombre);
+  fd.append('Descripcion', desc);
+
+  if (crearCatId !== null) {
+    fd.append('Categorias', crearCatId);
+  }
 
   let idMuestraCreada = null;
 
   try {
-    const res  = await fetch(API.subirMuestra, {
-      method:  'POST',
-      headers: authHeaders(),   // sin Content-Type para que el browser ponga el boundary
-      body:    fd,
+
+    const res = await fetch(API.subirMuestra, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: fd
     });
+
     const json = await res.json();
-    console.log('[DEBUG] subirMuestra — respuesta:', json);
-    if (!json.success) throw new Error(json.mensaje);
-    idMuestraCreada = json.data?.id ?? json.data?.idMuestra ?? json.data?.Id ?? null;
-    console.log('[DEBUG] subirMuestra — idMuestraCreada:', idMuestraCreada);
+
+    console.log('[DEBUG] subirMuestra:', json);
+
+    if (!json.success) {
+      throw new Error(json.mensaje);
+    }
+
+    idMuestraCreada =
+      json.data?.id ??
+      json.data?.idMuestra ??
+      json.data?.Id ??
+      null;
+
     mostrarToast('✅ Muestra creada');
+
   } catch (err) {
-    console.error('[DEBUG] Error en subirMuestra:', err);
+
+    console.error(err);
+
     mostrarToast('Error al crear muestra: ' + err.message);
+
     return;
   }
 
-  // ── Llamada 2: subir_imagen (multipart/form-data) — solo si hay imagen e id ──
-  if (imgFile && idMuestraCreada) {
+  // ─────────────────────────────
+  // Subir imágenes
+  // ─────────────────────────────
+
+  const bloques = document.querySelectorAll('.imagen-item');
+
+  for (const bloque of bloques) {
+
+    const objetivoInput = bloque.querySelector('.crear-objetivo');
+    const fileInput     = bloque.querySelector('.crear-img');
+
+    const objetivo = parseInt(objetivoInput.value, 10);
+    const archivo  = fileInput.files[0];
+
+    // Ignorar bloques vacíos
+    if (!archivo) {
+      continue;
+    }
+
+    if (isNaN(objetivo)) {
+      mostrarToast('Una imagen no tiene objetivo');
+      continue;
+    }
+
     try {
+
       const fdImg = new FormData();
+
       fdImg.append('IdMuestra', idMuestraCreada);
-      fdImg.append('Objetivo',  objetivo);
-      fdImg.append('File',      imgFile);
+      fdImg.append('Objetivo', objetivo);
+      fdImg.append('File', archivo);
 
-      console.log('[DEBUG] subirImagen — IdMuestra:', idMuestraCreada, '| Objetivo:', objetivo, '| File:', imgFile.name);
+      console.log(
+        '[DEBUG] subirImagen:',
+        archivo.name,
+        '| Objetivo:',
+        objetivo
+      );
 
-      const resImg  = await fetch(API.subirImagen, {
-        method:  'POST',
+      const resImg = await fetch(API.subirImagen, {
+        method: 'POST',
         headers: authHeaders(),
-        body:    fdImg,
+        body: fdImg
       });
+
       const jsonImg = await resImg.json();
-      console.log('[DEBUG] subirImagen — respuesta:', jsonImg);
-      if (!jsonImg.success) throw new Error(jsonImg.mensaje);
-      mostrarToast('✅ Imagen subida correctamente');
+
+      console.log('[DEBUG] respuesta imagen:', jsonImg);
+
+      if (!jsonImg.success) {
+        throw new Error(jsonImg.mensaje);
+      }
+
     } catch (err) {
-      console.error('[DEBUG] Error en subirImagen:', err);
-      mostrarToast('Muestra creada pero falló la imagen: ' + err.message);
+
+      console.error(err);
+
+      mostrarToast(
+        `Error subiendo ${archivo.name}: ${err.message}`
+      );
     }
   }
 
+  mostrarToast('✅ Proceso completado');
+
   cerrarModal('modal-crear');
+
   await cargarMuestras();
+}
+
+function agregarCampoImagen() {
+  const container = document.getElementById('imagenes-container');
+
+  const div = document.createElement('div');
+  div.className = 'imagen-item';
+
+  div.innerHTML = `
+    <input type="number"
+           class="crear-objetivo"
+           placeholder="Objetivo"
+           min="0" />
+
+    <input type="file"
+           class="crear-img"
+           accept="image/*" />
+
+    <button type="button" onclick="this.parentElement.remove()">
+      ❌
+    </button>
+  `;
+
+  container.appendChild(div);
 }
 
 // ─────────────────────────────────────────────────────────────

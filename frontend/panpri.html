@@ -125,12 +125,26 @@
         <div class="autocomplete-list" id="crear-cat-lista"></div>
       </div>
 
-      <label>Objetivo *</label>
-      <input type="number" id="crear-objetivo" placeholder="Objetivo" min="0" />
+      <label>Imágenes</label>
 
-      <label>Imagen</label>
-      <input type="file" id="crear-img" accept="image/*" />
-      <div id="crear-preview" class="img-preview"></div>
+      <div id="imagenes-container">
+
+        <div class="imagen-item">
+          <input type="number"
+                class="crear-objetivo"
+                placeholder="Objetivo"
+                min="0" />
+
+          <input type="file"
+                class="crear-img"
+                accept="image/*" />
+        </div>
+
+      </div>
+
+      <button type="button" onclick="agregarCampoImagen()">
+        + Agregar otra imagen
+      </button>
 
     </div>
     <div class="modal-footer">
