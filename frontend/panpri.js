@@ -771,7 +771,7 @@ async function subirMuestra() {
       json.data?.Id ??
       null;
 
-    mostrarToast('✅ Muestra creada');
+    mostrarToast(' Muestra creada');
 
   } catch (err) {
 
@@ -845,7 +845,7 @@ async function subirMuestra() {
     }
   }
 
-  mostrarToast('✅ Proceso completado');
+  mostrarToast(' Proceso completado');
 
   cerrarModal('modal-crear');
 
@@ -922,7 +922,7 @@ async function editarMuestra() {
     console.log('[DEBUG] editarMuestra — respuesta:', json);
     if (!json.success) throw new Error(json.mensaje);
 
-    mostrarToast('✅ Muestra actualizada');
+    mostrarToast(' Muestra actualizada');
     cerrarModal('modal-editar');
     await cargarMuestras();
     seleccionar(muestraActual.id);
@@ -965,7 +965,7 @@ async function eliminarMuestra() {
     console.log('[DEBUG] eliminarMuestra — respuesta:', json);
     if (!json.success) throw new Error(json.mensaje);
 
-    mostrarToast('🗑️ Muestra eliminada');
+    mostrarToast(' Muestra eliminada');
     cerrarModal('modal-eliminar');
     muestraActual = null;
     document.getElementById('detalle-muestra').style.display = 'none';
