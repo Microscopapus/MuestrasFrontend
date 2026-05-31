@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zoom Explorer — Base de datos de muestras microscópicas</title>
+  <meta name="description" content="Zoom Explorer es una plataforma de divulgación científica con una base de datos de muestras microscópicas, diseñada para quienes no tienen acceso a un microscopio." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="pres.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════
+       NAVBAR
+  ═══════════════════════════════════════════════ -->
+  <header class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="#" class="navbar-logo">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <circle cx="14" cy="14" r="13" stroke="#00c9b1" stroke-width="1.5"/>
+          <circle cx="14" cy="14" r="7" stroke="#00c9b1" stroke-width="1" stroke-dasharray="3 3"/>
+          <circle cx="14" cy="14" r="3" fill="#00c9b1"/>
+          <line x1="14" y1="1" x2="14" y2="6" stroke="#00c9b1" stroke-width="1.5"/>
+          <line x1="14" y1="22" x2="14" y2="27" stroke="#00c9b1" stroke-width="1.5"/>
+        </svg>
+        <span class="navbar-brand">Zoom Explorer</span>
+      </a>
+
+      <nav class="navbar-nav" id="nav-links">
+        <a href="#quienes-somos" class="nav-link">Quiénes Somos</a>
+        <a href="#que-es" class="nav-link">Qué es</a>
+        <a href="#objetivos" class="nav-link">Objetivos</a>
+        <a href="#descarga" class="nav-link">Descarga</a>
+      </nav>
+
+      <div class="navbar-actions">
+        <a href="/login" class="btn btn-outline btn-sm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          Iniciar Sesión
+        </a>
+        <button class="hamburger" id="hamburger" aria-label="Menú">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#quienes-somos" class="mobile-link">Quiénes Somos</a>
+      <a href="#que-es" class="mobile-link">Qué es</a>
+      <a href="#objetivos" class="mobile-link">Objetivos</a>
+      <a href="#descarga" class="mobile-link">Descarga</a>
+      <a href="/login" class="btn btn-outline btn-sm" style="margin-top:8px;width:100%;justify-content:center;">Iniciar Sesión</a>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════════ -->
+  <section class="hero" id="hero">
+    <!-- Decorative shapes -->
+    <div class="hero-shapes" aria-hidden="true">
+      <div class="shape shape-orb-1"></div>
+      <div class="shape shape-orb-2"></div>
+      <div class="shape shape-line"></div>
+      <svg class="shape shape-dots" viewBox="0 0 180 180">
+        <circle cx="10"  cy="10"  r="2.5" fill="#00c9b1"/>
+        <circle cx="50"  cy="10"  r="2.5" fill="#00c9b1"/>
+        <circle cx="90"  cy="10"  r="2.5" fill="#00c9b1"/>
+        <circle cx="130" cy="10"  r="2.5" fill="#00c9b1"/>
+        <circle cx="170" cy="10"  r="2.5" fill="#00c9b1"/>
+        <circle cx="10"  cy="50"  r="2.5" fill="#00c9b1"/>
+        <circle cx="50"  cy="50"  r="2.5" fill="#00c9b1"/>
+        <circle cx="90"  cy="50"  r="2.5" fill="#00c9b1"/>
+        <circle cx="130" cy="50"  r="2.5" fill="#00c9b1"/>
+        <circle cx="170" cy="50"  r="2.5" fill="#00c9b1"/>
+        <circle cx="10"  cy="90"  r="2.5" fill="#00c9b1"/>
+        <circle cx="50"  cy="90"  r="2.5" fill="#00c9b1"/>
+        <circle cx="90"  cy="90"  r="2.5" fill="#00c9b1"/>
+        <circle cx="130" cy="90"  r="2.5" fill="#00c9b1"/>
+        <circle cx="170" cy="90"  r="2.5" fill="#00c9b1"/>
+        <circle cx="10"  cy="130" r="2.5" fill="#00c9b1"/>
+        <circle cx="50"  cy="130" r="2.5" fill="#00c9b1"/>
+        <circle cx="90"  cy="130" r="2.5" fill="#00c9b1"/>
+        <circle cx="130" cy="130" r="2.5" fill="#00c9b1"/>
+        <circle cx="170" cy="130" r="2.5" fill="#00c9b1"/>
+        <circle cx="10"  cy="170" r="2.5" fill="#00c9b1"/>
+        <circle cx="50"  cy="170" r="2.5" fill="#00c9b1"/>
+        <circle cx="90"  cy="170" r="2.5" fill="#00c9b1"/>
+        <circle cx="130" cy="170" r="2.5" fill="#00c9b1"/>
+        <circle cx="170" cy="170" r="2.5" fill="#00c9b1"/>
+      </svg>
+      <svg class="shape shape-hex" viewBox="0 0 130 130">
+        <polygon points="65,8 112,35 112,95 65,122 18,95 18,35" fill="none" stroke="#00c9b1" stroke-width="1.5"/>
+      </svg>
+      <svg class="shape shape-lens" viewBox="0 0 90 90">
+        <circle cx="45" cy="45" r="40" fill="none" stroke="#00c9b1" stroke-width="1" stroke-dasharray="4 6"/>
+        <circle cx="45" cy="45" r="25" fill="none" stroke="#00c9b1" stroke-width="0.8"/>
+      </svg>
+    </div>
+
+    <div class="hero-content fade-in">
+      <span class="hero-badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Divulgación Científica
+      </span>
+      <h1 class="hero-title">Zoom <span class="accent">Explorer</span></h1>
+      <p class="hero-sub">
+        Una plataforma de divulgación científica con una base de datos de muestras microscópicas,
+        para quienes quieren explorar el mundo que no se ve a simple vista.
+      </p>
+    </div>
+
+    <button class="scroll-hint" onclick="document.getElementById('quienes-somos').scrollIntoView({behavior:'smooth'})" aria-label="Desplazar hacia abajo">
+      <span>Conocer más</span>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       QUIÉNES SOMOS
+  ═══════════════════════════════════════════════ -->
+  <section id="quienes-somos" class="section bg-dark">
+    <div class="container">
+      <div class="grid-2">
+        <div class="fade-in">
+          <div class="section-label"><span class="label-num">01</span><span class="label-line"></span>Quiénes Somos</div>
+          <h2 class="section-title">Un equipo comprometido con la divulgación científica</h2>
+          <p class="section-text">
+            Somos un equipo de desarrolladores apasionados por acercar la ciencia a todas las personas,
+            especialmente a quienes no tienen acceso a un microscopio o a un laboratorio equipado.
+          </p>
+          <p class="section-text">
+            Creemos que el conocimiento científico no debería estar limitado por recursos materiales.
+            Por eso construimos Zoom Explorer: un espacio donde cualquier persona puede explorar
+            muestras microscópicas reales desde su dispositivo.
+          </p>
+        </div>
+
+        <div class="fade-in fade-delay-1">
+          <div class="feature-card">
+            <div class="card-dot card-dot-tl"></div>
+            <div class="card-dot card-dot-br"></div>
+            <div class="feature-list">
+              <div class="feature-item">
+                <div class="feature-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <div>
+                  <p class="feature-title">Simulador de microscopio</p>
+                  <p class="feature-desc">APK para Android con experiencia inmersiva de microscopía</p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                </div>
+                <div>
+                  <p class="feature-title">Base de datos web</p>
+                  <p class="feature-desc">Catálogo de muestras con interfaz accesible desde cualquier navegador</p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div>
+                  <p class="feature-title">Para todos</p>
+                  <p class="feature-desc">Sin necesidad de laboratorio ni equipo especializado</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════════
+       QUÉ ES
+  ═══════════════════════════════════════════════ -->
+  <section id="que-es" class="section bg-teal">
+    <div class="container">
+      <div class="fade-in section-header">
+        <div class="section-label"><span class="label-num">02</span><span class="label-line"></span>¿Qué es?</div>
+        <h2 class="section-title">Dos herramientas, una misión</h2>
+        <p class="section-text" style="max-width:480px">
+          Zoom Explorer se compone de dos partes complementarias que juntas forman un ecosistema completo de divulgación científica.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <div class="fade-in card-tool">
+          <div class="card-glow"></div>
+          <div class="tool-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <span class="tool-tag">APK · Android</span>
+          <h3 class="tool-title">Simulador de Microscopio</h3>
+          <p class="tool-desc">
+            Una aplicación móvil que simula la experiencia de usar un microscopio real.
+            Permite explorar muestras con controles de zoom, enfoque y contraste,
+            brindando una experiencia inmersiva sin necesidad de equipo físico.
+          </p>
+          <div class="tool-bar"></div>
+        </div>
+
+        <div class="fade-in fade-delay-1 card-tool">
+          <div class="card-glow"></div>
+          <div class="tool-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <span class="tool-tag">Web · Esta plataforma</span>
+          <h3 class="tool-title">Base de Datos de Muestras</h3>
+          <p class="tool-desc">
+            Una interfaz web donde puedes explorar, subir y gestionar muestras microscópicas.
+            Organiza tu colección, marca favoritos y accede a un catálogo colaborativo
+            de muestras científicas con descripción y clasificación.
+          </p>
+          <div class="tool-bar"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════════
+       OBJETIVOS
+  ═══════════════════════════════════════════════ -->
+  <section id="objetivos" class="section bg-dark">
+    <div class="container container-md">
+      <div class="fade-in section-header">
+        <div class="section-label"><span class="label-num">03</span><span class="label-line"></span>Objetivos</div>
+        <h2 class="section-title">Lo que buscamos lograr</h2>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-line"></div>
+
+        <div class="timeline-item fade-in">
+          <div class="timeline-dot"></div>
+          <div class="timeline-body">
+            <div class="timeline-num">01</div>
+            <h3 class="timeline-title">Democratizar el acceso a la microscopía</h3>
+            <p class="timeline-desc">Que cualquier persona, sin importar sus recursos, pueda explorar el mundo microscópico y descubrir la ciencia que hay en él.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item fade-in fade-delay-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-body">
+            <div class="timeline-num">02</div>
+            <h3 class="timeline-title">Suplir la falta de acceso a microscopios</h3>
+            <p class="timeline-desc">Muchos estudiantes y curiosos nunca han visto una muestra real. Queremos cambiar eso con una experiencia digital fiel y accesible.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item fade-in fade-delay-2">
+          <div class="timeline-dot"></div>
+          <div class="timeline-body">
+            <div class="timeline-num">03</div>
+            <h3 class="timeline-title">Construir un repositorio científico colaborativo</h3>
+            <p class="timeline-desc">Crear una base de datos abierta donde la comunidad pueda subir, clasificar y compartir muestras microscópicas reales.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item fade-in fade-delay-3">
+          <div class="timeline-dot"></div>
+          <div class="timeline-body">
+            <div class="timeline-num">04</div>
+            <h3 class="timeline-title">Apoyar a educadores y divulgadores</h3>
+            <p class="timeline-desc">Proveer una herramienta que complemente la enseñanza de biología, química y ciencias naturales en cualquier nivel educativo.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item fade-in fade-delay-4">
+          <div class="timeline-dot"></div>
+          <div class="timeline-body">
+            <div class="timeline-num">05</div>
+            <h3 class="timeline-title">Fomentar la curiosidad científica</h3>
+            <p class="timeline-desc">Inspirar a la próxima generación de científicos mostrando que la ciencia es accesible, visual y emocionante.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       DESCARGA
+  ═══════════════════════════════════════════════ -->
+  <section id="descarga" class="section section-cta">
+    <div class="cta-glow" aria-hidden="true"></div>
+    <div class="cta-top-line" aria-hidden="true"></div>
+
+    <div class="container container-sm text-center fade-in">
+      <div class="section-label" style="justify-content:center"><span class="label-num">04</span><span class="label-line"></span>Simulador</div>
+      <h2 class="section-title">Lleva el microscopio en tu bolsillo</h2>
+      <p class="section-text" style="max-width:480px;margin:0 auto 2.5rem">
+        Descarga la APK del simulador de microscopio para Android. Explora muestras con controles
+        reales de zoom y enfoque, sin necesidad de equipo físico.
+      </p>
+
+      <a href="#" class="btn btn-primary btn-lg" id="apk-btn">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Descargar APK
+      </a>
+
+      <div class="cta-meta">
+        <p>Compatible con Android 8.0 o superior · Versión 1.0.0</p>
+        <p>Tamaño aproximado: 45 MB · Acceso gratuito</p>
+      </div>
+
+      <div class="cta-divider"></div>
+
+      <p class="cta-sub">¿Quieres explorar la base de datos de muestras?</p>
+      <a href="/login" class="btn btn-outline">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Acceder a la plataforma web
+      </a>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <svg width="22" height="22" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <circle cx="14" cy="14" r="13" stroke="#00c9b1" stroke-width="1.5"/>
+          <circle cx="14" cy="14" r="7" stroke="#00c9b1" stroke-width="1" stroke-dasharray="3 3"/>
+          <circle cx="14" cy="14" r="3" fill="#00c9b1"/>
+        </svg>
+        <span>Zoom Explorer</span>
+      </div>
+      <p class="footer-copy">© 2026 Zoom Explorer. Divulgación científica accesible para todos.</p>
+    </div>
+  </footer>
+
+  <script src="pres.js"></script>
+</body>
+</html>
