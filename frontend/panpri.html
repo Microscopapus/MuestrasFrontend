@@ -3,160 +3,166 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Muestras</title>
+  <title>Zoom Explorer — Muestras</title>
   <link rel="stylesheet" href="panpri.css">
 </head>
 <body>
 
-<!-- ══ TOPBAR ══ -->
-<header class="topbar">
-  <h1>MUESTRAS</h1>
-  <div class="topbar-actions">
-    <button class="icon-btn" id="btn-fav-topbar" title="Mis favoritos" onclick="abrirFavoritos()">★</button>
-    <button class="icon-btn" title="Nueva muestra" onclick="abrirModalCrear()">＋</button>
-    <button class="icon-btn" title="Catálogo" onclick="abrirMenu()">☰</button>
-    <button class="logout-btn" title="Cerrar Sesión" onclick="cerrarSesion()">Salir ➔</button>
+<!-- ══ NAVBAR ══ -->
+<header class="navbar">
+  <div class="navbar-logo">
+    <!-- LOGO: coloca tu imagen aquí -->
+    <img src="imglogo.png" alt="Zoom Explorer">
+    <span>Zoom Explorer</span>
+  </div>
+
+  <div class="navbar-actions">
+    <button class="nav-btn" onclick="abrirFavoritos()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <span>Favoritos</span>
+    </button>
+    <button class="nav-btn accent" onclick="abrirModalCrear()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span>Nueva muestra</span>
+    </button>
+    <button class="nav-btn danger" onclick="cerrarSesion()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span>Salir</span>
+    </button>
   </div>
 </header>
 
-<!-- Overlay general -->
-<div class="overlay" id="overlay" onclick="cerrarTodo()"></div>
-
-<!-- ══ MENÚ LATERAL: Catálogo ══ -->
-<nav id="menu">
-  <div class="menu-header">
-    <span>🔬 Catálogo</span>
-    <button class="close-btn" onclick="cerrarMenu()">✕</button>
-  </div>
-
-  <!-- Búsqueda por categoría con chips -->
-  <div class="menu-search-wrap">
-    <!-- Chips de categorías seleccionadas -->
-    <div id="cat-chips" class="cat-chips-container"></div>
-
-    <!-- Input + autocomplete -->
-    <div class="autocomplete-wrap">
-      <input
-        type="text"
-        id="cat-filtro"
-        placeholder="Filtrar por categoría…"
-        oninput="onCatFiltroInput(this.value)"
-        autocomplete="off"
-      />
-      <div class="autocomplete-list" id="cat-filtro-lista"></div>
-    </div>
-  </div>
-
-  <div class="menu-grid" id="menu-grid"></div>
-</nav>
-
-<!-- ══ PANEL FAVORITOS ══ -->
-<aside id="panel-favoritos">
-  <div class="menu-header">
-    <span>★ Favoritos</span>
-    <button class="close-btn" onclick="cerrarFavoritos()">✕</button>
-  </div>
-  <div class="fav-search-wrap">
-    <input type="text" id="fav-search" placeholder="Buscar favorito…" oninput="filtrarFavoritos()" autocomplete="off" />
-  </div>
-  <div id="fav-lista"></div>
-</aside>
-
-<!-- ══ PANTALLAS ══ -->
-<div class="pantalla" id="pantalla-cargando">
-  <div class="spinner-grande"></div>
+<!-- ══ PANTALLAS DE CARGA / ERROR ══ -->
+<div class="pantalla" id="pantalla-cargando" style="display:flex;">
+  <div class="spinner"></div>
   <p>Cargando catálogo…</p>
 </div>
 
 <div class="pantalla" id="pantalla-error">
-  <div class="error-icono-grande">⚠️</div>
+  <span style="font-size:48px;opacity:0.4;">⚠️</span>
   <h2>No se pudo cargar el catálogo</h2>
-  <div id="error-msg"></div>
+  <p id="error-msg"></p>
   <button class="btn-reintentar" onclick="cargarMuestras()">↺ Reintentar</button>
 </div>
 
-<div class="pantalla" id="pantalla-contenido">
-  <!-- Estado vacío -->
-  <div class="detalle-vacio" id="detalle-vacio">
-    <div class="vacio-icono">🔬</div>
-    <p>Abre el menú y selecciona<br>una muestra para verla aquí</p>
-  </div>
+<!-- ══ LAYOUT PRINCIPAL ══ -->
+<div class="main-layout" id="pantalla-contenido" style="display:none;">
 
-  <!-- Detalle de muestra -->
-  <div id="detalle-muestra">
-    <div id="detalle-imagen"></div>
-    <h2 id="detalle-nombre"></h2>
-    <span class="badge" id="detalle-cat"></span>
-    <p id="detalle-desc"></p>
-    <div class="detalle-acciones" id="detalle-acciones-crud">
-      <button class="btn-accion btn-editar"   onclick="abrirModalEditar()">✏️ Editar</button>
-      <button class="btn-accion btn-eliminar" onclick="confirmarEliminar()">🗑️ Eliminar</button>
+  <!-- PANEL IZQUIERDO: catálogo -->
+  <aside class="catalogo-panel">
+
+    <div class="panel-head">
+      <div class="panel-label">Catálogo</div>
+
+      <!-- Búsqueda por nombre -->
+      <div class="search-box" style="margin-bottom:10px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="buscar-muestra" placeholder="Buscar muestra…" oninput="filtrarPorNombre(this.value)" autocomplete="off">
+      </div>
+
+      <!-- Chips de categorías -->
+      <div id="cat-chips" class="chips-row"></div>
+
+      <!-- Filtro por categoría -->
+      <div class="autocomplete-wrap">
+        <div class="search-box" style="margin-bottom:0;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input
+            type="text"
+            id="cat-filtro"
+            placeholder="Filtrar por categoría…"
+            oninput="onCatFiltroInput(this.value)"
+            autocomplete="off"
+          >
+        </div>
+        <div class="autocomplete-list" id="cat-filtro-lista"></div>
+      </div>
     </div>
-    <div id="detalle-permiso" class="detalle-permiso" style="display:none; margin-top: 0.75rem; color: #2c7a2c;"></div>
-  </div>
+
+    <div class="catalogo-count" id="catalogo-count">
+      <span id="count-num">0</span> muestras
+    </div>
+
+    <div class="catalogo-grid" id="menu-grid"></div>
+  </aside>
+
+  <!-- PANEL DERECHO: detalle -->
+  <main class="detalle-panel">
+
+    <!-- Vacío -->
+    <div class="detalle-vacio" id="detalle-vacio">
+      <div class="vacio-icon">🔬</div>
+      <p>Selecciona una muestra<br>del catálogo para verla aquí</p>
+    </div>
+
+    <!-- Detalle -->
+    <div id="detalle-muestra">
+      <div id="detalle-imagen"></div>
+      <h2 id="detalle-nombre"></h2>
+      <span class="badge-cat" id="detalle-cat" style="display:none;"></span>
+      <p id="detalle-desc"></p>
+      <div class="detalle-acciones" id="detalle-acciones-crud">
+        <button class="btn-accion btn-editar" onclick="abrirModalEditar()" style="display:none;">✏️ Editar</button>
+        <button class="btn-accion btn-eliminar" onclick="confirmarEliminar()" style="display:none;">🗑️ Eliminar</button>
+      </div>
+    </div>
+
+  </main>
+
 </div>
 
-<!-- ══════════════ MODALES ══════════════ -->
+<!-- ══════════ MODALES ══════════ -->
+
+<!-- Modal: Favoritos -->
+<div class="modal-backdrop" id="modal-favoritos">
+  <div class="modal">
+    <div class="modal-header">
+      <span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Favoritos
+      </span>
+      <button class="close-btn" onclick="cerrarModal('modal-favoritos')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fav-search">
+        <input type="text" id="fav-search" placeholder="Buscar favorito…" oninput="filtrarFavoritos()" autocomplete="off">
+      </div>
+      <div id="fav-lista"></div>
+    </div>
+  </div>
+</div>
 
 <!-- Modal: Crear muestra -->
 <div class="modal-backdrop" id="modal-crear">
   <div class="modal">
     <div class="modal-header">
-      <span>➕ Nueva muestra</span>
+      <span>Nueva muestra</span>
       <button class="close-btn" onclick="cerrarModal('modal-crear')">✕</button>
     </div>
     <div class="modal-body">
 
       <label>Nombre *</label>
-      <input type="text" id="crear-nombre" placeholder="Nombre de la muestra" />
+      <input type="text" id="crear-nombre" placeholder="Nombre de la muestra">
 
       <label>Descripción</label>
       <textarea id="crear-desc" placeholder="Descripción de la muestra…"></textarea>
 
       <label>Categoría</label>
       <div class="autocomplete-wrap">
-        <input
-          type="text"
-          id="crear-cat-texto"
-          placeholder="Escribe para buscar categoría…"
-          oninput="sugerirCat('crear')"
-          autocomplete="off"
-        />
+        <input type="text" id="crear-cat-texto" placeholder="Escribe para buscar…" oninput="sugerirCat('crear')" autocomplete="off">
         <div class="autocomplete-list" id="crear-cat-lista"></div>
       </div>
 
       <label>Imágenes</label>
+      <div id="imagenes-container"></div>
 
-      <div id="imagenes-container">
-        <div class="imagen-item">
-          <div class="imagen-preview">🔍</div>
-          <div class="imagen-item-controls">
-            <input type="number"
-                   class="crear-objetivo"
-                   placeholder="Objetivo"
-                   min="0" />
-
-            <label class="file-label">
-              <span>Seleccionar imagen</span>
-              <input type="file"
-                     class="crear-img"
-                     accept="image/*" />
-            </label>
-
-            <button type="button" class="btn-remove-img">
-              ✕ Quitar imagen
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <button type="button" onclick="agregarCampoImagen()">
-        + Agregar otra imagen
+      <button type="button" class="btn-cancel" onclick="agregarCampoImagen()" style="align-self:flex-start; margin-top:4px;">
+        + Agregar imagen
       </button>
 
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel"  onclick="cerrarModal('modal-crear')">Cancelar</button>
+      <button class="btn-cancel" onclick="cerrarModal('modal-crear')">Cancelar</button>
       <button class="btn-confirm" onclick="subirMuestra()">Subir muestra</button>
     </div>
   </div>
@@ -166,32 +172,26 @@
 <div class="modal-backdrop" id="modal-editar">
   <div class="modal">
     <div class="modal-header">
-      <span>✏️ Editar muestra</span>
+      <span>Editar muestra</span>
       <button class="close-btn" onclick="cerrarModal('modal-editar')">✕</button>
     </div>
     <div class="modal-body">
 
       <label>Nombre *</label>
-      <input type="text" id="editar-nombre" placeholder="Nombre" />
+      <input type="text" id="editar-nombre" placeholder="Nombre">
 
       <label>Descripción</label>
       <textarea id="editar-desc" placeholder="Descripción…"></textarea>
 
       <label>Categoría</label>
       <div class="autocomplete-wrap">
-        <input
-          type="text"
-          id="editar-cat-texto"
-          placeholder="Escribe para buscar categoría…"
-          oninput="sugerirCat('editar')"
-          autocomplete="off"
-        />
+        <input type="text" id="editar-cat-texto" placeholder="Escribe para buscar…" oninput="sugerirCat('editar')" autocomplete="off">
         <div class="autocomplete-list" id="editar-cat-lista"></div>
       </div>
 
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel"  onclick="cerrarModal('modal-editar')">Cancelar</button>
+      <button class="btn-cancel" onclick="cerrarModal('modal-editar')">Cancelar</button>
       <button class="btn-confirm" onclick="editarMuestra()">Guardar cambios</button>
     </div>
   </div>
@@ -201,7 +201,7 @@
 <div class="modal-backdrop" id="modal-eliminar">
   <div class="modal modal-sm">
     <div class="modal-header">
-      <span>🗑️ Eliminar muestra</span>
+      <span>Eliminar muestra</span>
       <button class="close-btn" onclick="cerrarModal('modal-eliminar')">✕</button>
     </div>
     <div class="modal-body">

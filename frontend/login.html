@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión — Zoom Explorer</title>
+  <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+
+<div class="auth-wrap">
+
+  <!-- IMAGEN IZQUIERDA -->
+  <div class="auth-img">
+    <img src="imglog.png" alt="Microscopio">
+    <div class="auth-img-overlay">
+      <div class="auth-img-badge">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Divulgación Científica
+      </div>
+      <p class="auth-img-text">Explora muestras microscópicas reales desde cualquier dispositivo.</p>
+    </div>
+  </div>
+
+  <!-- PANEL DERECHO -->
+  <div class="auth-panel">
+    <div class="auth-card">
+
+      <!-- LOGO — coloca tu imagen aquí -->
+      <div class="auth-logo">
+        <img src="imglogo.png" alt="Zoom Explorer">
+      </div>
+
+      <h1 class="auth-title">Iniciar Sesión</h1>
+      <p class="auth-sub">Accede a tu cuenta para continuar</p>
+
+      <div class="auth-error" id="auth-error" style="display:none">
+        <span id="auth-error-msg"></span>
+      </div>
+
+      <div class="auth-form">
+
+        <div class="campo">
+          <label for="email">Correo electrónico</label>
+          <input type="email" id="email" placeholder="tu@correo.com" autocomplete="email">
+        </div>
+
+        <div class="campo">
+          <label for="password">Contraseña</label>
+          <div class="campo-input-wrap">
+            <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+            <button class="toggle-pass" type="button" onclick="togglePassword('password', this)" aria-label="Mostrar contraseña">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-auth" onclick="loginEmail()">Iniciar Sesión</button>
+      </div>
+
+      <div class="separador"><span>o</span></div>
+
+      <div id="btn-google-container"></div>
+
+      <p class="auth-link">¿No tienes cuenta? <a href="register.html">Crear cuenta</a></p>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="https://accounts.google.com/gsi/client"></script>
+<script src="auth.js"></script>
+</body>
+</html>
