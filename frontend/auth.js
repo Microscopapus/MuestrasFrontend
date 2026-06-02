@@ -130,5 +130,5 @@ document.addEventListener('DOMContentLoaded', () => {
 function cerrarSesion() {
   localStorage.removeItem('token');
   localStorage.removeItem('usuario');
-  window.location.replace('panpres.html');
+  window.location.replace('index.html');
 }
