@@ -23,6 +23,15 @@ body {
   flex-direction: column;
 }
 
+/* Contenedor que ocupa todo menos la navbar */
+.app-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: calc(100vh - 58px);
+}
+
 /* ════════════════════════
    NAVBAR
 ════════════════════════ */
@@ -47,7 +56,7 @@ body {
 }
 
 .navbar-logo img {
-  height: 30px;
+  height: 44px;
   width: auto;
 }
 
@@ -96,11 +105,15 @@ body {
    LAYOUT PRINCIPAL
 ════════════════════════ */
 .main-layout {
-  display: grid;
-  grid-template-columns: 280px 1fr;
+  display: none; /* JS lo activa */
+  grid-template-columns: 300px 1fr;
   flex: 1;
   overflow: hidden;
-  height: calc(100vh - 58px);
+  height: 100%;
+}
+
+.main-layout.activo {
+  display: grid;
 }
 
 /* ════════════════════════
@@ -426,9 +439,14 @@ body {
   align-items: center;
   justify-content: center;
   flex: 1;
+  height: 100%;
   text-align: center;
   gap: 16px;
   padding: 40px;
+}
+
+.pantalla.activo {
+  display: flex;
 }
 
 .spinner {
@@ -567,6 +585,32 @@ body {
 
 .fav-search input::placeholder { color: var(--muted); }
 .fav-search input:focus { border-color: var(--primary); }
+
+/* Fav search input dentro del modal */
+.fav-search-input {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--fg);
+  padding: 9px 12px;
+  font-size: 0.85rem;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.fav-search-input::placeholder { color: var(--muted); }
+.fav-search-input:focus { border-color: var(--primary); }
+
+.fav-body {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 65vh;
+  overflow-y: auto;
+}
 
 /* Fav items */
 .fav-item {
@@ -766,7 +810,9 @@ body {
    RESPONSIVE
 ════════════════════════ */
 @media (max-width: 768px) {
-  .main-layout {
+  .app-area { height: auto; overflow: visible; }
+
+  .main-layout.activo {
     grid-template-columns: 1fr;
     height: auto;
     overflow: visible;

@@ -11,11 +11,9 @@
 <!-- ══ NAVBAR ══ -->
 <header class="navbar">
   <div class="navbar-logo">
-    <!-- LOGO: coloca tu imagen aquí -->
     <img src="imglogo.png" alt="Zoom Explorer">
     <span>Zoom Explorer</span>
   </div>
-
   <div class="navbar-actions">
     <button class="nav-btn" onclick="abrirFavoritos()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -32,84 +30,76 @@
   </div>
 </header>
 
-<!-- ══ PANTALLAS DE CARGA / ERROR ══ -->
-<div class="pantalla" id="pantalla-cargando" style="display:flex;">
-  <div class="spinner"></div>
-  <p>Cargando catálogo…</p>
-</div>
+<!-- ══ ÁREA PRINCIPAL ══ -->
+<div class="app-area">
 
-<div class="pantalla" id="pantalla-error">
-  <span style="font-size:48px;opacity:0.4;">⚠️</span>
-  <h2>No se pudo cargar el catálogo</h2>
-  <p id="error-msg"></p>
-  <button class="btn-reintentar" onclick="cargarMuestras()">↺ Reintentar</button>
-</div>
+  <!-- Pantalla cargando -->
+  <div class="pantalla activo" id="pantalla-cargando">
+    <div class="spinner"></div>
+    <p>Cargando catálogo…</p>
+  </div>
 
-<!-- ══ LAYOUT PRINCIPAL ══ -->
-<div class="main-layout" id="pantalla-contenido" style="display:none;">
+  <!-- Pantalla error -->
+  <div class="pantalla" id="pantalla-error">
+    <span style="font-size:48px;opacity:0.4;">⚠️</span>
+    <h2>No se pudo cargar el catálogo</h2>
+    <p id="error-msg"></p>
+    <button class="btn-reintentar" onclick="cargarMuestras()">↺ Reintentar</button>
+  </div>
 
-  <!-- PANEL IZQUIERDO: catálogo -->
-  <aside class="catalogo-panel">
+  <!-- Layout principal -->
+  <div class="main-layout" id="pantalla-contenido">
 
-    <div class="panel-head">
-      <div class="panel-label">Catálogo</div>
+    <!-- PANEL IZQUIERDO: catálogo -->
+    <aside class="catalogo-panel">
 
-      <!-- Búsqueda por nombre -->
-      <div class="search-box" style="margin-bottom:10px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="buscar-muestra" placeholder="Buscar muestra…" oninput="filtrarPorNombre(this.value)" autocomplete="off">
-      </div>
+      <div class="panel-head">
+        <div class="panel-label">Catálogo</div>
 
-      <!-- Chips de categorías -->
-      <div id="cat-chips" class="chips-row"></div>
-
-      <!-- Filtro por categoría -->
-      <div class="autocomplete-wrap">
-        <div class="search-box" style="margin-bottom:0;">
+        <div class="search-box" style="margin-bottom:10px;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input
-            type="text"
-            id="cat-filtro"
-            placeholder="Filtrar por categoría…"
-            oninput="onCatFiltroInput(this.value)"
-            autocomplete="off"
-          >
+          <input type="text" id="buscar-muestra" placeholder="Buscar muestra…" oninput="filtrarPorNombre(this.value)" autocomplete="off">
         </div>
-        <div class="autocomplete-list" id="cat-filtro-lista"></div>
+
+        <div id="cat-chips" class="chips-row"></div>
+
+        <div class="autocomplete-wrap">
+          <div class="search-box" style="margin-bottom:0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="cat-filtro" placeholder="Filtrar por categoría…" oninput="onCatFiltroInput(this.value)" autocomplete="off">
+          </div>
+          <div class="autocomplete-list" id="cat-filtro-lista"></div>
+        </div>
       </div>
-    </div>
 
-    <div class="catalogo-count" id="catalogo-count">
-      <span id="count-num">0</span> muestras
-    </div>
-
-    <div class="catalogo-grid" id="menu-grid"></div>
-  </aside>
-
-  <!-- PANEL DERECHO: detalle -->
-  <main class="detalle-panel">
-
-    <!-- Vacío -->
-    <div class="detalle-vacio" id="detalle-vacio">
-      <div class="vacio-icon">🔬</div>
-      <p>Selecciona una muestra<br>del catálogo para verla aquí</p>
-    </div>
-
-    <!-- Detalle -->
-    <div id="detalle-muestra">
-      <div id="detalle-imagen"></div>
-      <h2 id="detalle-nombre"></h2>
-      <span class="badge-cat" id="detalle-cat" style="display:none;"></span>
-      <p id="detalle-desc"></p>
-      <div class="detalle-acciones" id="detalle-acciones-crud">
-        <button class="btn-accion btn-editar" onclick="abrirModalEditar()" style="display:none;">✏️ Editar</button>
-        <button class="btn-accion btn-eliminar" onclick="confirmarEliminar()" style="display:none;">🗑️ Eliminar</button>
+      <div class="catalogo-count">
+        <span id="count-num">0</span> muestras
       </div>
-    </div>
 
-  </main>
+      <div class="catalogo-grid" id="menu-grid"></div>
+    </aside>
 
-</div>
+    <!-- PANEL DERECHO: detalle -->
+    <main class="detalle-panel">
+      <div class="detalle-vacio" id="detalle-vacio">
+        <div class="vacio-icon">🔬</div>
+        <p>Selecciona una muestra<br>del catálogo para verla aquí</p>
+      </div>
+      <div id="detalle-muestra">
+        <div id="detalle-imagen"></div>
+        <h2 id="detalle-nombre"></h2>
+        <span class="badge-cat" id="detalle-cat" style="display:none;"></span>
+        <p id="detalle-desc"></p>
+        <div class="detalle-acciones">
+          <button class="btn-accion btn-editar" onclick="abrirModalEditar()" style="display:none;">✏️ Editar</button>
+          <button class="btn-accion btn-eliminar" onclick="confirmarEliminar()" style="display:none;">🗑️ Eliminar</button>
+        </div>
+      </div>
+    </main>
+
+  </div><!-- /main-layout -->
+
+</div><!-- /app-area -->
 
 <!-- ══════════ MODALES ══════════ -->
 
@@ -123,10 +113,8 @@
       </span>
       <button class="close-btn" onclick="cerrarModal('modal-favoritos')">✕</button>
     </div>
-    <div class="modal-body">
-      <div class="fav-search">
-        <input type="text" id="fav-search" placeholder="Buscar favorito…" oninput="filtrarFavoritos()" autocomplete="off">
-      </div>
+    <div class="modal-body fav-body">
+      <input type="text" id="fav-search" placeholder="Buscar favorito…" oninput="filtrarFavoritos()" autocomplete="off" class="fav-search-input">
       <div id="fav-lista"></div>
     </div>
   </div>
@@ -140,26 +128,18 @@
       <button class="close-btn" onclick="cerrarModal('modal-crear')">✕</button>
     </div>
     <div class="modal-body">
-
       <label>Nombre *</label>
       <input type="text" id="crear-nombre" placeholder="Nombre de la muestra">
-
       <label>Descripción</label>
       <textarea id="crear-desc" placeholder="Descripción de la muestra…"></textarea>
-
       <label>Categoría</label>
       <div class="autocomplete-wrap">
         <input type="text" id="crear-cat-texto" placeholder="Escribe para buscar…" oninput="sugerirCat('crear')" autocomplete="off">
         <div class="autocomplete-list" id="crear-cat-lista"></div>
       </div>
-
       <label>Imágenes</label>
       <div id="imagenes-container"></div>
-
-      <button type="button" class="btn-cancel" onclick="agregarCampoImagen()" style="align-self:flex-start; margin-top:4px;">
-        + Agregar imagen
-      </button>
-
+      <button type="button" class="btn-cancel" onclick="agregarCampoImagen()" style="align-self:flex-start; margin-top:4px;">+ Agregar imagen</button>
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="cerrarModal('modal-crear')">Cancelar</button>
@@ -176,19 +156,15 @@
       <button class="close-btn" onclick="cerrarModal('modal-editar')">✕</button>
     </div>
     <div class="modal-body">
-
       <label>Nombre *</label>
       <input type="text" id="editar-nombre" placeholder="Nombre">
-
       <label>Descripción</label>
       <textarea id="editar-desc" placeholder="Descripción…"></textarea>
-
       <label>Categoría</label>
       <div class="autocomplete-wrap">
         <input type="text" id="editar-cat-texto" placeholder="Escribe para buscar…" oninput="sugerirCat('editar')" autocomplete="off">
         <div class="autocomplete-list" id="editar-cat-lista"></div>
       </div>
-
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="cerrarModal('modal-editar')">Cancelar</button>
