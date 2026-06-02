@@ -103,12 +103,12 @@ body {
 .auth-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 4px;
+  justify-content: center;
+  margin-bottom: 8px;
 }
 
 .auth-logo img {
-  height: 56px;
+  height: 120px;
   width: auto;
 }
 
