@@ -101,7 +101,8 @@
       <h2 id="detalle-nombre"></h2>
       <span class="badge-cat" id="detalle-cat" style="display:none;"></span>
       <p id="detalle-desc"></p>
-      <div class="detalle-acciones" id="detalle-acciones-crud">
+      <div class="detalle-acciones">
+        <button class="btn-accion" id="btn-ver-imagenes" onclick="abrirGaleriaImagenes()" style="display:none;"> Ver todas las imágenes</button>
         <button class="btn-accion btn-editar" onclick="abrirModalEditar()" style="display:none;">✏️ Editar</button>
         <button class="btn-accion btn-eliminar" onclick="confirmarEliminar()" style="display:none;">🗑️ Eliminar</button>
       </div>
@@ -128,6 +129,22 @@
         <input type="text" id="fav-search" placeholder="Buscar favorito…" oninput="filtrarFavoritos()" autocomplete="off">
       </div>
       <div id="fav-lista"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Galería de imágenes -->
+<div class="modal-backdrop" id="modal-galeria">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span>Imágenes</span>
+      <button class="close-btn" onclick="cerrarModal('modal-galeria')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="galeria-header">
+        <h3 id="galeria-titulo"></h3>
+      </div>
+      <div id="galeria-contenido" class="galeria-grid"></div>
     </div>
   </div>
 </div>

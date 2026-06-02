@@ -163,6 +163,16 @@ function mapearMuestras(raw) {
     // Extraer el array de categorías del backend (puede venir de varias formas)
     const catsRaw = m.categorias ?? m.Categorias ?? m.categoria ?? m.Categoria ?? [];
 
+    // Normalizar el array de imágenes completo
+    const imgsRaw = m.imagenes ?? m.Imagenes ?? m.Imagenes ?? m.Imagen ?? [];
+    const imagenes = Array.isArray(imgsRaw)
+      ? imgsRaw.map(img => ({
+          idImagen: img.idImagen ?? img.IdImagen ?? img.id ?? null,
+          url:       img.url ?? img.Url ?? img.uri ?? img.UrlImagen ?? null,
+          objetivo:  img.objetivo ?? img.Objetivo ?? img.obj ?? null,
+        })).filter(i => i.url)
+      : [];
+
     // Si es array de objetos → agarrar el primer nombre
     // Si es array de strings → agarrar el primero
     // Si es string directo → usarlo tal cual
@@ -192,7 +202,8 @@ function mapearMuestras(raw) {
       // Guardamos el id de la primera categoría para pre-llenar el modal editar
       categoriaId:   categoriaId,
       descripcion:   m.descripcion || '',
-      imagen:        m.imagenes?.[0]?.url || null,
+      imagen:        imagenes[0]?.url || null,
+      imagenes,
       userId:        m.userId ?? m.idUsuario ?? m.creadorId ?? m.usuarioId
                   ?? m.id_usuario ?? m.IdUsuario ?? m.CreadorId ?? null,
       _raw: m,
@@ -602,12 +613,40 @@ function cerrarTodo() {
 //  SELECCIONAR MUESTRA
 // ─────────────────────────────────────────────────────────────
 function actualizarBotonesCrud(m) {
-  const btnEditar   = document.querySelector('.btn-editar');
-  const btnEliminar = document.querySelector('.btn-eliminar');
-  const tienePermiso = m && usuarioActual && esMiMuestra(m);
+  const btnEditar      = document.querySelector('.btn-editar');
+  const btnEliminar    = document.querySelector('.btn-eliminar');
+  const btnVerImagenes = document.getElementById('btn-ver-imagenes');
+  const tienePermiso   = m && usuarioActual && esMiMuestra(m);
 
-  if (btnEditar)   btnEditar.style.display   = tienePermiso ? '' : 'none';
-  if (btnEliminar) btnEliminar.style.display = tienePermiso ? '' : 'none';
+  if (btnEditar)      btnEditar.style.display      = tienePermiso ? '' : 'none';
+  if (btnEliminar)    btnEliminar.style.display    = tienePermiso ? '' : 'none';
+  if (btnVerImagenes) btnVerImagenes.style.display = (m && Array.isArray(m.imagenes) && m.imagenes.length > 1) ? '' : 'none';
+}
+
+function abrirGaleriaImagenes() {
+  if (!muestraActual) return;
+
+  const titulo = document.getElementById('galeria-titulo');
+  const body   = document.getElementById('galeria-contenido');
+  const imgs   = muestraActual.imagenes || [];
+
+  titulo.textContent = muestraActual.nombre || 'Imágenes';
+
+  if (!imgs.length) {
+    body.innerHTML = '<p class="galeria-vacio">No hay imágenes disponibles para esta muestra.</p>';
+  } else {
+    body.innerHTML = imgs.map((img, index) => `
+      <div class="galeria-item">
+        <img src="${img.url}" alt="${muestraActual.nombre} ${index + 1}" loading="lazy">
+        <div class="galeria-meta">
+          <span>Imagen ${index + 1}</span>
+          <span>Objetivo: ${img.objetivo ?? 'N/A'}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  abrirModal('modal-galeria');
 }
 
 function seleccionar(id) {
