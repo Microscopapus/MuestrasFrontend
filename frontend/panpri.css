@@ -822,8 +822,26 @@ body {
 /* ════════════════════════
    RESPONSIVE
 ════════════════════════ */
+
+/* Tablet landscape y pantallas medianas */
+@media (max-width: 1024px) {
+  .main-layout.activo {
+    grid-template-columns: 240px 1fr;
+  }
+
+  .catalogo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablet portrait */
 @media (max-width: 768px) {
-  .app-area { height: auto; overflow: visible; }
+  .navbar { padding: 0 16px; }
+
+  .app-area {
+    height: auto;
+    overflow: visible;
+  }
 
   .main-layout.activo {
     grid-template-columns: 1fr;
@@ -831,20 +849,50 @@ body {
     overflow: visible;
   }
 
+  /* En móvil: catálogo arriba con altura fija, detalle abajo */
   .catalogo-panel {
-    height: 50vh;
+    height: 55vh;
     border-right: none;
     border-bottom: 1px solid var(--border);
   }
 
+  .catalogo-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   .detalle-panel {
     min-height: 50vh;
+    padding: 24px 16px;
+  }
+
+  #detalle-imagen img {
+    width: 160px;
+    height: 160px;
+  }
+
+  #detalle-muestra h2 {
+    font-size: 1.3rem;
   }
 }
 
+/* Móvil */
 @media (max-width: 480px) {
   .navbar-logo span { display: none; }
-  .nav-btn span     { display: none; }
-  .nav-btn          { padding: 7px 10px; }
-  .catalogo-grid    { grid-template-columns: repeat(2, 1fr); }
+
+  .nav-btn span { display: none; }
+  .nav-btn      { padding: 7px 10px; gap: 0; }
+
+  .nav-usuario  { display: none; }
+
+  .catalogo-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .panel-head { padding: 10px 12px; }
+
+  .modal { border-radius: 12px; max-height: 90vh; overflow-y: auto; }
+}
+
+/* Pantallas muy pequeñas */
+@media (max-width: 360px) {
+  .catalogo-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .nav-btn       { width: 36px; height: 36px; justify-content: center; }
 }
