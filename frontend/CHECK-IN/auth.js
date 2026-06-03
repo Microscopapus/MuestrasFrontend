@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function guardarSesionYRedirigir(data) {
   localStorage.setItem('token',   data.token);
   localStorage.setItem('usuario', JSON.stringify(data.usuario));
-  window.location.replace('PanPri/panpri.html');
+  window.location.replace('../PanPri/panpri.html');
 }
 
 function mensajePorTipo(tipo, mensajeBackend) {
@@ -137,5 +137,5 @@ document.addEventListener('DOMContentLoaded', () => {
 function cerrarSesion() {
   localStorage.removeItem('token');
   localStorage.removeItem('usuario');
-  window.location.replace('index.html');
+  window.location.replace('../index.html');
 }
