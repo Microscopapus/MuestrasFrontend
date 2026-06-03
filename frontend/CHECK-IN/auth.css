@@ -272,18 +272,89 @@ body {
 }
 
 /* ── Responsive ── */
+
+/* Laptop pequeño */
+@media (max-width: 1024px) {
+  .auth-card {
+    max-width: 360px;
+  }
+
+  .auth-logo img {
+    height: 100px;
+  }
+}
+
+/* Tablet */
 @media (max-width: 768px) {
   .auth-wrap {
     grid-template-columns: 1fr;
   }
 
   .auth-img {
-    height: 220px;
+    height: 200px;
+    order: -1;
   }
 
   .auth-panel {
-    padding: 32px 24px;
+    padding: 32px 28px;
     border-left: none;
     border-top: 1px solid var(--border);
+  }
+
+  .auth-card {
+    max-width: 100%;
+    gap: 16px;
+  }
+
+  .auth-logo img {
+    height: 90px;
+  }
+
+  .auth-title {
+    font-size: 1.75rem;
+  }
+}
+
+/* Móvil */
+@media (max-width: 480px) {
+  .auth-img {
+    height: 160px;
+  }
+
+  .auth-panel {
+    padding: 24px 20px;
+  }
+
+  .auth-logo img {
+    height: 72px;
+  }
+
+  .auth-title {
+    font-size: 1.5rem;
+  }
+
+  .auth-sub {
+    font-size: 0.8rem;
+  }
+
+  .campo input {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+
+  .btn-auth {
+    padding: 11px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Móvil muy pequeño */
+@media (max-width: 360px) {
+  .auth-panel {
+    padding: 20px 16px;
+  }
+
+  .auth-logo img {
+    height: 60px;
   }
 }

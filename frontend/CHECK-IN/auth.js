@@ -6,42 +6,50 @@ const AUTH_API = {
 
 const GOOGLE_CLIENT_ID = '30335745792-2elqg0tt0s9iq9u0hd6flgbstldbjrg1.apps.googleusercontent.com';
 
-// ── Helpers UI ──────────────────────────────────────────────
+// ── Funciones de autenticación ──────────────────────────────
+
+// Muestra un mensaje de error.
 function mostrarError(msg) {
   const el = document.getElementById('auth-error');
   document.getElementById('auth-error-msg').textContent = msg;
   el.style.display = 'block';
 }
 
+// Oculta el mensaje de error.
 function ocultarError() {
   document.getElementById('auth-error').style.display = 'none';
 }
 
+// Activa o desactiva el estado de carga del botón.
 function setLoading(btn, loading) {
   btn.disabled = loading;
   btn.textContent = loading ? 'Cargando…' : btn.dataset.texto;
 }
 
+// Muestra u oculta la contraseña.
 function togglePassword(inputId, btn) {
   const input = document.getElementById(inputId);
   const show  = input.type === 'password';
-  input.type  = show ? 'text' : 'password';
+
+  input.type = show ? 'text' : 'password';
+
   btn.innerHTML = show
     ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
     : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
 }
 
+// Guarda el texto original de los botones.
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.btn-auth').forEach(btn => {
     btn.dataset.texto = btn.textContent;
   });
 });
 
-// ── Sesión ──────────────────────────────────────────────────
+// Aquí redirige
 function guardarSesionYRedirigir(data) {
   localStorage.setItem('token',   data.token);
   localStorage.setItem('usuario', JSON.stringify(data.usuario));
-  window.location.replace('../PanPri/panpri.html');
+  window.location.replace('PanPri/panpri.html');
 }
 
 function mensajePorTipo(tipo, mensajeBackend) {
@@ -55,7 +63,7 @@ function mensajePorTipo(tipo, mensajeBackend) {
   return mensajes[tipo] || mensajeBackend || 'La conexión falló, intenta de nuevo.';
 }
 
-// ── Login ────────────────────────────────────────────────────
+//Login y registro y manejo de sesión con email/password y Google son manejados aquí
 async function loginEmail() {
   ocultarError();
   const email    = document.getElementById('email')?.value.trim();
@@ -78,7 +86,7 @@ async function loginEmail() {
   finally   { setLoading(btn, false); }
 }
 
-// ── Registro ─────────────────────────────────────────────────
+
 async function registrar() {
   ocultarError();
   const nombre    = document.getElementById('nombre')?.value.trim();
@@ -105,7 +113,6 @@ async function registrar() {
   finally   { setLoading(btn, false); }
 }
 
-// ── Google ───────────────────────────────────────────────────
 async function handleGoogleResponse(response) {
   try {
     const res  = await fetch(AUTH_API.google, {
@@ -126,9 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ── Cerrar sesión ─────────────────────────────────────────────
+//Cerrar sesión 
 function cerrarSesion() {
   localStorage.removeItem('token');
   localStorage.removeItem('usuario');
-  window.location.replace('../index.html');
+  window.location.replace('index.html');
 }

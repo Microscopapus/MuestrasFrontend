@@ -1,9 +1,4 @@
-// ─────────────────────────────────────────────────────────────
-//  favoritos.js — Gestión de favoritos y su modal
-//  Depende de: state.js, catalogo.js
-// ─────────────────────────────────────────────────────────────
-
-// ── Carga inicial ─────────────────────────────────────────────
+//Carga inicial
 async function cargarFavoritos() {
   try {
     const res  = await fetch(`${API.obtenerFavoritos}?page=1&size=100`, { method: 'GET', headers: authHeaders() });
@@ -13,7 +8,7 @@ async function cargarFavoritos() {
   } catch { favoritos = []; }
 }
 
-// ── Estado ────────────────────────────────────────────────────
+//Estado
 function esFavorito(id) {
   return favoritos.includes(id);
 }
@@ -24,7 +19,7 @@ function actualizarEstrellas() {
   });
 }
 
-// ── Agregar ───────────────────────────────────────────────────
+//agregar
 async function agregarFavorito(id, e) {
   if (e) e.stopPropagation();
   if (esFavorito(id)) return;
@@ -41,7 +36,7 @@ async function agregarFavorito(id, e) {
   } catch { mostrarToast('Error al agregar favorito'); }
 }
 
-// ── Eliminar ──────────────────────────────────────────────────
+//Eliminar
 async function eliminarFavoritoById(id, e) {
   if (e) e.stopPropagation();
   if (!esFavorito(id)) return;
@@ -63,7 +58,7 @@ function toggleFavorito(id, e) {
   esFavorito(id) ? eliminarFavoritoById(id, e) : agregarFavorito(id, e);
 }
 
-// ── Modal favoritos ───────────────────────────────────────────
+//POP-UP favoritos
 function abrirFavoritos() {
   const searchEl = document.getElementById('fav-search');
   if (searchEl) searchEl.value = '';
@@ -102,6 +97,7 @@ function renderFavLista(filtro = '') {
   `).join('');
 }
 
+//Para eliminar favorito desde el panel de favoritos sin tener que ir al detalle de la muestra
 async function quitarFavDesdePanel(id) {
   try {
     const res  = await fetch(API.eliminarFavorito, {

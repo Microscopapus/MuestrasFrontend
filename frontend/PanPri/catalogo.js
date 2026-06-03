@@ -1,22 +1,17 @@
-// ─────────────────────────────────────────────────────────────
-//  catalogo.js — Carga de muestras, grid, búsqueda, filtros
-//  Depende de: state.js
-// ─────────────────────────────────────────────────────────────
-
 let _filtroTimer = null;
 
-// ── Cargar catálogo completo ──────────────────────────────────
+//Cargar catálogo completo
 async function cargarMuestras() {
   mostrarPantalla('pantalla-cargando');
   usuarioActual = getUserIdDesdeToken();
 
-  // Nombre del usuario en navbar
+  // Nombre del usuario en toolbar
   try {
     const u = JSON.parse(localStorage.getItem('usuario') || '{}');
     const nombre = u.nombre || u.name || u.Name || u.Nombre || '';
     const el = document.getElementById('nav-usuario-nombre');
     if (el && nombre) el.textContent = `Bienvenido, ${nombre}`;
-  } catch { /* silencioso */ }
+  } catch { }
 
   try {
     const res  = await fetch(`${API.muestras}?page=1&size=100`, { headers: authHeaders() });
@@ -48,7 +43,7 @@ async function cargarCategorias() {
   } catch { categorias = []; }
 }
 
-// ── Mapeo de respuesta del backend ────────────────────────────
+//Mapeo de respuesta del backend
 function mapearMuestras(raw) {
   return raw.map(m => {
     const catsRaw = m.categorias ?? m.Categorias ?? m.categoria ?? m.Categoria ?? [];
@@ -81,7 +76,7 @@ function mapearMuestras(raw) {
   });
 }
 
-// ── Grid de cards ─────────────────────────────────────────────
+// Grilla de muestras y selección de muestra para detalle
 function buildGrid(lista = muestras) {
   const grid    = document.getElementById('menu-grid');
   const countEl = document.getElementById('count-num');
@@ -136,7 +131,7 @@ function buildGrid(lista = muestras) {
   });
 }
 
-// ── Seleccionar muestra para ver detalle ──────────────────────
+//Seleccionar muestra para ver detalle
 function seleccionar(id) {
   const m = muestras.find(x => x.id === id);
   if (!m) return;
@@ -176,7 +171,7 @@ function seleccionar(id) {
   document.querySelector('.btn-eliminar').style.display = tienePermiso ? '' : 'none';
 }
 
-// ── Búsqueda por nombre ───────────────────────────────────────
+//Búsqueda por nombre
 function filtrarPorNombre(valor) {
   if (filtroChips.length) return; // chips tienen prioridad
   const q    = valor.toLowerCase().trim();
@@ -184,7 +179,7 @@ function filtrarPorNombre(valor) {
   buildGrid(lista);
 }
 
-// ── Filtro por categoría (chips) ──────────────────────────────
+//creacion de chips de filtro por categoría
 function onCatFiltroInput(valor) {
   clearTimeout(_filtroTimer);
   _filtroTimer = setTimeout(() => _mostrarSugerenciasFiltro(valor), 200);
@@ -255,7 +250,7 @@ async function _ejecutarFiltro() {
   } catch { buildGrid([]); }
 }
 
-// ── Autocomplete de categoría en modales ──────────────────────
+//Autocompletas categoría en modales
 function sugerirCat(prefijo) {
   const input = document.getElementById(`${prefijo}-cat-texto`);
   const lista = document.getElementById(`${prefijo}-cat-lista`);
@@ -286,5 +281,5 @@ function seleccionarCat(prefijo, id, nombre) {
   else editarCatId = id;
 }
 
-// ── Init ──────────────────────────────────────────────────────
+//inicializar las muestras
 cargarMuestras();

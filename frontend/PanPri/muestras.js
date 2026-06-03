@@ -1,9 +1,4 @@
-// ─────────────────────────────────────────────────────────────
-//  muestras.js — CRUD: crear, editar, eliminar muestras
-//  Depende de: state.js, catalogo.js
-// ─────────────────────────────────────────────────────────────
-
-// ── CREAR ─────────────────────────────────────────────────────
+//Crear muestra
 function abrirModalCrear() {
   document.getElementById('crear-nombre').value    = '';
   document.getElementById('crear-desc').value      = '';
@@ -105,7 +100,7 @@ async function subirMuestra() {
   await cargarMuestras();
 }
 
-// ── EDITAR ────────────────────────────────────────────────────
+//Editar
 function abrirModalEditar() {
   if (!muestraActual) return;
   if (!esMiMuestra(muestraActual)) { mostrarToast('No tienes permiso para editar esta muestra'); return; }
@@ -152,7 +147,7 @@ async function editarMuestra() {
   }
 }
 
-// ── ELIMINAR ──────────────────────────────────────────────────
+//Eliminar
 function confirmarEliminar() {
   if (!muestraActual) return;
   if (!esMiMuestra(muestraActual)) { mostrarToast('No tienes permiso para eliminar esta muestra'); return; }
@@ -185,7 +180,7 @@ async function eliminarMuestra() {
   }
 }
 
-// ── Init: preparar campo de imagen inicial ────────────────────
+//Preparar campo de imagen inicial
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('imagenes-container');
   if (!container) return;

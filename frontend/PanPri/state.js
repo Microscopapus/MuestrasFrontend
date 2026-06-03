@@ -28,7 +28,7 @@ let crearCatId    = null;
 let editarCatId   = null;
 let filtroChips   = [];
 
-// ── Auth utils ────────────────────────────────────────────────
+//Vlidaciones con el backend
 function getToken() {
   return localStorage.getItem('token') || '';
 }
@@ -59,7 +59,7 @@ function esMiMuestra(muestra) {
   return String(dueno) === String(usuarioActual);
 }
 
-// ── Pantallas ─────────────────────────────────────────────────
+//Pantallas
 function mostrarPantalla(id) {
   ['pantalla-cargando', 'pantalla-error', 'pantalla-contenido'].forEach(p => {
     document.getElementById(p)?.classList.remove('activo');
@@ -67,7 +67,7 @@ function mostrarPantalla(id) {
   document.getElementById(id)?.classList.add('activo');
 }
 
-// ── Modales ───────────────────────────────────────────────────
+//Modales
 function abrirModal(id) {
   document.getElementById(id)?.classList.add('activo');
 }
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// ── Toast ─────────────────────────────────────────────────────
+//Mnesajes
 let _toastTimer;
 function mostrarToast(msg) {
   let t = document.getElementById('_toast');
