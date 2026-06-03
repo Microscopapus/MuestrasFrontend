@@ -64,8 +64,6 @@ img { display: block; max-width: 100%; }
   padding: 10px 20px;
   font-size: .875rem;
 }
-.btn:hover { opacity: .88; transform: translateY(-1px); }
-.btn:active { transform: translateY(0); }
 
 .btn-primary {
   background: var(--primary);
