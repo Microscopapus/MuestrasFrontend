@@ -10,16 +10,10 @@
 
 <div class="auth-wrap">
 
-  <!-- IMAGEN IZQUIERDA -->
-  <div class="auth-img">
-    <img src="../Assets/imglog.png" alt="Microscopio">
-    <div class="auth-img-overlay">
-
-  <!-- PANEL DERECHO -->
-  <div class="auth-panel">
+  <!-- PANEL IZQUIERDO (form) — espejo del register que tiene el form a la izquierda -->
+  <div class="auth-panel" style="border-left:none; border-right:1px solid var(--border);">
     <div class="auth-card">
 
-      <!-- LOGO — coloca tu imagen aquí -->
       <div class="auth-logo">
         <img src="../Assets/imglogo.png" alt="Zoom Explorer">
       </div>
@@ -57,6 +51,18 @@
 
       <p class="auth-link">¿No tienes cuenta? <a href="register.html">Crear cuenta</a></p>
 
+    </div>
+  </div>
+
+  <!-- IMAGEN DERECHA -->
+  <div class="auth-img">
+    <img src="../Assets/imglog.png" alt="Microscopio">
+    <div class="auth-img-overlay">
+      <span class="auth-img-badge">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+        Zoom Explorer
+      </span>
+      <p class="auth-img-text">Explora el mundo microscópico con herramientas diseñadas para la comunidad científica.</p>
     </div>
   </div>
 
