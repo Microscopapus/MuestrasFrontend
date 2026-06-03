@@ -1,8 +1,3 @@
-// ─────────────────────────────────────────────────────────────
-//  state.js — Estado global, API, auth utils, UI compartida
-//  Debe cargarse PRIMERO en el HTML
-// ─────────────────────────────────────────────────────────────
-
 // ── Endpoints ────────────────────────────────────────────────
 const API = {
   muestras:          'https://microscopiobackend-production.up.railway.app/api/muestras/obtener_muestras',
@@ -27,6 +22,21 @@ let usuarioActual = null;
 let crearCatId    = null;
 let editarCatId   = null;
 let filtroChips   = [];
+
+// Al cargar, verifica sesión y bloquea el "atrás"
+(function() {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.replace('../CHECK-IN/index.html');
+    return;
+  }
+  // Reemplaza la entrada actual en el historial para que "atrás" no regrese a la presentación
+  history.replaceState(null, '', window.location.href);
+  // Si alguien intenta navegar hacia atrás, lo devuelve aquí mismo
+  window.addEventListener('popstate', function() {
+    history.pushState(null, '', window.location.href);
+  });
+})();
 
 //Vlidaciones con el backend
 function getToken() {
