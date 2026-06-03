@@ -10,18 +10,20 @@
 
 <div class="auth-wrap">
 
-  <!-- PANEL IZQUIERDO (form) — espejo del register que tiene el form a la izquierda -->
-  <div class="auth-panel" style="border-left:none; border-right:1px solid var(--border);">
+  <!-- ── FORM (izquierda en desktop, único en móvil) ── -->
+  <div class="auth-panel">
     <div class="auth-card">
 
       <div class="auth-logo">
         <img src="../Assets/imglogo.png" alt="Zoom Explorer">
       </div>
 
-      <h1 class="auth-title">Iniciar Sesión</h1>
-      <p class="auth-sub">Accede a tu cuenta para continuar</p>
+      <div class="auth-heading">
+        <h1 class="auth-title">Bienvenido <em>de vuelta</em></h1>
+        <p class="auth-sub">Accede a tu cuenta para continuar explorando</p>
+      </div>
 
-      <div class="auth-error" id="auth-error" style="display:none">
+      <div class="auth-error" id="auth-error">
         <span id="auth-error-msg"></span>
       </div>
 
@@ -43,9 +45,10 @@
         </div>
 
         <button class="btn-auth" onclick="loginEmail()">Iniciar Sesión</button>
+
       </div>
 
-      <div class="separador"><span>o</span></div>
+      <div class="separador"><span>o continúa con</span></div>
 
       <div id="btn-google-container"></div>
 
@@ -54,15 +57,16 @@
     </div>
   </div>
 
-  <!-- IMAGEN DERECHA -->
+  <!-- ── IMAGEN (derecha en desktop, oculta en móvil) ── -->
   <div class="auth-img">
     <img src="../Assets/imglog.png" alt="Microscopio">
     <div class="auth-img-overlay">
       <span class="auth-img-badge">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
         Zoom Explorer
       </span>
-      <p class="auth-img-text">Explora el mundo microscópico con herramientas diseñadas para la comunidad científica.</p>
+      <p class="auth-img-title">Descubre lo invisible</p>
+      <p class="auth-img-text">Herramientas diseñadas para la comunidad científica. Explora, analiza y comparte.</p>
     </div>
   </div>
 

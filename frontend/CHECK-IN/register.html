@@ -10,19 +10,33 @@
 
 <div class="auth-wrap">
 
-  <!-- PANEL IZQUIERDO -->
-  <div class="auth-panel" style="border-left:none; border-right:1px solid var(--border);">
+  <!-- ── IMAGEN (izquierda en desktop, oculta en móvil) ── -->
+  <div class="auth-img">
+    <img src="../Assets/imgreg.png" alt="Laboratorio">
+    <div class="auth-img-overlay">
+      <span class="auth-img-badge">
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
+        Comunidad científica
+      </span>
+      <p class="auth-img-title">Únete a la exploración</p>
+      <p class="auth-img-text">Miles de investigadores ya usan Zoom Explorer para documentar y compartir sus hallazgos.</p>
+    </div>
+  </div>
+
+  <!-- ── FORM (derecha en desktop, único en móvil) ── -->
+  <div class="auth-panel">
     <div class="auth-card">
 
-      <!-- LOGO — coloca tu imagen aquí -->
       <div class="auth-logo">
         <img src="../Assets/imglogo.png" alt="Zoom Explorer">
       </div>
 
-      <h1 class="auth-title">Crear Cuenta</h1>
-      <p class="auth-sub">Únete a la comunidad científica</p>
+      <div class="auth-heading">
+        <h1 class="auth-title">Crea tu <em>cuenta</em></h1>
+        <p class="auth-sub">Únete a la comunidad científica de Zoom Explorer</p>
+      </div>
 
-      <div class="auth-error" id="auth-error" style="display:none">
+      <div class="auth-error" id="auth-error">
         <span id="auth-error-msg"></span>
       </div>
 
@@ -59,20 +73,16 @@
         </div>
 
         <button class="btn-auth" onclick="registrar()">Crear Cuenta</button>
+
       </div>
 
-      <div class="separador"><span>o</span></div>
+      <div class="separador"><span>o continúa con</span></div>
 
       <div id="btn-google-container"></div>
 
-      <p class="auth-link">¿Ya tienes cuenta? <a href="index.html">Iniciar sesión</a></p>
+      <p class="auth-link">¿Ya tienes cuenta? <a href="login.html">Iniciar sesión</a></p>
 
     </div>
-  </div>
-
-  <!-- IMAGEN DERECHA -->
-  <div class="auth-img">
-    <img src="../Assets/imgreg.png" alt="Laboratorio">
   </div>
 
 </div>
