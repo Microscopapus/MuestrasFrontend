@@ -40,8 +40,8 @@ async function editarMuestra() {
     cerrarModal('modal-editar');
     await cargarMuestras();
     seleccionar(idActual);
-  } catch (err) {
-    mostrarToast('Error al editar: ' + err.message);
+  } catch (error) {
+    mostrarToast('Error al editar: ' + error.message);
   }
 }
 
@@ -73,8 +73,10 @@ async function eliminarMuestra() {
     document.getElementById('detalle-vacio').style.display   = 'flex';
     favoritos = favoritos.filter(f => f !== idEliminar);
     await cargarMuestras();
-  } catch (err) {
-    mostrarToast('Error al eliminar: ' + err.message);
+  } catch (error
+
+  ) {
+    mostrarToast('Error al eliminar: ' + error.message);
   }
 }
 
