@@ -8,6 +8,42 @@ const GOOGLE_CLIENT_ID = '30335745792-2elqg0tt0s9iq9u0hd6flgbstldbjrg1.apps.goog
 
 // ── Funciones de autenticación ──────────────────────────────
 
+// Al cargar, verifica sesión y bloquea el "atrás"
+(function () {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    window.location.replace('Index.html');
+    return;
+  }
+
+  history.pushState(null, '', location.href);
+
+  window.addEventListener('popstate', function () {
+    history.pushState(null, '', location.href);
+  });
+})();
+
+//Vlidaciones con el backend
+function getToken() {
+  return localStorage.getItem('token') || '';
+}
+
+function authHeaders(json = false) {
+  const h = { 'Authorization': `Bearer ${getToken()}` };
+  if (json) h['Content-Type'] = 'application/json';
+  return h;
+}
+
+function getUserIdDesdeToken() {
+  try {
+    const payload = getToken().split('.')[1];
+    const decoded = JSON.parse(atob(payload));
+    return decoded.id_usuario || decoded.sub || decoded.id || decoded.userId
+        || decoded.nameid   || decoded.Id  || null;
+  } catch { return null; }
+}
+
 // Muestra un mensaje de error.
 function mostrarError(msg) {
   const el = document.getElementById('auth-error');
@@ -21,13 +57,13 @@ function ocultarError() {
 }
 
 // Activa o desactiva el estado de carga del botón.
-function setLoading(btn, loading) {
+function cargar(btn, loading) {
   btn.disabled = loading;
   btn.textContent = loading ? 'Cargando…' : btn.dataset.texto;
 }
 
 // Muestra u oculta la contraseña.
-function togglePassword(inputId, btn) {
+function contra(inputId, btn) {
   const input = document.getElementById(inputId);
   const show  = input.type === 'password';
 
@@ -86,7 +122,7 @@ async function loginEmail() {
   finally   { setLoading(btn, false); }
 }
 
-
+//funcion para registrar nuevo usuario
 async function registrar() {
   ocultarError();
   const nombre    = document.getElementById('nombre')?.value.trim();
@@ -100,7 +136,7 @@ async function registrar() {
   if (password.length < 8)    { mostrarError('La contraseña debe tener al menos 8 caracteres.'); return; }
   if (password !== password2) { mostrarError('Las contraseñas no coinciden.'); return; }
 
-  setLoading(btn, true);
+  cargar(btn, true);
   try {
     const res  = await fetch(AUTH_API.register, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -110,9 +146,9 @@ async function registrar() {
     if (!json.success) { mostrarError(mensajePorTipo(json.tipo, json.mensaje)); return; }
     guardarSesionYRedirigir(json.data);
   } catch { mostrarError('La conexión falló, intenta de nuevo.'); }
-  finally   { setLoading(btn, false); }
+  finally   { cargar(btn, false); }
 }
-
+//regitrarse con google
 async function handleGoogleResponse(response) {
   try {
     const res  = await fetch(AUTH_API.google, {
