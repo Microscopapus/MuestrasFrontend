@@ -88,3 +88,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (items.length) items.forEach(_prepararCampoImagen);
   else container.appendChild(crearBloqueImagen());
 });
+function esMiMuestra(muestra) {
+  if (!usuarioActual) return false;
+  let dueno = muestra.userId;
+  if ((dueno === null || dueno === undefined) && muestra._raw) {
+    const raw = muestra._raw;
+    dueno = raw.userId ?? raw.idUsuario ?? raw.creadorId ?? raw.usuarioId
+          ?? raw.id_usuario ?? raw.IdUsuario ?? raw.CreadorId;
+  }
+  return String(dueno) === String(usuarioActual);
+}
