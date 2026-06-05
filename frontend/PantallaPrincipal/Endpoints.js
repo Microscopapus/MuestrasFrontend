@@ -1,4 +1,3 @@
-// ── Endpoints ────────────────────────────────────────────────
 const API = {
   muestras:          'https://microscopiobackend-production.up.railway.app/api/muestras/obtener_muestras',
   obtener:           'https://microscopiobackend-production.up.railway.app/api/muestras/obtener_muestra',

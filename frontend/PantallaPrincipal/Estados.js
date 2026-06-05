@@ -1,5 +1,3 @@
-
-
 // ── Estado compartido ─────────────────────────────────────────
 let muestras      = [];
 let categorias    = [];
