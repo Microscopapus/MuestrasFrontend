@@ -9,8 +9,7 @@ function toolbarUsuario() {
 }
 
 // ── Cargar catálogo completo ───────────────────────────────────
-// FIX: toda la lógica async estaba partida fuera de la función.
-// Se unifica en un solo bloque async correcto.
+
 async function cargarMuestras() {
   mostrarPantalla('pantalla-cargando');
   usuarioActual = getUserIdDesdeToken();
