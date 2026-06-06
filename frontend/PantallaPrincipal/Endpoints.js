@@ -1,7 +1,7 @@
 (function () {
   const token = localStorage.getItem('token');
   if (!token) {
-    window.location.replace('../Auth/Login.html');
+    window.location.replace('PantallaPrincipal.html');
     return;
   }
 
