@@ -31,3 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+function mostrarToast(msg) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.classList.add('visible');
+  setTimeout(() => toast.classList.remove('visible'), 2500);
+}
