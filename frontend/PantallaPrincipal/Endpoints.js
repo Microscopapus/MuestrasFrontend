@@ -2,6 +2,13 @@
     window.addEventListener('load', () => {
     window.history.pushState(null, null, window.location.href);
     window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
   },false);
 })();
 
