@@ -6,25 +6,8 @@ const AUTH_API = {
 
 const GOOGLE_CLIENT_ID = '30335745792-2elqg0tt0s9iq9u0hd6flgbstldbjrg1.apps.googleusercontent.com';
 
-// ── Funciones de autenticación ──────────────────────────────
+// ── Utilidades de token ──────────────────────────────────────
 
-// Al cargar, verifica sesión y bloquea el "atrás"
-(function () {
-  const token = localStorage.getItem('token');
-
-  if (!token) {
-    window.location.replace('Index.html');
-    return;
-  }
-
-  history.pushState(null, '', location.href);
-
-  window.addEventListener('popstate', function () {
-    history.pushState(null, '', location.href);
-  });
-})();
-
-//Vlidaciones con el backend
 function getToken() {
   return localStorage.getItem('token') || '';
 }
@@ -44,26 +27,26 @@ function getUserIdDesdeToken() {
   } catch { return null; }
 }
 
-// Muestra un mensaje de error.
+// ── UI helpers ───────────────────────────────────────────────
+
 function mostrarError(msg) {
   const el = document.getElementById('auth-error');
   document.getElementById('auth-error-msg').textContent = msg;
   el.style.display = 'block';
 }
 
-// Oculta el mensaje de error.
 function ocultarError() {
   document.getElementById('auth-error').style.display = 'none';
 }
 
-// Activa o desactiva el estado de carga del botón.
+// BUG 3 FIX: se llamaba setLoading() pero la función se llama cargar()
 function cargar(btn, loading) {
   btn.disabled = loading;
   btn.textContent = loading ? 'Cargando…' : btn.dataset.texto;
 }
 
-// Muestra u oculta la contraseña.
-function contra(inputId, btn) {
+// BUG 2 FIX: el HTML llama togglePassword() pero la función se llamaba contra()
+function togglePassword(inputId, btn) {
   const input = document.getElementById(inputId);
   const show  = input.type === 'password';
 
@@ -74,18 +57,18 @@ function contra(inputId, btn) {
     : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
 }
 
-// Guarda el texto original de los botones.
+// Guarda el texto original de los botones al cargar el DOM
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.btn-auth').forEach(btn => {
     btn.dataset.texto = btn.textContent;
   });
 });
 
-// Aquí redirige
+// BUG 4 FIX: ruta corregida a PantallaPrincipal/PantallaPrincipal.html
 function guardarSesionYRedirigir(data) {
   localStorage.setItem('token',   data.token);
   localStorage.setItem('usuario', JSON.stringify(data.usuario));
-  window.location.replace('../PanPri/panpri.html');
+  window.location.replace('../PantallaPrincipal/PantallaPrincipal.html');
 }
 
 function mensajePorTipo(tipo, mensajeBackend) {
@@ -99,7 +82,8 @@ function mensajePorTipo(tipo, mensajeBackend) {
   return mensajes[tipo] || mensajeBackend || 'La conexión falló, intenta de nuevo.';
 }
 
-//Login y registro y manejo de sesión con email/password y Google son manejados aquí
+// ── Login con email ──────────────────────────────────────────
+
 async function loginEmail() {
   ocultarError();
   const email    = document.getElementById('email')?.value.trim();
@@ -109,7 +93,8 @@ async function loginEmail() {
   if (!email || !password) { mostrarError('Por favor llena todos los campos.'); return; }
   if (!email.includes('@')) { mostrarError('Escribe un correo válido.'); return; }
 
-  setLoading(btn, true);
+  // BUG 3 FIX: era setLoading(), ahora usa cargar()
+  cargar(btn, true);
   try {
     const res  = await fetch(AUTH_API.login, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -119,10 +104,11 @@ async function loginEmail() {
     if (!json.success) { mostrarError(json.mensaje || 'Correo o contraseña incorrectos.'); return; }
     guardarSesionYRedirigir(json.data);
   } catch { mostrarError('La conexión falló, intenta de nuevo.'); }
-  finally   { setLoading(btn, false); }
+  finally   { cargar(btn, false); }
 }
 
-//funcion para registrar nuevo usuario
+// ── Registro con email ───────────────────────────────────────
+
 async function registrar() {
   ocultarError();
   const nombre    = document.getElementById('nombre')?.value.trim();
@@ -148,7 +134,9 @@ async function registrar() {
   } catch { mostrarError('La conexión falló, intenta de nuevo.'); }
   finally   { cargar(btn, false); }
 }
-//regitrarse con google
+
+// ── Login con Google ─────────────────────────────────────────
+
 async function handleGoogleResponse(response) {
   try {
     const res  = await fetch(AUTH_API.google, {
@@ -169,9 +157,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-//Cerrar sesión 
+// ── Cerrar sesión ────────────────────────────────────────────
+
 function cerrarSesion() {
   localStorage.removeItem('token');
   localStorage.removeItem('usuario');
   window.location.replace('../index.html');
 }
+
+// BUG 1 FIX: el IIFE que bloqueaba login/register fue eliminado de aquí.
+// Pega este bloque en PantallaPrincipal.js (o al inicio del script de esa página)
+// para proteger la ruta autenticada:
+//
+// (function () {
+//   const token = localStorage.getItem('token');
+//   if (!token) {
+//     window.location.replace('../Auth/Login.html');
+//     return;
+//   }
+//   history.pushState(null, '', location.href);
+//   window.addEventListener('popstate', function () {
+//     history.pushState(null, '', location.href);
+//   });
+// })();
