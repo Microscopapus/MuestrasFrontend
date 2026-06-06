@@ -1,4 +1,4 @@
-//Crear muestra
+// ── Crear muestra ─────────────────────────────────────────────
 function abrirModalCrear() {
   document.getElementById('crear-nombre').value    = '';
   document.getElementById('crear-desc').value      = '';
@@ -14,16 +14,17 @@ function abrirModalCrear() {
 
 function crearBloqueImagen() {
   const bloque = document.createElement('div');
-  bloque.className = 'imagen-item';
+  // FIX: clase corregida de 'imagen-item' a 'item-imagen' para coincidir con MostrarMuestras.css
+  bloque.className = 'item-imagen';
   bloque.innerHTML = `
-    <div class="imagen-preview">🔍</div>
-    <div class="imagen-item-controls">
+    <div class="preview-imagen">🔍</div>
+    <div class="controles-imagen">
       <input type="number" class="crear-objetivo" placeholder="Objetivo" min="0">
-      <label class="file-label">
+      <label class="etiqueta-archivo">
         <span>Seleccionar imagen</span>
         <input type="file" class="crear-img" accept="image/*">
       </label>
-      <button type="button" class="btn-remove-img">✕ Quitar imagen</button>
+      <button type="button" class="btn-quitar-img">✕ Quitar imagen</button>
     </div>
   `;
   _prepararCampoImagen(bloque);
@@ -31,9 +32,10 @@ function crearBloqueImagen() {
 }
 
 function _prepararCampoImagen(bloque) {
+  // FIX: selectores actualizados para coincidir con las nuevas clases
   const fileInput = bloque.querySelector('.crear-img');
-  const preview   = bloque.querySelector('.imagen-preview');
-  const remover   = bloque.querySelector('.btn-remove-img');
+  const preview   = bloque.querySelector('.preview-imagen');
+  const remover   = bloque.querySelector('.btn-quitar-img');
 
   fileInput?.addEventListener('change', function () {
     const archivo = this.files[0];
@@ -44,7 +46,7 @@ function _prepararCampoImagen(bloque) {
     const contenedor = document.getElementById('imagenes-container');
     if (!contenedor) return;
     bloque.remove();
-    if (!contenedor.querySelector('.imagen-item')) contenedor.appendChild(crearBloqueImagen());
+    if (!contenedor.querySelector('.item-imagen')) contenedor.appendChild(crearBloqueImagen());
   });
 }
 
@@ -53,6 +55,17 @@ function agregarCampoImagen() {
   if (container) container.appendChild(crearBloqueImagen());
 }
 
+// ── Preparar campo de imagen al cargar ────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.getElementById('imagenes-container');
+  if (!container) return;
+  // FIX: selector actualizado
+  const items = container.querySelectorAll('.item-imagen');
+  if (items.length) items.forEach(_prepararCampoImagen);
+  else container.appendChild(crearBloqueImagen());
+});
+
+// ── Subir muestra ─────────────────────────────────────────────
 async function subirMuestra() {
   const nombre = document.getElementById('crear-nombre').value.trim();
   const desc   = document.getElementById('crear-desc').value.trim();
@@ -77,7 +90,8 @@ async function subirMuestra() {
   }
 
   // Subir imágenes asociadas
-  for (const bloque of document.querySelectorAll('.imagen-item')) {
+  // FIX: selector actualizado
+  for (const bloque of document.querySelectorAll('.item-imagen')) {
     const objetivo = parseInt(bloque.querySelector('.crear-objetivo').value, 10);
     const archivo  = bloque.querySelector('.crear-img').files[0];
     if (!archivo) continue;
@@ -99,4 +113,3 @@ async function subirMuestra() {
   cerrarModal('modal-crear');
   await cargarMuestras();
 }
-

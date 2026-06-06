@@ -1,9 +1,53 @@
-//Cargar catálogo completo
+// ── Nombre del usuario en toolbar ─────────────────────────────
+function toolbarUsuario() {
+  try {
+    const u      = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const nombre = u.nombre || u.name || u.Name || u.Nombre || '';
+    const el     = document.getElementById('nav-usuario-nombre');
+    if (el && nombre) el.textContent = `Bienvenido, ${nombre}`;
+  } catch { }
+}
+
+// ── Cargar catálogo completo ───────────────────────────────────
+// FIX: toda la lógica async estaba partida fuera de la función.
+// Se unifica en un solo bloque async correcto.
 async function cargarMuestras() {
   mostrarPantalla('pantalla-cargando');
   usuarioActual = getUserIdDesdeToken();
+  toolbarUsuario();
+
+  try {
+    const res  = await fetch(`${API.muestras}?page=1&size=100`, { headers: authHeaders() });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.mensaje);
+    muestras = mapearMuestras(json.data?.muestras || []);
+  } catch {
+    document.getElementById('error-msg').textContent = 'La conexión falló, intenta de nuevo.';
+    mostrarPantalla('pantalla-error');
+    return;
+  }
+
+  await Promise.all([cargarFavoritos(), cargarCategorias()]);
+  buildGrid();
+  mostrarPantalla('pantalla-contenido');
 }
-//Mapeo de respuesta del backend
+
+// ── Cargar categorías ──────────────────────────────────────────
+async function cargarCategorias() {
+  try {
+    const res  = await fetch(API.obtenerCategorias, { method: 'GET', headers: authHeaders() });
+    const json = await res.json();
+    const raw  = json.data?.categorias || json.data || json.categorias || [];
+    categorias = Array.isArray(raw)
+      ? raw.map(c => ({
+          id:     c.id   ?? c.Id   ?? c.idCategoria ?? c.IdCategoria ?? null,
+          nombre: c.nombre ?? c.name ?? c.Nombre    ?? '',
+        })).filter(c => c.id !== null && c.nombre !== '')
+      : [];
+  } catch { categorias = []; }
+}
+
+// ── Mapeo de respuesta del backend ─────────────────────────────
 function mapearMuestras(raw) {
   return raw.map(m => {
     const catsRaw = m.categorias ?? m.Categorias ?? m.categoria ?? m.Categoria ?? [];
@@ -36,7 +80,7 @@ function mapearMuestras(raw) {
   });
 }
 
-// Grilla de muestras y selección de muestra para detalle
+// ── Grilla de muestras ─────────────────────────────────────────
 function buildGrid(lista = muestras) {
   const grid    = document.getElementById('menu-grid');
   const countEl = document.getElementById('count-num');
@@ -91,7 +135,7 @@ function buildGrid(lista = muestras) {
   });
 }
 
-//Seleccionar muestra para ver detalle
+// ── Seleccionar muestra para ver detalle ───────────────────────
 function seleccionar(id) {
   const m = muestras.find(x => x.id === id);
   if (!m) return;
@@ -124,11 +168,12 @@ function seleccionar(id) {
   } else {
     badge.style.display = 'none';
   }
+
   // Mostrar/ocultar botones según permiso
   const tienePermiso = usuarioActual && esMiMuestra(m);
   document.querySelector('.btn-editar').style.display   = tienePermiso ? '' : 'none';
   document.querySelector('.btn-eliminar').style.display = tienePermiso ? '' : 'none';
 }
 
-//inicializar las muestras
+// ── Inicializar ────────────────────────────────────────────────
 cargarMuestras();

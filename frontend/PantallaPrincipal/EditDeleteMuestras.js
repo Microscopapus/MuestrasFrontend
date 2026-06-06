@@ -1,4 +1,16 @@
-//Editar
+// ── Permisos ───────────────────────────────────────────────────
+function esMiMuestra(muestra) {
+  if (!usuarioActual) return false;
+  let dueno = muestra.userId;
+  if ((dueno === null || dueno === undefined) && muestra._raw) {
+    const raw = muestra._raw;
+    dueno = raw.userId ?? raw.idUsuario ?? raw.creadorId ?? raw.usuarioId
+          ?? raw.id_usuario ?? raw.IdUsuario ?? raw.CreadorId;
+  }
+  return String(dueno) === String(usuarioActual);
+}
+
+// ── Editar ────────────────────────────────────────────────────
 function abrirModalEditar() {
   if (!muestraActual) return;
   if (!esMiMuestra(muestraActual)) { mostrarToast('No tienes permiso para editar esta muestra'); return; }
@@ -45,7 +57,7 @@ async function editarMuestra() {
   }
 }
 
-//Eliminar
+// ── Eliminar ──────────────────────────────────────────────────
 function confirmarEliminar() {
   if (!muestraActual) return;
   if (!esMiMuestra(muestraActual)) { mostrarToast('No tienes permiso para eliminar esta muestra'); return; }
@@ -73,28 +85,8 @@ async function eliminarMuestra() {
     document.getElementById('detalle-vacio').style.display   = 'flex';
     favoritos = favoritos.filter(f => f !== idEliminar);
     await cargarMuestras();
-  } catch (error
-
-  ) {
+  } catch (error) {
+    // FIX: paréntesis de cierre del catch faltaba, causaba SyntaxError
     mostrarToast('Error al eliminar: ' + error.message);
   }
-}
-
-//Preparar campo de imagen inicial
-document.addEventListener('DOMContentLoaded', () => {
-  const container = document.getElementById('imagenes-container');
-  if (!container) return;
-  const items = container.querySelectorAll('.imagen-item');
-  if (items.length) items.forEach(_prepararCampoImagen);
-  else container.appendChild(crearBloqueImagen());
-});
-function esMiMuestra(muestra) {
-  if (!usuarioActual) return false;
-  let dueno = muestra.userId;
-  if ((dueno === null || dueno === undefined) && muestra._raw) {
-    const raw = muestra._raw;
-    dueno = raw.userId ?? raw.idUsuario ?? raw.creadorId ?? raw.usuarioId
-          ?? raw.id_usuario ?? raw.IdUsuario ?? raw.CreadorId;
-  }
-  return String(dueno) === String(usuarioActual);
 }
