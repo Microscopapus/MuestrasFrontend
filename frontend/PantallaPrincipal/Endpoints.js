@@ -4,9 +4,12 @@
     window.location.replace('../Auth/Login.html');
     return;
   }
-  history.pushState(null, '', location.href);
+
+  // Bloqueo del botón atrás más agresivo
+  window.history.pushState(null, "", window.location.href);
   window.addEventListener('popstate', function () {
-    history.pushState(null, '', location.href);
+    window.history.pushState(null, "", window.location.href);
+    window.history.forward(); // Fuerza a avanzar si logró retroceder
   });
 })();
 
