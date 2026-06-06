@@ -1,15 +1,3 @@
-(function () {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    window.location.replace('../Auth/Login.html');
-    return;
-  }
-  history.pushState(null, '', location.href);
-  window.addEventListener('popstate', function () {
-    history.pushState(null, '', location.href);
-  });
-})();
-
 //Pantallas
 function mostrarPantalla(id) {
   ['pantalla-cargando', 'pantalla-error', 'pantalla-contenido'].forEach(p => {

@@ -14,7 +14,7 @@ function esFavorito(id) {
 }
 
 function actualizarEstrellas() {
- document.querySelectorAll('.estrella-tarjeta').forEach(btn => {
+    document.querySelectorAll('.estrella-tarjeta').forEach(btn => {
     btn.classList.toggle('favorito', esFavorito(Number(btn.dataset.id)));
   });
 }
