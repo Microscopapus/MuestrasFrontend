@@ -1,30 +1,17 @@
 let _filtroTimer = null;
 
-  // Nombre del usuario en toolbar
-  function toolbarUsuario() {
+// BUG 1 FIX: toolbarUsuario solo muestra el nombre — el fetch que estaba
+// pegado aquí adentro no pertenece a esta función, vive en ObtenerMuestras.js
+function toolbarUsuario() {
   try {
-    const u = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const u      = JSON.parse(localStorage.getItem('usuario') || '{}');
     const nombre = u.nombre || u.name || u.Name || u.Nombre || '';
-    const el = document.getElementById('nav-usuario-nombre');
+    const el     = document.getElementById('nav-usuario-nombre');
     if (el && nombre) el.textContent = `Bienvenido, ${nombre}`;
   } catch { }
-
-  try {
-    const res  = await fetch(`${API.muestras}?page=1&size=100`, { headers: authHeaders() });
-    const json = await res.json();
-    if (!json.success) throw new Error(json.mensaje);
-    muestras = mapearMuestras(json.data?.muestras || []);
-  } catch {
-    document.getElementById('error-msg').textContent = 'La conexión falló, intenta de nuevo.';
-    mostrarPantalla('pantalla-error');
-    return;
-  }
-
-  await Promise.all([cargarFavoritos(), cargarCategorias()]);
-  buildGrid();
-  mostrarPantalla('pantalla-contenido');
 }
 
+// BUG 2 FIX: le faltaba async
 async function cargarCategorias() {
   try {
     const res  = await fetch(API.obtenerCategorias, { method: 'GET', headers: authHeaders() });
@@ -32,22 +19,22 @@ async function cargarCategorias() {
     const raw  = json.data?.categorias || json.data || json.categorias || [];
     categorias = Array.isArray(raw)
       ? raw.map(c => ({
-          id:     c.id   ?? c.Id   ?? c.idCategoria ?? c.IdCategoria ?? null,
-          nombre: c.nombre ?? c.name ?? c.Nombre    ?? '',
+          id:     c.id     ?? c.Id     ?? c.idCategoria ?? c.IdCategoria ?? null,
+          nombre: c.nombre ?? c.name   ?? c.Nombre      ?? '',
         })).filter(c => c.id !== null && c.nombre !== '')
       : [];
   } catch { categorias = []; }
 }
 
-//Búsqueda por nombre
+// Búsqueda por nombre
 function filtrarPorNombre(valor) {
-  if (filtroChips.length) return; // chips tienen prioridad
-  const q    = valor.toLowerCase().trim();
+  if (filtroChips.length) return;
+  const q     = valor.toLowerCase().trim();
   const lista = q ? muestras.filter(m => m.nombre.toLowerCase().includes(q)) : muestras;
   buildGrid(lista);
 }
 
-//creacion de chips de filtro por categoría
+// Chips de filtro por categoría
 function onCatFiltroInput(valor) {
   clearTimeout(_filtroTimer);
   _filtroTimer = setTimeout(() => _mostrarSugerenciasFiltro(valor), 200);
@@ -71,7 +58,7 @@ function _mostrarSugerenciasFiltro(texto) {
   if (!coincidencias.length) { lista.innerHTML = ''; lista.classList.remove('visible'); return; }
 
   lista.innerHTML = coincidencias.map(c =>
-    `<div class="autocomplete-item"
+    `<div class="item-autocompletar"
           onmousedown="event.preventDefault()"
           onclick="agregarChipFiltro(${c.id}, '${c.nombre.replace(/'/g, "\\'")}')">
        ${c.nombre}
@@ -118,7 +105,7 @@ async function _ejecutarFiltro() {
   } catch { buildGrid([]); }
 }
 
-//Autocompletas categoría en modales
+// Autocomplete categoría en modales
 function sugerirCat(prefijo) {
   const input = document.getElementById(`${prefijo}-cat-texto`);
   const lista = document.getElementById(`${prefijo}-cat-lista`);
@@ -133,7 +120,7 @@ function sugerirCat(prefijo) {
   if (!coincidencias.length) { lista.innerHTML = ''; lista.classList.remove('visible'); return; }
 
   lista.innerHTML = coincidencias.map(c =>
-    `<div class="autocomplete-item"
+    `<div class="item-autocompletar"
           onmousedown="event.preventDefault()"
           onclick="seleccionarCat('${prefijo}', ${c.id}, '${c.nombre.replace(/'/g, "\\'")}')">
        ${c.nombre}
