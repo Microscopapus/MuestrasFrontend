@@ -1,7 +1,42 @@
-( function () { 
-window.location.hash="no-back-button";
-window.location.hash="Again-No-back-button";//esta linea es necesaria para chrome
-window.onhashchange=function(){window.location.hash="no-back-button";}
+( function () {
+    window.addEventListener('load', () => {
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+  },false);
 })();
 
 const API = {
