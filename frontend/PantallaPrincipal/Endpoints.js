@@ -1,16 +1,8 @@
-(function () {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    window.location.replace('Index.html');
-    return;
-  }
-
-  window.history.pushState(null, "", window.location.href);
-  window.addEventListener('popstate',
-   function () {
-    window.history.pushState(null, "", window.location.href);
-    window.history.forward(); // Fuerza a avanzar si logró retroceder
-  });
+( function () {
+    window.addEventListener('load', () => {
+    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, null, window.location.href);
+  },false);
 })();
 
 const API = {
