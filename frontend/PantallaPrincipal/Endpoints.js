@@ -1,13 +1,13 @@
 (function () {
   const token = localStorage.getItem('token');
   if (!token) {
-    window.location.replace('PantallaPrincipal.html');
+    window.location.replace('Index.html');
     return;
   }
 
-  // Bloqueo del botón atrás más agresivo
   window.history.pushState(null, "", window.location.href);
-  window.addEventListener('popstate', function () {
+  window.addEventListener('popstate',
+   function () {
     window.history.pushState(null, "", window.location.href);
     window.history.forward(); // Fuerza a avanzar si logró retroceder
   });
