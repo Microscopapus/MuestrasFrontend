@@ -17,7 +17,8 @@ async function cargarMuestras() {
   toolbarUsuario();
 
   try {
-    const res  = await fetch(`${API.muestras}?page=1&size=100`, { headers: authHeaders() });
+    // En ObtenerMuestras.js
+const res = await fetch(`${API.muestras}?page=1&size=20`, { headers: authHeaders() });
     const json = await res.json();
     if (!json.success) throw new Error(json.mensaje);
     muestras = mapearMuestras(json.data?.muestras || []);
@@ -88,18 +89,18 @@ function buildGrid(lista = muestras) {
   if (countEl) countEl.textContent = lista.length;
 
   if (!lista.length) {
-    grid.innerHTML = '<p class="grid-vacio">Sin resultados</p>';
+    grid.innerHTML = '<p class="grilla-vacia">Sin resultados</p>';
     return;
   }
 
   lista.forEach(m => {
     const card     = document.createElement('div');
-    card.className = 'menu-card';
+    card.className = 'tarjeta-muestra';        // ← corregido
     card.id        = 'card-' + m.id;
     card.onclick   = () => seleccionar(m.id);
 
     const star      = document.createElement('button');
-    star.className  = 'card-star' + (esFavorito(m.id) ? ' favorito' : '');
+    star.className  = 'estrella-tarjeta' + (esFavorito(m.id) ? ' favorito' : ''); // ← corregido
     star.innerHTML  = '★';
     star.dataset.id = m.id;
     star.onclick    = (e) => toggleFavorito(m.id, e);
@@ -109,24 +110,24 @@ function buildGrid(lista = muestras) {
       const img     = document.createElement('img');
       img.src       = m.imagen;
       img.alt       = m.nombre;
-      img.className = 'card-img';
+      img.className = 'img-tarjeta';           // ← corregido
       img.loading   = 'lazy';
       card.appendChild(img);
     } else {
       const ph       = document.createElement('div');
-      ph.className   = 'card-placeholder';
+      ph.className   = 'img-placeholder';      // ← corregido
       ph.textContent = '🔬';
       card.appendChild(ph);
     }
 
     const nombre       = document.createElement('div');
-    nombre.className   = 'card-nombre';
+    nombre.className   = 'nombre-tarjeta';     // ← corregido
     nombre.textContent = m.nombre.length > 13 ? m.nombre.slice(0, 12) + '…' : m.nombre;
     card.appendChild(nombre);
 
     if (m.categoria) {
       const cat       = document.createElement('div');
-      cat.className   = 'card-cat';
+      cat.className   = 'cat-tarjeta';         // ← corregido
       cat.textContent = m.categoria;
       card.appendChild(cat);
     }
@@ -141,7 +142,7 @@ function seleccionar(id) {
   if (!m) return;
   muestraActual = m;
 
-  document.querySelectorAll('.menu-card').forEach(c => c.classList.remove('activo'));
+  document.querySelectorAll('.tarjeta-muestra').forEach(c => c.classList.remove('activo'));
   document.getElementById('card-' + id)?.classList.add('activo');
 
   document.getElementById('detalle-vacio').style.display   = 'none';
