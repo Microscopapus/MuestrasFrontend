@@ -50,7 +50,7 @@ img { display: block; max-width: 100%; }
   font-size: .875rem;
 }
 .btn-primario { background: var(--primario); color: var(--bg-negro); }
-.btn-borde    { background: transparent; border: 1px solid var(--primario); color: var(--primario); }
+.btn-borde    { background: transparent; border: 1px solid var(--primario); color: var(--primario); margin-top:8px;width:100%;justify-content:center;}
 .btn-chico    { padding: 7px 14px; font-size: .8rem; border-radius: 10px; }
 .btn-grande   { padding: 16px 40px; font-size: 1.1rem; border-radius: 16px; font-weight: 700; }
 
