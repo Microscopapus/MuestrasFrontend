@@ -26,12 +26,13 @@ body {
   overflow-x: hidden;
 }
 
-/* ── Layout ── */
+/* ── Layout raíz ── */
 .auth-wrap {
   width: 100%;
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* Desktop grande: imagen + form en proporción 5:7 para que el form respire más */
+  grid-template-columns: 5fr 7fr;
 }
 
 /* ── Panel imagen ── */
@@ -50,12 +51,12 @@ body {
 .auth-img-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(8,30,30,0.70) 0%, rgba(8,30,30,0.15) 60%, transparent 100%);
+  background: linear-gradient(to top, rgba(8,30,30,0.72) 0%, rgba(8,30,30,0.15) 60%, transparent 100%);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: clamp(20px, 3.5vw, 40px);
-  gap: 10px;
+  padding: clamp(24px, 3.5vw, 48px);
+  gap: 12px;
 }
 .auth-img-badge {
   display: inline-flex;
@@ -76,16 +77,16 @@ body {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-style: italic;
   font-weight: 600;
-  font-size: clamp(1.3rem, 2.5vw, 2rem);
+  font-size: clamp(1.5rem, 2.8vw, 2.4rem);
   color: #fff;
   line-height: 1.2;
-  max-width: 260px;
+  max-width: 300px;
 }
 .auth-img-text {
-  font-size: 0.83rem;
-  color: rgba(255,255,255,0.55);
+  font-size: clamp(0.8rem, 1.2vw, 0.92rem);
+  color: rgba(255,255,255,0.58);
   line-height: 1.65;
-  max-width: 280px;
+  max-width: 300px;
 }
 
 /* Separador vertical entre paneles */
@@ -105,15 +106,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(28px, 5vw, 56px) clamp(22px, 4.5vw, 52px);
+  /* Padding generoso en desktop para que el card no quede pegado a los bordes */
+  padding: clamp(32px, 5vw, 72px) clamp(28px, 5vw, 80px);
 }
 
+/* ── Card del form ── */
 .auth-card {
   width: 100%;
-  max-width: 400px;
+  /* Max-width más amplio: aprovecha el espacio disponible en desktop/tablet */
+  max-width: 480px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 22px;
   animation: subir 0.45s ease both;
 }
 
@@ -129,7 +133,7 @@ body {
   justify-content: center;
 }
 .auth-logo img {
-  height: clamp(68px, 12vw, 100px);
+  height: clamp(72px, 11vw, 108px);
   width: auto;
 }
 
@@ -137,12 +141,12 @@ body {
 .auth-heading {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 7px;
 }
 .auth-title {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-weight: 700;
-  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-size: clamp(1.9rem, 3.5vw, 2.6rem);
   color: var(--texto);
   line-height: 1.08;
 }
@@ -151,7 +155,7 @@ body {
   color: var(--primario);
 }
 .auth-sub {
-  font-size: clamp(0.78rem, 1.6vw, 0.88rem);
+  font-size: clamp(0.82rem, 1.4vw, 0.95rem);
   color: var(--apagado);
   line-height: 1.5;
 }
@@ -161,8 +165,8 @@ body {
   background: var(--error-fondo);
   border: 1px solid var(--error-borde);
   border-radius: var(--radio);
-  padding: 10px 14px;
-  font-size: 0.8rem;
+  padding: 11px 16px;
+  font-size: 0.82rem;
   color: var(--error-texto);
   text-align: center;
   display: none;
@@ -172,12 +176,12 @@ body {
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 .campo {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 .campo label {
   font-size: 0.66rem;
@@ -193,8 +197,9 @@ body {
   border: 1px solid var(--borde);
   border-radius: var(--radio);
   color: var(--texto);
-  padding: 12px 15px;
-  font-size: clamp(0.84rem, 1.8vw, 0.9rem);
+  /* Inputs más altos en desktop para no verse raquíticos */
+  padding: 14px 16px;
+  font-size: clamp(0.86rem, 1.5vw, 0.95rem);
   font-family: 'DM Sans', sans-serif;
   outline: none;
   transition: border-color 0.2s, background 0.2s;
@@ -207,7 +212,7 @@ body {
 
 .toggle-pass {
   position: absolute;
-  right: 12px;
+  right: 13px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -221,25 +226,25 @@ body {
 }
 .toggle-pass:hover { color: var(--primario); }
 
-/* Input con botón: padding extra a la derecha para no solaparse */
 .campo-input-wrap input {
-  padding-right: 40px;
+  padding-right: 42px;
 }
 
 /* ── Botón principal ── */
 .btn-auth {
   width: 100%;
-  padding: 13px;
+  padding: 15px;
   background: var(--primario);
   border: none;
   border-radius: var(--radio);
   color: #081e1e;
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
-  font-size: clamp(0.88rem, 1.8vw, 0.95rem);
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
   cursor: pointer;
   transition: opacity 0.2s, transform 0.15s;
-  margin-top: 2px;
+  margin-top: 4px;
+  letter-spacing: 0.01em;
 }
 .btn-auth:hover   { opacity: 0.88; transform: translateY(-1px); }
 .btn-auth:active  { transform: translateY(0); }
@@ -251,7 +256,7 @@ body {
   align-items: center;
   gap: 10px;
   color: var(--apagado);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
@@ -266,13 +271,13 @@ body {
 /* ── Google ── */
 .btn-google {
   width: 100%;
-  padding: 12px;
+  padding: 13px;
   background: rgba(255,255,255,0.04);
   border: 1px solid var(--borde);
   border-radius: var(--radio);
   color: var(--texto);
   font-family: 'DM Sans', sans-serif;
-  font-size: clamp(0.84rem, 1.8vw, 0.9rem);
+  font-size: clamp(0.86rem, 1.5vw, 0.95rem);
   font-weight: 500;
   cursor: pointer;
   display: flex;
@@ -292,7 +297,7 @@ body {
 
 /* ── Link inferior ── */
 .auth-link {
-  font-size: 0.83rem;
+  font-size: 0.85rem;
   color: var(--apagado);
   text-align: center;
 }
@@ -303,13 +308,93 @@ body {
 }
 .auth-link a:hover { opacity: 0.75; }
 
-/* ── Responsive ── */
-@media (max-width: 640px) {
-  .auth-wrap      { grid-template-columns: 1fr; }
-  .auth-img       { display: none; }
+/* ════════════════════════════════════════
+   BREAKPOINTS — de mayor a menor
+   ════════════════════════════════════════ */
+
+/* ── Tablet landscape / desktop pequeño: imagen más delgada ── */
+@media (max-width: 1100px) and (min-width: 769px) {
+  .auth-wrap {
+    grid-template-columns: 4fr 6fr;
+  }
+  .auth-card {
+    max-width: 440px;
+  }
+}
+
+/* ── Tablet portrait (768 – 640 px): imagen colapsa, panel ocupa todo ── */
+@media (max-width: 768px) and (min-width: 641px) {
+  .auth-wrap {
+    grid-template-columns: 1fr;
+  }
+  .auth-img {
+    display: none;
+  }
   .auth-panel {
     min-height: 100vh;
-    padding: clamp(28px, 7vw, 40px) clamp(18px, 5vw, 28px);
+    /* Padding más reducido para que el card llene más pantalla */
+    padding: 40px 36px;
+    align-items: center;
   }
-  .auth-card { max-width: 100%; }
+  .auth-card {
+    /* En tablet portrait el card puede ser más ancho */
+    max-width: 520px;
+    gap: 24px;
+  }
+  .auth-title {
+    font-size: 2.4rem;
+  }
+}
+
+/* ── Móvil (≤ 640 px): una sola columna, sin imagen, sin padding muerto ── */
+@media (max-width: 640px) {
+  .auth-wrap {
+    grid-template-columns: 1fr;
+    /* El grid ocupa exactamente el viewport */
+    min-height: 100vh;
+  }
+  .auth-img {
+    display: none;
+  }
+  .auth-panel {
+    /* Elimina el centrado vertical que creaba espacio arriba/abajo */
+    align-items: flex-start;
+    /* Padding vertical controlado para que el contenido empiece cerca del top */
+    padding: 36px 22px 40px;
+    /* Ocupa toda la altura disponible */
+    min-height: 100vh;
+    /* Ya no centra verticalmente — el contenido fluye desde arriba */
+    justify-content: flex-start;
+  }
+  .auth-card {
+    /* En móvil ocupa todo el ancho disponible */
+    max-width: 100%;
+    width: 100%;
+    gap: 20px;
+  }
+  .auth-logo img {
+    height: 72px;
+  }
+  .auth-title {
+    font-size: 2rem;
+  }
+  /* Inputs y botón ligeramente más compactos en móvil */
+  .campo input {
+    padding: 13px 15px;
+    font-size: 0.9rem;
+  }
+  .btn-auth {
+    padding: 14px;
+    font-size: 0.92rem;
+  }
+}
+
+/* ── Móvil muy pequeño (≤ 380 px) ── */
+@media (max-width: 380px) {
+  .auth-panel {
+    padding: 28px 16px 32px;
+  }
+  .auth-title {
+    font-size: 1.75rem;
+  }
 }
