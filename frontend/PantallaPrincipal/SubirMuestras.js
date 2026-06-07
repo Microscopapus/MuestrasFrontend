@@ -69,8 +69,6 @@ async function subirMuestra() {
   if (!nombre) { mostrarToast('El nombre es obligatorio'); return; }
 
  const btnConfirmar = document.querySelector('.btn-confirmar');
-  if (btnConfirmar) btnConfirmar.disabled = true;
-
 
   const fd = new FormData();
   fd.append('Nombre', nombre);
@@ -85,10 +83,10 @@ async function subirMuestra() {
     if (!json.success) throw new Error(json.mensaje);
     idMuestraCreada = json.data?.id ?? json.data?.idMuestra ?? json.data?.Id ?? null;
     mostrarToast('Muestra creada');
- } catch (err) {
+  if (btnConfirmar) btnConfirmar.disabled = true;
+  } catch (err) {
     mostrarToast('Error al crear: ' + err.message);
     
-    // 2. Si hay un error, desbloqueamos el botón para que el usuario pueda reintentar [1]
     if (btnConfirmar) btnConfirmar.disabled = false;
     return; 
   }
