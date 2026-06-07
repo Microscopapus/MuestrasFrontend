@@ -68,6 +68,7 @@ body {
 
 /* ── Panel formulario ── */
 .auth-panel {
+    min-height: 100dvh;
   background: var(--fondo-panel);
   display: flex;
   flex-direction: column;
@@ -89,7 +90,6 @@ body {
   max-width: 480px;
   width: 100%;
   margin: 0 auto;
-  animation: aparecer 0.4s ease both;
 }
 
 @keyframes aparecer {
@@ -146,7 +146,6 @@ h2.campo-label {
   font-size: clamp(0.88rem, 1.3vw, 0.98rem);
   font-family: 'DM Sans', sans-serif;
   outline: none;
-  transition: border-color 0.2s, background 0.2s;
 }
 .campo input:focus { border-color: var(--borde-foco); background: rgba(0,201,177,0.04); }
 .campo input::placeholder { color: var(--texto-apagado); }
@@ -169,7 +168,6 @@ h2.campo-label {
   font-weight: 700;
   font-size: clamp(0.9rem, 1.3vw, 0.98rem);
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.15s;
 }
 .btn-auth:hover, .boton-principal:hover  { opacity: 0.88; transform: translateY(-1px); }
 .btn-auth:active, .boton-principal:active { transform: translateY(0); }
