@@ -9,20 +9,28 @@ async function cargarFavoritos() {
       }
     );
 
-    const json = await res.json();
+    const texto = await res.text();
 
-    console.log("RESPUESTA FAVORITOS:", json);
+    console.log("FAVORITOS RAW:");
+    console.log(texto);
+
+    if (!texto.trim()) {
+      favoritos = [];
+      return;
+    }
+
+    const json = JSON.parse(texto);
 
     const raw = json.data?.muestras || json.data || [];
 
     favoritos = Array.isArray(raw)
-      ? raw.map(m => (typeof m === 'object' ? m.id : m))
+      ? raw.map(m => typeof m === 'object' ? m.id : m)
       : [];
 
-    console.log("FAVORITOS CARGADOS:", favoritos);
+    console.log("FAVORITOS:", favoritos);
 
   } catch (err) {
-    console.error(err);
+    console.error("ERROR FAVORITOS:", err);
     favoritos = [];
   }
 }
