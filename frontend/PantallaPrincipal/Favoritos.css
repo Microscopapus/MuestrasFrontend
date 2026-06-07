@@ -1,41 +1,80 @@
-.item-fav{
-    display:flex !important;
-    align-items:center;
-    gap:12px;
-    padding:10px 14px;
-    border:1px solid var(--borde);
-    border-radius:12px;
-    background:rgba(255,255,255,.04);
-    overflow:hidden;
+.fav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0,201,177,0.04);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
 }
 
-.item-fav img{
-    width:60px !important;
-    height:60px !important;
-    min-width:60px !important;
-    max-width:60px !important;
-    object-fit:cover;
-    border-radius:10px;
-    display:block;
+.fav-item img {
+  width: 50px !important;
+  height: 50px !important;
+  min-width: 50px !important;
+  max-width: 50px !important;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgba(0,201,177,0.25);
+  display: block;
 }
 
-.info-fav{
-    flex:1;
-    min-width:0;
+.fav-placeholder {
+  width: 50px;
+  height: 50px;
+  min-width: 50px;
+  border-radius: 50%;
+  background: rgba(0,201,177,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
-.nombre-fav{
-    font-weight:600;
-    font-size:.9rem;
+.fav-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
-.cat-fav{
-    font-size:.75rem;
-    color:var(--primario);
+.fav-nombre {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--texto);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.btn-quitar-fav{
-    width:32px;
-    height:32px;
-    flex-shrink:0;
+.fav-cat {
+  font-size: 0.72rem;
+  color: var(--primario);
+}
+
+.fav-quitar {
+  background: rgba(224,82,82,0.08);
+  border: 1px solid rgba(224,82,82,0.2);
+  color: rgba(255,120,120,0.8);
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.fav-vacio {
+  text-align: center;
+  color: var(--apagado);
+  font-size: 0.82rem;
+  padding: 30px 0;
+  line-height: 1.8;
 }
