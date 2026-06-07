@@ -84,6 +84,7 @@ async function subirMuestra() {
     if (!json.success) throw new Error(json.mensaje);
     idMuestraCreada = json.data?.id ?? json.data?.idMuestra ?? json.data?.Id ?? null;
     mostrarToast('Muestra creada');
+    return idMuestraCreada;
   } catch (err) {
     mostrarToast('Error al crear: ' + err.message);
     return;

@@ -6,6 +6,9 @@ async function cargarFavoritos() {
     const raw  = json.data?.muestras || json.data || [];
     favoritos  = Array.isArray(raw) ? raw.map(m => (typeof m === 'object' ? m.id : m)) : [];
   } catch { favoritos = []; }
+  await Promise.all([cargarFavoritos(), cargarCategorias()]);
+  buildGrid();
+  mostrarPantalla('pantalla-contenido');
 }
 
 //Estado
