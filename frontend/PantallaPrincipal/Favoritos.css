@@ -1,0 +1,41 @@
+.item-fav{
+    display:flex !important;
+    align-items:center;
+    gap:12px;
+    padding:10px 14px;
+    border:1px solid var(--borde);
+    border-radius:12px;
+    background:rgba(255,255,255,.04);
+    overflow:hidden;
+}
+
+.item-fav img{
+    width:60px !important;
+    height:60px !important;
+    min-width:60px !important;
+    max-width:60px !important;
+    object-fit:cover;
+    border-radius:10px;
+    display:block;
+}
+
+.info-fav{
+    flex:1;
+    min-width:0;
+}
+
+.nombre-fav{
+    font-weight:600;
+    font-size:.9rem;
+}
+
+.cat-fav{
+    font-size:.75rem;
+    color:var(--primario);
+}
+
+.btn-quitar-fav{
+    width:32px;
+    height:32px;
+    flex-shrink:0;
+}
