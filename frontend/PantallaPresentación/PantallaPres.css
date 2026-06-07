@@ -50,7 +50,7 @@ img { display: block; max-width: 100%; }
   font-size: .875rem;
 }
 .btn-primario { background: var(--primario); color: var(--bg-negro); }
-.btn-borde    { background: transparent; border: 1px solid var(--primario); color: var(--primario); margin-top:8px;width:100%;justify-content:center;}
+.btn-borde    { background: transparent; border: 1px solid var(--primario); color: var(--primario);justify-content:center;}
 .btn-chico    { padding: 7px 14px; font-size: .8rem; border-radius: 10px; }
 .btn-grande   { padding: 16px 40px; font-size: 1.1rem; border-radius: 16px; font-weight: 700; }
 
@@ -219,27 +219,6 @@ img { display: block; max-width: 100%; }
   background: linear-gradient(90deg, transparent, rgba(0,201,177,.3), transparent);
 }
 
-/* ── Tarjeta características ── */
-.tarjeta-caracteristicas {
-  background: var(--bg-teal);
-  border: 1px solid var(--borde);
-  border-radius: var(--radio);
-  padding: 24px;
-}
-.lista-caracteristicas { display: flex; flex-direction: column; gap: 24px; }
-.item-caracteristica   { display: flex; align-items: flex-start; gap: 16px; }
-.icono-caracteristica  {
-  flex-shrink: 0;
-  width: 36px; height: 36px;
-  border-radius: 10px;
-  background: rgba(0,201,177,.12);
-  color: var(--primario);
-  display: flex; align-items: center; justify-content: center;
-  margin-top: 2px;
-}
-.nombre-caracteristica { font-weight: 600; font-size: .9rem; color: var(--texto); margin-bottom: 2px; }
-.desc-caracteristica   { font-size: .8rem; color: var(--apagado); line-height: 1.55; }
-
 /* ── Tarjetas herramientas ── */
 .tarjeta-herramienta {
   background: var(--bg-oscuro);
@@ -250,35 +229,10 @@ img { display: block; max-width: 100%; }
   flex-direction: column;
   gap: 16px;
 }
-.icono-herramienta {
-  width: 48px; height: 48px;
-  border-radius: 14px;
-  background: rgba(0,201,177,.12);
-  color: var(--primario);
-  display: flex; align-items: center; justify-content: center;
-}
 .tag-herramienta    { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: rgba(0,201,177,.6); }
 .titulo-herramienta { font-family: var(--fuente-t); font-weight: 700; font-size: 1.3rem; color: var(--texto); }
 .desc-herramienta   { font-size: .875rem; color: var(--apagado); line-height: 1.7; flex: 1; }
 .barra-herramienta  { width: 40px; height: 2px; background: var(--primario); margin-top: auto; }
-
-.seccion-cta {
-  background: linear-gradient(135deg, #0f3d3d 0%, #081e1e 100%);
-  position: relative;
-}
-.brillo-cta {
-  position: absolute;
-  width: 600px; height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0,201,177,0.08) 0%, transparent 70%);
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-.divisor-cta { height: 1px; background: rgba(0,201,177,.12); margin: 40px 0; }
-.sub-cta     { font-size: .9rem; color: var(--apagado); margin-bottom: 16px; }
-.meta-cta    { margin-top: 20px; display: flex; flex-direction: column; gap: 4px; }
-.meta-cta p  { font-size: .75rem; color: var(--apagado); }
 
 /* ── Pie de página ── */
 .pie-pagina {

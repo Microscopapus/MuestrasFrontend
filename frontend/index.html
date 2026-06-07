@@ -1,194 +1,194 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zoom Explorer — Base de datos de muestras microscópicas</title>
-  <meta name="description" content="Zoom Explorer es una plataforma de divulgación científica con una base de datos de muestras microscópicas." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="PantallaPresentación/PantallaPres.css" />
-</head>
-<body>
+  <!DOCTYPE html>
+  <html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zoom Explorer — Base de datos de muestras microscópicas</title>
+    <meta name="description" content="Zoom Explorer es una plataforma de divulgación científica con una base de datos de muestras microscópicas." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="PantallaPresentación/PantallaPres.css" />
+  </head>
+  <body>
 
-  <header class="barra-nav" id="navbar">
-    <div class="barra-interior">
-      <a href="#" class="logo-nav">
-        <img src="Assets/imglogo.png" alt="Zoom Explorer" class="logo-img">
-        <span class="marca">Zoom Explorer</span>
-      </a>
+    <header class="barra-nav" id="navbar">
+      <div class="barra-interior">
+        <a href="#" class="logo-nav">
+          <img src="Assets/imglogo.png" alt="Zoom Explorer" class="logo-img">
+          <span class="marca">Zoom Explorer</span>
+        </a>
 
-      <nav class="enlaces-nav" id="nav-links">
-        <a href="#quienes-somos" class="enlace">Quiénes Somos</a>
-        <a href="#que-es" class="enlace">Qué es</a>
-        <a href="#objetivos" class="enlace">Objetivos</a>
-        <a href="#descarga" class="enlace">Descarga</a>
-      </nav>
+        <nav class="enlaces-nav" id="nav-links">
+          <a href="#quienes-somos" class="enlace">Quiénes Somos</a>
+          <a href="#que-es" class="enlace">Qué es</a>
+          <a href="#objetivos" class="enlace">Objetivos</a>
+          <a href="#descarga" class="enlace">Descarga</a>
+        </nav>
 
-      <div class="acciones-nav">
+        <div class="acciones-nav">
+          <a href="AUTH/Login.html" class="btn btn-borde btn-chico">Iniciar Sesión</a>
+          <button class="hamburguesa" id="hamburger" aria-label="Menú"
+            onclick="this.classList.toggle('abierto'); document.getElementById('menu-movil').classList.toggle('abierto');">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="menu-movil" id="menu-movil">
+        <a href="#quienes-somos" class="enlace-movil">Quiénes Somos</a>
+        <a href="#que-es" class="enlace-movil">Qué es</a>
+        <a href="#objetivos" class="enlace-movil">Objetivos</a>
+        <a href="#descarga" class="enlace-movil">Descarga</a>
         <a href="AUTH/Login.html" class="btn btn-borde btn-chico">Iniciar Sesión</a>
-        <button class="hamburguesa" id="hamburger" aria-label="Menú"
-          onclick="this.classList.toggle('abierto'); document.getElementById('menu-movil').classList.toggle('abierto');">
-          <span></span><span></span><span></span>
-        </button>
       </div>
-    </div>
+    </header>
 
-    <div class="menu-movil" id="menu-movil">
-      <a href="#quienes-somos" class="enlace-movil">Quiénes Somos</a>
-      <a href="#que-es" class="enlace-movil">Qué es</a>
-      <a href="#objetivos" class="enlace-movil">Objetivos</a>
-      <a href="#descarga" class="enlace-movil">Descarga</a>
-      <a href="AUTH/Login.html" class="btn btn-borde btn-chico">Iniciar Sesión</a>
-    </div>
-  </header>
+    <section class="portada">
+      <div class="contenido-portada">
+        <h1 class="titulo-portada">Zoom <span class="acento">Explorer</span></h1>
+        <p class="subtitulo-portada">
+          Una plataforma de divulgación científica con una base de datos de muestras microscópicas,
+          para quienes quieren explorar el mundo que no se ve a simple vista.
+        </p>
+      </div>
+    </section>
 
-  <section class="portada">
-    <div class="contenido-portada">
-      <h1 class="titulo-portada">Zoom <span class="acento">Explorer</span></h1>
-      <p class="subtitulo-portada">
-        Una plataforma de divulgación científica con una base de datos de muestras microscópicas,
-        para quienes quieren explorar el mundo que no se ve a simple vista.
-      </p>
-    </div>
-  </section>
+    <div class="divisor"></div>
 
-   <div class="divisor"></div>
+    <section id="quienes-somos" class="seccion fondo-oscuro">
+      <div class="contenedor">
+        <div class="cuadricula-2">
+            <h2 class="titulo-seccion">¿Quiénes Somos?</h2>
+            <h3 class="texto-seccion">Somos un equipo de desarrolladores apasionados por acercar la ciencia a todas las personas, especialmente a quienes no tienen acceso a un microscopio o a un laboratorio equipado.</h3>
+            <h3 class="texto-seccion">Creemos que el conocimiento científico no debería estar limitado por recursos materiales. Por eso construimos Zoom Explorer: un espacio donde cualquier persona puede explorar muestras microscópicas reales desde su dispositivo.</h3>
+                <h3 class="texto-seccion">En busca de de ese ideal desarrollamos este espacio de divulgación científica, odnde tanto gente que va iniciando en este espacio así como investigdores consolidados pueden compartir sus conocimientos y fomentar las ciencias.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <section id="quienes-somos" class="seccion fondo-oscuro">
+    <div class="divisor"></div>
+
+    <section id="que-es" class="seccion fondo-teal">
+      <div class="contenedor">
+        <div class="encabezado-seccion">
+          <h2 class="titulo-seccion">¿Qué es Zoom Explorer?</h2>
+          <p class="texto-seccion" style="max-width:480px">Zoom Explorer es un proyecto compuesto de dos partes complementarias que juntas forman un ecosistema completo de divulgación científica.</p>
+        </div>
+
+        <div class="cuadricula-2">
+          <div class="tarjeta-herramienta">
+            <span class="tag-herramienta">APK · Android</span>
+            <h3 class="titulo-herramienta">Simulador de Microscopio</h3>
+            <p class="desc-herramienta">Una aplicación móvil que simula la experiencia de usar un microscopio real. Permite explorar muestras con controles de zoom, enfoque y contraste, brindando una experiencia inmersiva sin necesidad de equipo físico.</p>
+            <div class="barra-herramienta"></div>
+          </div>
+
+          <div class="tarjeta-herramienta">
+            <span class="tag-herramienta">Web · Dashboard</span>
+            <h3 class="titulo-herramienta">Base de Datos de Muestras</h3>
+            <p class="desc-herramienta">Una interfaz web donde puedes explorar, subir y gestionar muestras microscópicas. Organiza tu colección, marca favoritos y accede a un catálogo colaborativo, y un filtrado por categorías.</p>
+            <div class="barra-herramienta"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divisor"></div>
+
+    
+    <section id="objetivos" class="seccion fondo-oscuro">
     <div class="contenedor">
-      <div class="cuadricula-2">
-          <h2 class="titulo-seccion">¿Quiénes Somos?</h2>
-          <h3 class="texto-seccion">Somos un equipo de desarrolladores apasionados por acercar la ciencia a todas las personas, especialmente a quienes no tienen acceso a un microscopio o a un laboratorio equipado.</h3>
-          <h3 class="texto-seccion">Creemos que el conocimiento científico no debería estar limitado por recursos materiales. Por eso construimos Zoom Explorer: un espacio donde cualquier persona puede explorar muestras microscópicas reales desde su dispositivo.</h3>
-              <h3 class="texto-seccion">En busca de de ese ideal desarrollamos este espacio de divulgación científica, odnde tanto gente que va iniciando en este espacio así como investigdores consolidados pueden compartir sus conocimientos y fomentar las ciencias.</p>
-        </div>
+
+      <div class="encabezado-seccion texto-centro">
+        <h2 class="titulo-seccion">Objetivos</h2>
+        <p class="texto-seccion">
+          Nuestra misión es acercar el mundo microscópico a cualquier persona mediante herramientas digitales accesibles.
+        </p>
       </div>
+
+      <div class="objetivos-grid">
+
+        <div class="objetivo-card">
+          <div class="objetivo-numero">01</div>
+          <h3>Fomentar la curiosidad científica</h3>
+          <p>
+            Acercar la observación microscópica a estudiantes,
+            docentes y entusiastas de la ciencia mediante una
+            experiencia accesible e intuitiva.
+          </p>
+        </div>
+
+        <div class="objetivo-card">
+          <div class="objetivo-numero">02</div>
+          <h3>Suplir la falta de acceso a microscopios</h3>
+          <p>
+            Permitir que cualquier persona explore muestras
+            microscópicas sin necesidad de contar con equipo
+            especializado.
+          </p>
+        </div>
+
+        <div class="objetivo-card">
+          <div class="objetivo-numero">03</div>
+          <h3>Crear un repositorio colaborativo</h3>
+          <p>
+            Construir una base de datos donde investigadores,
+            estudiantes y aficionados compartan conocimiento
+            y muestras reales.
+          </p>
+        </div>
+
+        <div class="objetivo-card">
+          <div class="objetivo-numero">04</div>
+          <h3>Apoyar la educación científica</h3>
+          <p>
+            Proporcionar recursos que complementen la enseñanza
+            de biología, química y ciencias naturales.
+          </p>
+        </div>
+
+      </div>
+
     </div>
   </section>
 
-  <div class="divisor"></div>
+    <section id="descarga" class="seccion fondo-teal">
+      <div class="contenedor contenedor-chico texto-centro">
+        <h2 class="titulo-seccion">Simulador</h2>
+        <h4>Tu propio microoscopio a un solo click</h4>
+        <p class="texto-seccion" style="max-width:480px;margin:0 auto 2.5rem">
+          Descarga la APK del simulador de microscopio para Android. Explora muestras con controles reales de zoom y enfoque, sin necesidad de equipo físico.
+        </p>
 
-  <section id="que-es" class="seccion fondo-teal">
-    <div class="contenedor">
-      <div class="encabezado-seccion">
-        <h2 class="titulo-seccion">¿Qué es Zoom Explorer?</h2>
-        <p class="texto-seccion" style="max-width:480px">Zoom Explorer es un proyecto compuesto de dos partes complementarias que juntas forman un ecosistema completo de divulgación científica.</p>
-      </div>
+        <a href="APK/app-release.apk" download class="btn btn-primario btn-grande"> Descargar APK</a>
 
-      <div class="cuadricula-2">
-        <div class="tarjeta-herramienta">
-          <span class="tag-herramienta">APK · Android</span>
-          <h3 class="titulo-herramienta">Simulador de Microscopio</h3>
-          <p class="desc-herramienta">Una aplicación móvil que simula la experiencia de usar un microscopio real. Permite explorar muestras con controles de zoom, enfoque y contraste, brindando una experiencia inmersiva sin necesidad de equipo físico.</p>
-          <div class="barra-herramienta"></div>
+        <div class="meta-cta">
+          <p>Compatible con Android 8.0 o superior · Versión 1.0.0</p>
+          <p>Tamaño aproximado: 15 MB · descarga gratuita</p>
         </div>
 
-        <div class="tarjeta-herramienta">
-          <span class="tag-herramienta">Web · Dashboard</span>
-          <h3 class="titulo-herramienta">Base de Datos de Muestras</h3>
-          <p class="desc-herramienta">Una interfaz web donde puedes explorar, subir y gestionar muestras microscópicas. Organiza tu colección, marca favoritos y accede a un catálogo colaborativo, y un filtrado por categorías.</p>
-          <div class="barra-herramienta"></div>
+        <div class="divisor"></div>
+
+  <h3>¿Quieres explorar la base de datos de muestras?</h3>
+  <br>
+
+  <a href="AUTH/Register.html" class="btn btn-borde btn-chico">
+      Regístrate en nuestra página web
+  </a>
+      </div>
+    </section>
+
+    <footer class="pie-pagina">
+      <div class="contenedor interior-pie">
+        <div class="marca-pie">
+          <img src="Assets/imglogo.png" alt="Zoom Explorer" style="height:22px;width:auto;">
+          <span>Zoom Explorer</span>
         </div>
+        <p class="derechos">© 2026 Zoom Explorer. Divulgación científica accesible para todos.</p>
       </div>
-    </div>
-  </section>
+    </footer>
 
-  <div class="divisor"></div>
-
-  
-  <section id="objetivos" class="seccion fondo-oscuro">
-  <div class="contenedor">
-
-    <div class="encabezado-seccion texto-centro">
-      <h2 class="titulo-seccion">Objetivos</h2>
-      <p class="texto-seccion">
-        Nuestra misión es acercar el mundo microscópico a cualquier persona mediante herramientas digitales accesibles.
-      </p>
-    </div>
-
-    <div class="objetivos-grid">
-
-      <div class="objetivo-card">
-        <div class="objetivo-numero">01</div>
-        <h3>Fomentar la curiosidad científica</h3>
-        <p>
-          Acercar la observación microscópica a estudiantes,
-          docentes y entusiastas de la ciencia mediante una
-          experiencia accesible e intuitiva.
-        </p>
-      </div>
-
-      <div class="objetivo-card">
-        <div class="objetivo-numero">02</div>
-        <h3>Suplir la falta de acceso a microscopios</h3>
-        <p>
-          Permitir que cualquier persona explore muestras
-          microscópicas sin necesidad de contar con equipo
-          especializado.
-        </p>
-      </div>
-
-      <div class="objetivo-card">
-        <div class="objetivo-numero">03</div>
-        <h3>Crear un repositorio colaborativo</h3>
-        <p>
-          Construir una base de datos donde investigadores,
-          estudiantes y aficionados compartan conocimiento
-          y muestras reales.
-        </p>
-      </div>
-
-      <div class="objetivo-card">
-        <div class="objetivo-numero">04</div>
-        <h3>Apoyar la educación científica</h3>
-        <p>
-          Proporcionar recursos que complementen la enseñanza
-          de biología, química y ciencias naturales.
-        </p>
-      </div>
-
-    </div>
-
-  </div>
-</section>
-
-  <section id="descarga" class="seccion fondo-teal">
-    <div class="contenedor contenedor-chico texto-centro">
-      <h2 class="titulo-seccion">Simulador</h2>
-      <h4>Tu propio microoscopio a un solo click</h4>
-      <p class="texto-seccion" style="max-width:480px;margin:0 auto 2.5rem">
-        Descarga la APK del simulador de microscopio para Android. Explora muestras con controles reales de zoom y enfoque, sin necesidad de equipo físico.
-      </p>
-
-      <a href="APK/app-release.apk" download class="btn btn-primario btn-grande"> Descargar APK</a>
-
-      <div class="meta-cta">
-        <p>Compatible con Android 8.0 o superior · Versión 1.0.0</p>
-        <p>Tamaño aproximado: 15 MB · descarga gratuita</p>
-      </div>
-
-      <div class="divisor-cta"></div>
-
-<h3>¿Quieres explorar la base de datos de muestras?</h3>
-<br>
-
-<a href="AUTH/Register.html" class="btn btn-borde btn-chico">
-    Regístrate en nuestra página web
-</a>
-    </div>
-  </section>
-
-  <footer class="pie-pagina">
-    <div class="contenedor interior-pie">
-      <div class="marca-pie">
-        <img src="Assets/imglogo.png" alt="Zoom Explorer" style="height:22px;width:auto;">
-        <span>Zoom Explorer</span>
-      </div>
-      <p class="derechos">© 2026 Zoom Explorer. Divulgación científica accesible para todos.</p>
-    </div>
-  </footer>
-
-</body>
-</html>
+  </body>
+  </html>
