@@ -1,29 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600&display=swap');
 
 :root {
-  /* ── Fondos ── */
-  --fondo-pagina:   #081e1e;
-  --fondo-panel:    #0c2424;
-  --fondo-campo:    rgba(255,255,255,0.05);
-
-  /* ── Color principal ── */
-  --color-primario: #00c9b1;
-
-  /* ── Textos ── */
+  --fondo-pagina:    #081e1e;
+  --fondo-panel:     #0c2424;
+  --fondo-campo:     rgba(255,255,255,0.05);
+  --color-primario:  #00c9b1;
   --texto-principal: #e2f8f5;
   --texto-apagado:   rgba(226,248,245,0.45);
-
-  /* ── Bordes ── */
-  --borde-normal:   rgba(0,201,177,0.16);
-  --borde-foco:     rgba(0,201,177,0.5);
-
-  /* ── Error ── */
-  --error-fondo:    rgba(220,60,60,0.1);
-  --error-borde:    rgba(220,60,60,0.3);
-  --error-texto:    #ff8a80;
-
-  /* ── Forma ── */
-  --radio-borde:    13px;
+  --borde-normal:    rgba(0,201,177,0.16);
+  --borde-foco:      rgba(0,201,177,0.5);
+  --error-fondo:     rgba(220,60,60,0.1);
+  --error-borde:     rgba(220,60,60,0.3);
+  --error-texto:     #ff8a80;
+  --radio:           13px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,95 +21,89 @@ body {
   font-family: 'DM Sans', sans-serif;
   background: var(--fondo-pagina);
   color: var(--texto-principal);
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   display: flex;
 }
 
-/* ── Layout: formulario izquierda | imagen derecha ── */
+/* Desktop: form izquierda | imagen derecha */
 .auth-wrap {
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
   display: grid;
   grid-template-columns: 55fr 45fr;
 }
 
-/* ════════════════════════════
-   PANEL FORMULARIO (izquierda)
-   ════════════════════════════ */
+/* ── Panel formulario ── */
 .auth-panel {
   background: var(--fondo-panel);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(20px, 3vh, 48px) clamp(32px, 5vw, 88px);
+  flex-direction: column;
+  padding: clamp(32px, 5vw, 72px) clamp(28px, 5vw, 80px);
   overflow-y: auto;
 }
 
+/* Logo arriba del todo */
+.auth-logo { display: flex; justify-content: center; margin-bottom: clamp(28px, 5vh, 56px); }
+.auth-logo img { height: clamp(80px, 14vh, 150px); width: auto; }
+
+/* El resto del contenido centrado verticalmente en el espacio restante */
 .auth-card {
-  width: 100%;
-  max-width: 500px;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: clamp(16px, 2.6vh, 28px);
+  justify-content: center;
+  gap: clamp(20px, 3.5vh, 36px);
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
   animation: aparecer 0.4s ease both;
 }
 
 @keyframes aparecer {
-  from { opacity: 0; transform: translateY(14px); }
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Logo 3× más grande, escala con altura ── */
-.auth-logo { display: flex; align-items: center; justify-content: center; }
-.auth-logo img {
-  height: clamp(100px, 16vh, 180px);
-  width: auto;
-}
-
 /* ── Encabezado ── */
-.auth-heading { display: flex; flex-direction: column; gap: clamp(5px, 0.8vh, 10px); }
-
 h1.auth-titulo {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-weight: 700;
-  font-size: clamp(2rem, 3.8vw, 3.2rem);
-  color: var(--texto-principal);
+  font-size: clamp(2rem, 3.5vw, 3rem);
   line-height: 1.06;
+  color: var(--texto-principal);
 }
 h1.auth-titulo em { font-style: italic; color: var(--color-primario); }
 
-h4.auth-subtitulo {
-  font-size: clamp(0.88rem, 1.4vw, 1.05rem);
+h2.auth-subtitulo {
+  font-size: clamp(0.9rem, 1.4vw, 1.05rem);
   font-weight: 400;
   color: var(--texto-apagado);
   line-height: 1.5;
+  margin-top: clamp(6px, 1vh, 12px);
 }
 
 /* ── Error ── */
 .auth-error {
   background: var(--error-fondo);
   border: 1px solid var(--error-borde);
-  border-radius: var(--radio-borde);
-  padding: clamp(10px, 1.4vh, 14px) 16px;
-  color: var(--error-texto);
+  border-radius: var(--radio);
+  padding: 11px 16px;
   text-align: center;
   display: none;
 }
-h4.auth-error-msg { font-size: clamp(0.82rem, 1.2vw, 0.92rem); font-weight: 400; }
+h2.auth-error-msg { font-size: 0.88rem; font-weight: 400; color: var(--error-texto); }
 
-/* ── Formulario ── */
-.auth-form {
-  display: flex; flex-direction: column;
-  gap: clamp(14px, 2vh, 22px);
-}
+/* ── Campos ── */
+.auth-form { display: flex; flex-direction: column; gap: clamp(14px, 2.2vh, 24px); }
 
-.campo { display: flex; flex-direction: column; gap: clamp(6px, 0.9vh, 10px); }
+.campo { display: flex; flex-direction: column; gap: 7px; }
 
-h3.campo-label {
-  font-size: clamp(0.68rem, 0.9vw, 0.78rem);
+h2.campo-label {
+  font-size: 0.68rem;
   font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.13em;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
   color: var(--color-primario);
 }
 
@@ -130,51 +113,37 @@ h3.campo-label {
   width: 100%;
   background: var(--fondo-campo);
   border: 1px solid var(--borde-normal);
-  border-radius: var(--radio-borde);
+  border-radius: var(--radio);
   color: var(--texto-principal);
-  padding: clamp(13px, 2vh, 18px) 18px;
-  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  padding: clamp(13px, 2vh, 17px) 18px;
+  font-size: clamp(0.9rem, 1.4vw, 1rem);
   font-family: 'DM Sans', sans-serif;
   outline: none;
   transition: border-color 0.2s, background 0.2s;
 }
-.campo input:focus {
-  border-color: var(--borde-foco);
-  background: rgba(0,201,177,0.04);
-}
+.campo input:focus { border-color: var(--borde-foco); background: rgba(0,201,177,0.04); }
 .campo input::placeholder { color: var(--texto-apagado); }
 .campo-input-wrap input { padding-right: 46px; }
 
-.boton-ver-contrasena {
-  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-  background: none; border: none; color: var(--texto-apagado);
-  cursor: pointer; display: flex; align-items: center; padding: 0;
-  transition: color 0.2s;
-}
-.boton-ver-contrasena:hover { color: var(--color-primario); }
-
-/* mantiene compatibilidad con el JS que usa .toggle-pass */
 .toggle-pass {
   position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
   background: none; border: none; color: var(--texto-apagado);
-  cursor: pointer; display: flex; align-items: center; padding: 0;
-  transition: color 0.2s;
+  cursor: pointer; display: flex; padding: 0; transition: color 0.2s;
 }
 .toggle-pass:hover { color: var(--color-primario); }
 
-/* ── Botón principal ── */
+/* ── Botón ── */
 .btn-auth {
   width: 100%;
-  padding: clamp(14px, 2.2vh, 18px);
+  padding: clamp(13px, 2vh, 17px);
   background: var(--color-primario);
-  border: none; border-radius: var(--radio-borde);
+  border: none; border-radius: var(--radio);
   color: #081e1e;
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
-  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  font-size: clamp(0.92rem, 1.4vw, 1rem);
   cursor: pointer;
   transition: opacity 0.2s, transform 0.15s;
-  letter-spacing: 0.02em;
 }
 .btn-auth:hover  { opacity: 0.88; transform: translateY(-1px); }
 .btn-auth:active { transform: translateY(0); }
@@ -182,52 +151,36 @@ h3.campo-label {
 
 /* ── Separador ── */
 .separador {
-  display: flex; align-items: center;
-  gap: 12px; color: var(--texto-apagado);
-  font-size: clamp(0.68rem, 1vw, 0.76rem);
-  letter-spacing: 0.06em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 12px;
+  color: var(--texto-apagado);
+  font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase;
 }
 .separador::before, .separador::after { content: ''; flex: 1; height: 1px; background: var(--borde-normal); }
 
-/* ── Botón Google ── */
+/* ── Google ── */
 .btn-google {
   width: 100%; padding: clamp(12px, 1.8vh, 16px);
   background: rgba(255,255,255,0.04);
-  border: 1px solid var(--borde-normal); border-radius: var(--radio-borde);
+  border: 1px solid var(--borde-normal); border-radius: var(--radio);
   color: var(--texto-principal); font-family: 'DM Sans', sans-serif;
-  font-size: clamp(0.9rem, 1.4vw, 1rem); font-weight: 500; cursor: pointer;
+  font-size: clamp(0.9rem, 1.3vw, 1rem); font-weight: 500; cursor: pointer;
   display: flex; align-items: center; justify-content: center; gap: 12px;
   transition: background 0.2s, border-color 0.2s;
 }
 .btn-google:hover { background: rgba(255,255,255,0.07); border-color: rgba(0,201,177,0.32); }
 #btn-google-container { display: flex; justify-content: center; }
 
-/* ── Enlace inferior ── */
-.enlace-auth { text-align: center; }
-h4.enlace-auth-texto {
-  font-size: clamp(0.85rem, 1.2vw, 0.98rem);
-  font-weight: 400;
-  color: var(--texto-apagado);
+/* ── Enlace ── */
+h2.enlace-auth-texto {
+  font-size: clamp(0.88rem, 1.2vw, 1rem);
+  font-weight: 400; color: var(--texto-apagado); text-align: center;
 }
-h4.enlace-auth-texto a {
-  color: var(--color-primario); font-weight: 600; text-decoration: none;
-}
-h4.enlace-auth-texto a:hover { opacity: 0.75; }
+h2.enlace-auth-texto a { color: var(--color-primario); font-weight: 600; text-decoration: none; }
+h2.enlace-auth-texto a:hover { opacity: 0.75; }
 
-/* mantiene compatibilidad con el HTML que usa .auth-link / p */
-.auth-link { font-size: clamp(0.85rem, 1.2vw, 0.98rem); color: var(--texto-apagado); text-align: center; }
-.auth-link a { color: var(--color-primario); font-weight: 600; text-decoration: none; }
-.auth-link a:hover { opacity: 0.75; }
-
-/* ════════════════════════════
-   PANEL IMAGEN (derecha)
-   ════════════════════════════ */
+/* ── Panel imagen ── */
 .auth-img { position: relative; overflow: hidden; }
-.auth-img img {
-  width: 100%; height: 100%;
-  object-fit: cover; object-position: center;
-  display: block; filter: brightness(0.72);
-}
+.auth-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.72); display: block; }
 .auth-img::after {
   content: ''; position: absolute;
   left: 0; top: 8%; bottom: 8%; width: 1px;
@@ -235,79 +188,44 @@ h4.enlace-auth-texto a:hover { opacity: 0.75; }
 }
 .auth-img-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(8,30,30,0.80) 0%, rgba(8,30,30,0.10) 55%, transparent 100%);
+  background: linear-gradient(to top, rgba(8,30,30,0.8) 0%, transparent 55%);
   display: flex; flex-direction: column; justify-content: flex-end;
-  padding: clamp(28px, 4vw, 52px);
-  gap: clamp(10px, 1.5vh, 18px);
+  padding: clamp(28px, 4vw, 52px); gap: 12px;
 }
 .auth-img-badge {
   display: inline-flex; align-items: center; gap: 7px;
-  font-size: clamp(0.6rem, 0.9vw, 0.72rem);
-  font-weight: 600; text-transform: uppercase; letter-spacing: 0.13em;
+  font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.13em;
   color: var(--color-primario); background: rgba(0,201,177,0.1);
-  border: 1px solid rgba(0,201,177,0.22);
-  border-radius: 999px; padding: 6px 14px; width: fit-content;
+  border: 1px solid rgba(0,201,177,0.22); border-radius: 999px;
+  padding: 6px 14px; width: fit-content;
 }
 .auth-img-title {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-style: italic; font-weight: 600;
-  font-size: clamp(1.6rem, 3vw, 2.6rem);
-  color: #fff; line-height: 1.18; max-width: 300px;
+  font-size: clamp(1.5rem, 2.6vw, 2.4rem);
+  color: #fff; line-height: 1.18; max-width: 280px;
 }
 .auth-img-text {
-  font-size: clamp(0.82rem, 1.2vw, 0.96rem);
-  color: rgba(255,255,255,0.58); line-height: 1.65; max-width: 300px;
+  font-size: clamp(0.82rem, 1.1vw, 0.94rem);
+  color: rgba(255,255,255,0.58); line-height: 1.65; max-width: 280px;
 }
 
-/* ════════════════════════════
-   RESPONSIVE
-   ════════════════════════════ */
+/* ── Tablet landscape ── */
 @media (max-width: 1100px) and (min-width: 769px) {
   .auth-wrap { grid-template-columns: 60fr 40fr; }
-  .auth-card { max-width: 460px; }
 }
 
+/* ── Móvil ── */
 @media (max-width: 768px) {
-  /* El body y wrap ocupan exactamente el viewport, sin scroll */
-  body {
-    height: 100dvh;
-    overflow: hidden;
-  }
-  .auth-wrap {
-    grid-template-columns: 1fr;
-    height: 100dvh;
-  }
-  .auth-img { display: none; }
-
-  /* El panel ocupa toda la altura disponible */
-  .auth-panel {
-    height: 100dvh;
-    align-items: stretch;        /* el card se estira verticalmente */
-    padding: 0;
-  }
-
-  /* El card ocupa toda la altura del panel y distribuye su espacio */
-  .auth-card {
-    max-width: 100%;
-    height: 100%;
-    justify-content: space-between;   /* distribuye el espacio sobrante entre secciones */
-    padding: clamp(28px, 6dvh, 52px) clamp(22px, 6vw, 44px);
-    gap: 0;                            /* gap lo maneja space-between */
-  }
-
-  /* Logo escala con la altura real del dispositivo */
-  .auth-logo img { height: clamp(72px, 14dvh, 130px); }
-
-  /* Cada sección interna mantiene su propio espaciado interno */
-  .auth-heading { gap: clamp(4px, 0.8dvh, 8px); }
-  .auth-form    { gap: clamp(10px, 2dvh, 18px); }
-  .campo        { gap: clamp(5px, 0.8dvh, 9px); }
-
-  .campo input  { padding: clamp(11px, 1.8dvh, 16px) 16px; }
-  .btn-auth     { padding: clamp(12px, 2dvh, 16px); }
-  .btn-google   { padding: clamp(11px, 1.8dvh, 15px); }
+  .auth-wrap { grid-template-columns: 1fr; }
+  .auth-img  { display: none; }
+  .auth-panel { padding: clamp(28px, 5dvh, 48px) clamp(22px, 6vw, 40px); overflow-y: auto; }
+  .auth-logo { margin-bottom: clamp(20px, 4dvh, 36px); }
+  .auth-logo img { height: clamp(80px, 16dvh, 130px); }
+  .auth-card { gap: clamp(18px, 3.5dvh, 30px); }
+  .campo input { padding: clamp(12px, 2dvh, 16px) 16px; }
 }
 
 @media (max-width: 380px) {
-  h1.auth-titulo { font-size: 1.75rem; }
+  h1.auth-titulo { font-size: 1.8rem; }
 }
