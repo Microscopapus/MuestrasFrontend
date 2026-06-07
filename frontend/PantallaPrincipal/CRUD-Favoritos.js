@@ -1,22 +1,30 @@
 //Carga inicial
 async function cargarFavoritos() {
   try {
-    const res  = await fetch(`${API.obtenerFavoritos}?page=1&size=100`, { method: 'GET', headers: authHeaders() });
+    const res = await fetch(
+      `${API.obtenerFavoritos}?page=1&size=100`,
+      {
+        method: 'GET',
+        headers: authHeaders()
+      }
+    );
+
     const json = await res.json();
-    const raw  = json.data?.muestras || json.data || [];
-    favoritos  = Array.isArray(raw) ? raw.map(m => (typeof m === 'object' ? m.id : m)) : [];
-  } catch { favoritos = []; }
-}
 
-//Estado
-function esFavorito(id) {
-  return favoritos.includes(id);
-}
+    console.log("RESPUESTA FAVORITOS:", json);
 
-function actualizarEstrellas() {
-    document.querySelectorAll('.estrella-tarjeta').forEach(btn => {
-    btn.classList.toggle('favorito', esFavorito(Number(btn.dataset.id)));
-  });
+    const raw = json.data?.muestras || json.data || [];
+
+    favoritos = Array.isArray(raw)
+      ? raw.map(m => (typeof m === 'object' ? m.id : m))
+      : [];
+
+    console.log("FAVORITOS CARGADOS:", favoritos);
+
+  } catch (err) {
+    console.error(err);
+    favoritos = [];
+  }
 }
 
 //agregar
