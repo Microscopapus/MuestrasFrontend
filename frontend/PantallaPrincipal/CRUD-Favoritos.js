@@ -1,24 +1,31 @@
 async function cargarFavoritos() {
   try {
+    console.log('🔍 Cargando favoritos...');
+    console.log('🔑 Token:', authHeaders());
+    
     const res = await fetch(`${API.obtenerFavoritos}?page=1&size=100`, { 
       method: 'GET', 
       headers: authHeaders() 
     });
 
-    // 204 = sin favoritos aún, no es un error
+    console.log('📡 Status:', res.status);
+    
+    // Fix del 204
     if (res.status === 204) {
       favoritos = [];
+      console.warn('⚠️ 204: servidor sin contenido');
       return;
     }
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
     const json = await res.json();
+    console.log('📦 Respuesta:', json);
+    
     const raw  = json.data?.muestras || json.data || [];
     favoritos  = Array.isArray(raw) ? raw.map(m => (typeof m === 'object' ? m.id : m)) : [];
+    console.log('⭐ Favoritos cargados:', favoritos);
 
   } catch (err) { 
-    console.error('Error cargando favoritos:', err);
+    console.error('❌ Error:', err);
     favoritos = []; 
   }
 }
