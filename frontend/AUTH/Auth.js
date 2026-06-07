@@ -164,9 +164,6 @@ function cerrarSesion() {
   localStorage.removeItem('usuario');
   window.location.replace('../index.html');
 }
-
-// BUG 1 FIX: el IIFE que bloqueaba login/register fue eliminado de aquí.
-// Pega este bloque en PantallaPrincipal.js (o al inicio del script de esa página)
 // para proteger la ruta autenticada:
 //
 // (function () {
