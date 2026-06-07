@@ -69,6 +69,7 @@ async function subirMuestra() {
   if (!nombre) { mostrarToast('El nombre es obligatorio'); return; }
 
  const btnConfirmar = document.querySelector('.btn-confirmar');
+ if (btnConfirmar) btnConfirmar.disabled = true;
 
   const fd = new FormData();
   fd.append('Nombre', nombre);
@@ -83,15 +84,12 @@ async function subirMuestra() {
     if (!json.success) throw new Error(json.mensaje);
     idMuestraCreada = json.data?.id ?? json.data?.idMuestra ?? json.data?.Id ?? null;
     mostrarToast('Muestra creada');
-  if (btnConfirmar) btnConfirmar.disabled = true;
   } catch (err) {
     mostrarToast('Error al crear: ' + err.message);
-    
-    if (btnConfirmar) btnConfirmar.disabled = false;
+     if (btnConfirmar) btnConfirmar.disabled = false;
     return; 
   }
 
-  // Subir imágenes asociadas — DENTRO de la función
   for (const bloque of document.querySelectorAll('.item-imagen')) {
     const objetivo = parseInt(bloque.querySelector('.crear-objetivo').value, 10);
     const archivo  = bloque.querySelector('.crear-img').files[0];
@@ -105,12 +103,13 @@ async function subirMuestra() {
       const resImg  = await fetch(API.subirImagen, { method: 'POST', headers: authHeaders(), body: fdImg });
       const jsonImg = await resImg.json();
       if (!jsonImg.success) throw new Error(jsonImg.mensaje);
-    } catch (err) {
+    
+      } catch (err) {
       mostrarToast(`Error subiendo ${archivo.name}: ${err.message}`);
+      if (btnConfirmar) btnConfirmar.disabled = false;
     }
   }
 
-  // Solo se ejecuta si la muestra se creó exitosamente
   cerrarModal('modal-crear');
   await cargarMuestras();
 }
