@@ -8,7 +8,6 @@ function abrirModalCrear() {
 
   const container = document.getElementById('imagenes-container');
   if (container) { container.innerHTML = ''; container.appendChild(crearBloqueImagen()); }
-
   abrirModal('modal-crear');
 }
 
@@ -69,6 +68,10 @@ async function subirMuestra() {
   const desc   = document.getElementById('crear-desc').value.trim();
   if (!nombre) { mostrarToast('El nombre es obligatorio'); return; }
 
+ const btnConfirmar = document.querySelector('.btn-confirmar');
+  if (btnConfirmar) btnConfirmar.disabled = true;
+
+
   const fd = new FormData();
   fd.append('Nombre', nombre);
   fd.append('Descripcion', desc);
@@ -77,14 +80,17 @@ async function subirMuestra() {
   let idMuestraCreada = null;
 
   try {
-    const res  = await fetch(API.subirMuestra, { method: 'POST', headers: authHeaders(), body: fd });
+  const res  = await fetch(API.subirMuestra, { method: 'POST', headers: authHeaders(), body: fd });
     const json = await res.json();
     if (!json.success) throw new Error(json.mensaje);
     idMuestraCreada = json.data?.id ?? json.data?.idMuestra ?? json.data?.Id ?? null;
     mostrarToast('Muestra creada');
-  } catch (err) {
+ } catch (err) {
     mostrarToast('Error al crear: ' + err.message);
-    return; // ← si falla la muestra, no intentar subir imágenes
+    
+    // 2. Si hay un error, desbloqueamos el botón para que el usuario pueda reintentar [1]
+    if (btnConfirmar) btnConfirmar.disabled = false;
+    return; 
   }
 
   // Subir imágenes asociadas — DENTRO de la función
