@@ -68,8 +68,8 @@ async function subirMuestra() {
   const desc   = document.getElementById('crear-desc').value.trim();
   if (!nombre) { mostrarToast('El nombre es obligatorio'); return; }
 
- const btnConfirmar = document.querySelector('.btn-confirmar');
- if (btnConfirmar) btnConfirmar.disabled = true;
+  const btnConfirmar = document.querySelector('.btn-confirmar');
+  if (btnConfirmar) btnConfirmar.disabled = true;
 
   const fd = new FormData();
   fd.append('Nombre', nombre);
@@ -77,39 +77,55 @@ async function subirMuestra() {
   if (crearCatId !== null) fd.append('Categorias', crearCatId);
 
   let idMuestraCreada = null;
+  let errorGlobal = false;
 
   try {
-  const res  = await fetch(API.subirMuestra, { method: 'POST', headers: authHeaders(), body: fd });
+    // 1. Crear la muestra
+    const res  = await fetch(API.subirMuestra, { method: 'POST', headers: authHeaders(), body: fd });
     const json = await res.json();
     if (!json.success) throw new Error(json.mensaje);
     idMuestraCreada = json.data?.id ?? json.data?.idMuestra ?? json.data?.Id ?? null;
     mostrarToast('Muestra creada');
+
+    // 2. Subir las imágenes asociadas
+    for (const bloque of document.querySelectorAll('.item-imagen')) {
+      const objetivo = parseInt(bloque.querySelector('.crear-objetivo').value, 10);
+      const archivo  = bloque.querySelector('.crear-img').files[0];
+      if (!archivo) continue;
+      if (isNaN(objetivo)) {
+        mostrarToast('Una imagen no tiene objetivo');
+        continue;
+      }
+      try {
+        const fdImg = new FormData();
+        fdImg.append('IdMuestra', idMuestraCreada);
+        fdImg.append('Objetivo', objetivo);
+        fdImg.append('File', archivo);
+        const resImg  = await fetch(API.subirImagen, { method: 'POST', headers: authHeaders(), body: fdImg });
+        const jsonImg = await resImg.json();
+        if (!jsonImg.success) throw new Error(jsonImg.mensaje);
+      } catch (err) {
+        mostrarToast(`Error subiendo ${archivo.name}: ${err.message}`);
+        errorGlobal = true; // marcamos que hubo al menos un error, pero no detenemos el flujo
+      }
+    }
+
+    if (errorGlobal) {
+      mostrarToast('Alguna imagen no se pudo subir, revisa los mensajes.');
+    }
+
   } catch (err) {
     mostrarToast('Error al crear: ' + err.message);
-     if (btnConfirmar) btnConfirmar.disabled = false;
-    return; 
+    if (btnConfirmar) btnConfirmar.disabled = false;
+    return; // salimos sin cerrar modal ni recargar
+  } finally {
+    // Siempre habilitar el botón al final de todo el proceso
+    if (btnConfirmar) btnConfirmar.disabled = false;
+    // Limpiar la categoría usada para la próxima vez que se abra el modal
+    crearCatId = null;
   }
 
-  for (const bloque of document.querySelectorAll('.item-imagen')) {
-    const objetivo = parseInt(bloque.querySelector('.crear-objetivo').value, 10);
-    const archivo  = bloque.querySelector('.crear-img').files[0];
-    if (!archivo) continue;
-    if (isNaN(objetivo)) { mostrarToast('Una imagen no tiene objetivo'); continue; }
-    try {
-      const fdImg = new FormData();
-      fdImg.append('IdMuestra', idMuestraCreada);
-      fdImg.append('Objetivo', objetivo);
-      fdImg.append('File', archivo);
-      const resImg  = await fetch(API.subirImagen, { method: 'POST', headers: authHeaders(), body: fdImg });
-      const jsonImg = await resImg.json();
-      if (!jsonImg.success) throw new Error(jsonImg.mensaje);
-    
-      } catch (err) {
-      mostrarToast(`Error subiendo ${archivo.name}: ${err.message}`);
-      if (btnConfirmar) btnConfirmar.disabled = false;
-    }
-  }
-
+  // Si llegamos aquí es porque la muestra se creó (aunque algunas imágenes fallen)
   cerrarModal('modal-crear');
   await cargarMuestras();
 }
