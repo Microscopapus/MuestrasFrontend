@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar sesión — Zoom Explorer</title>
-  <link rel="stylesheet" href="Login.css">
+  <link rel="stylesheet" href="login.css">
 </head>
 <body>
 
 <div class="auth-wrap">
 
-  <!-- ── FORM (izquierda en desktop, único en móvil) ── -->
+  <!-- ── FORMULARIO (izquierda) ── -->
   <div class="auth-panel">
     <div class="auth-card">
 
@@ -19,27 +19,27 @@
       </div>
 
       <div class="auth-heading">
-        <h1 class="auth-title">Bienvenido <em>de vuelta</em></h1>
-        <p class="auth-sub">Accede a tu cuenta para continuar explorando</p>
+        <h1 class="auth-titulo">Bienvenido <em>de vuelta</em></h1>
+        <h4 class="auth-subtitulo">Accede a tu cuenta para continuar explorando</h4>
       </div>
 
       <div class="auth-error" id="auth-error">
-        <span id="auth-error-msg"></span>
+        <h4 class="auth-error-msg" id="auth-error-msg"></h4>
       </div>
 
       <div class="auth-form">
 
         <div class="campo">
-          <label for="email">Correo electrónico</label>
+          <h3 class="campo-label">Correo electrónico</h3>
           <input type="email" id="email" placeholder="tu@correo.com" autocomplete="email">
         </div>
 
         <div class="campo">
-          <label for="password">Contraseña</label>
+          <h3 class="campo-label">Contraseña</h3>
           <div class="campo-input-wrap">
             <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
             <button class="toggle-pass" type="button" onclick="togglePassword('password', this)" aria-label="Mostrar contraseña">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
           </div>
         </div>
@@ -52,12 +52,15 @@
 
       <div id="btn-google-container"></div>
 
-      <p class="auth-link">¿No tienes cuenta? <a href="Register.html">Crear cuenta</a></p>
+      <div class="enlace-auth">
+        <h4 class="enlace-auth-texto">¿No tienes cuenta? <a href="Register.html">Crear cuenta</a></h4>
+      </div>
 
     </div>
   </div>
 
- <div class="auth-img">
+  <!-- ── IMAGEN (derecha) ── -->
+  <div class="auth-img">
     <img src="../Assets/imglog.png" alt="Laboratorio">
     <div class="auth-img-overlay">
       <span class="auth-img-badge">
@@ -68,6 +71,8 @@
       <p class="auth-img-text">Explora muestras microscópicas desde cualquier dispositivo.</p>
     </div>
   </div>
+
+</div>
 
 <script src="https://accounts.google.com/gsi/client"></script>
 <script src="Auth.js"></script>

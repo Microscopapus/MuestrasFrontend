@@ -1,28 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600&display=swap');
 
 :root {
-  /* ── Fondos ── */
   --fondo-pagina:    #081e1e;
   --fondo-panel:     #0c2424;
   --fondo-campo:     rgba(255,255,255,0.05);
 
-  /* ── Color principal ── */
   --color-primario:  #00c9b1;
 
-  /* ── Textos ── */
   --texto-principal: #e2f8f5;
   --texto-apagado:   rgba(226,248,245,0.45);
 
-  /* ── Bordes ── */
   --borde-normal:    rgba(0,201,177,0.16);
   --borde-foco:      rgba(0,201,177,0.5);
 
-  /* ── Error ── */
   --error-fondo:     rgba(220,60,60,0.1);
   --error-borde:     rgba(220,60,60,0.3);
   --error-texto:     #ff8a80;
 
-  /* ── Forma ── */
   --radio-borde:     13px;
 }
 
