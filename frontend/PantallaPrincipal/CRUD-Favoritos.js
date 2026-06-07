@@ -1,38 +1,26 @@
 //Carga inicial
 async function cargarFavoritos() {
   try {
-    const res = await fetch(
-      `${API.obtenerFavoritos}?page=1&size=100`,
-      {
-        method: 'GET',
-        headers: authHeaders()
-      }
-    );
+    const res  = await fetch(`${API.obtenerFavoritos}?page=1&size=100`, { method: 'GET', headers: authHeaders() });
+    const json = await res.json();
+    const raw  = json.data?.muestras || json.data || [];
+    const nuevos = Array.isArray(raw) ? raw.map(m => (typeof m === 'object' ? m.id : m)) : [];
 
-    const texto = await res.text();
-
-    console.log("FAVORITOS RAW:");
-    console.log(texto);
-
-    if (!texto.trim()) {
-      favoritos = [];
-      return;
+    // Solo actualiza si la respuesta tiene sentido
+    if (nuevos.length > 0 || favoritos.length === 0) {
+      favoritos = nuevos;
     }
+  } catch {  }
+}
+//Estado
+function esFavorito(id) {
+  return favoritos.includes(id);
+}
 
-    const json = JSON.parse(texto);
-
-    const raw = json.data?.muestras || json.data || [];
-
-    favoritos = Array.isArray(raw)
-      ? raw.map(m => typeof m === 'object' ? m.id : m)
-      : [];
-
-    console.log("FAVORITOS:", favoritos);
-
-  } catch (err) {
-    console.error("ERROR FAVORITOS:", err);
-    favoritos = [];
-  }
+function actualizarEstrellas() {
+    document.querySelectorAll('.estrella-tarjeta').forEach(btn => {
+    btn.classList.toggle('favorito', esFavorito(Number(btn.dataset.id)));
+  });
 }
 
 //agregar
