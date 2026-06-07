@@ -1,23 +1,24 @@
 async function cargarFavoritos() {
   try {
-    const res = await fetch(`${API.obtenerFavoritos}?page=1&size=100`, {
-      method: 'GET',
-      headers: authHeaders() // ← ¿authHeaders() tiene el token al momento del refresh?
+    const res = await fetch(`${API.obtenerFavoritos}?page=1&size=100`, { 
+      method: 'GET', 
+      headers: authHeaders() 
     });
 
-    // Agrega esto temporalmente para diagnosticar:
-    console.log('Status favoritos:', res.status);
-    console.log('Token al cargar:', authHeaders());
+    // 204 = sin favoritos aún, no es un error
+    if (res.status === 204) {
+      favoritos = [];
+      return;
+    }
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const json = await res.json();
-    console.log('Respuesta favoritos:', json); // ← ¿Qué llega aquí?
-    
-    const raw = json.data?.muestras || json.data || [];
-    favoritos = Array.isArray(raw) ? raw.map(m => (typeof m === 'object' ? m.id : m)) : [];
-    
-    console.log('Favoritos cargados:', favoritos); // ← ¿Están o están vacíos?
+    const raw  = json.data?.muestras || json.data || [];
+    favoritos  = Array.isArray(raw) ? raw.map(m => (typeof m === 'object' ? m.id : m)) : [];
+
   } catch (err) { 
-    console.error('Error cargando favoritos:', err); // ← ¿Hay error?
+    console.error('Error cargando favoritos:', err);
     favoritos = []; 
   }
 }
