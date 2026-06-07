@@ -14,7 +14,6 @@ function abrirModalCrear() {
 
 function crearBloqueImagen() {
   const bloque = document.createElement('div');
-  // FIX: clase corregida de 'imagen-item' a 'item-imagen' para coincidir con MostrarMuestras.css
   bloque.className = 'item-imagen';
   bloque.innerHTML = `
     <div class="preview-imagen">🔍</div>
@@ -32,14 +31,15 @@ function crearBloqueImagen() {
 }
 
 function _prepararCampoImagen(bloque) {
-  // FIX: selectores actualizados para coincidir con las nuevas clases
   const fileInput = bloque.querySelector('.crear-img');
   const preview   = bloque.querySelector('.preview-imagen');
   const remover   = bloque.querySelector('.btn-quitar-img');
 
   fileInput?.addEventListener('change', function () {
     const archivo = this.files[0];
-    preview.innerHTML = archivo ? `<img src="${URL.createObjectURL(archivo)}" alt="Vista previa">` : '🔍';
+    preview.innerHTML = archivo
+      ? `<img src="${URL.createObjectURL(archivo)}" alt="Vista previa">`
+      : '🔍';
   });
 
   remover?.addEventListener('click', function () {
@@ -55,11 +55,9 @@ function agregarCampoImagen() {
   if (container) container.appendChild(crearBloqueImagen());
 }
 
-// ── Preparar campo de imagen al cargar ────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('imagenes-container');
   if (!container) return;
-  // FIX: selector actualizado
   const items = container.querySelectorAll('.item-imagen');
   if (items.length) items.forEach(_prepararCampoImagen);
   else container.appendChild(crearBloqueImagen());
@@ -76,21 +74,20 @@ async function subirMuestra() {
   fd.append('Descripcion', desc);
   if (crearCatId !== null) fd.append('Categorias', crearCatId);
 
+  let idMuestraCreada = null;
+
   try {
     const res  = await fetch(API.subirMuestra, { method: 'POST', headers: authHeaders(), body: fd });
     const json = await res.json();
     if (!json.success) throw new Error(json.mensaje);
-
+    idMuestraCreada = json.data?.id ?? json.data?.idMuestra ?? json.data?.Id ?? null;
     mostrarToast('Muestra creada');
-    cerrarModal('modal-crear');   // ← cierra el modal (ajusta el nombre a tu función real)
-    await cargarMuestras();       // ← recarga el catálogo completo
   } catch (err) {
     mostrarToast('Error al crear: ' + err.message);
+    return; // ← si falla la muestra, no intentar subir imágenes
   }
-}
 
-  // Subir imágenes asociadas
-  // FIX: selector actualizado
+  // Subir imágenes asociadas — DENTRO de la función
   for (const bloque of document.querySelectorAll('.item-imagen')) {
     const objetivo = parseInt(bloque.querySelector('.crear-objetivo').value, 10);
     const archivo  = bloque.querySelector('.crear-img').files[0];
@@ -109,7 +106,7 @@ async function subirMuestra() {
     }
   }
 
-  mostrarToast('Proceso completado');
+  // Solo se ejecuta si la muestra se creó exitosamente
   cerrarModal('modal-crear');
   await cargarMuestras();
 }

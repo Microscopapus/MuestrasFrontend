@@ -17,7 +17,7 @@ function cerrarModal(id) {
 }
 
 function cerrarAutocompletes() {
-  document.querySelectorAll('.autocomplete-list').forEach(l => l.classList.remove('visible'));
+  document.querySelectorAll('.lista-autocompletar').forEach(l => l.classList.remove('visible'));
 }
 
 document.addEventListener('click', function (e) {
@@ -25,11 +25,11 @@ document.addEventListener('click', function (e) {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.modal-backdrop').forEach(bd => {
-    bd.addEventListener('click', function (e) {
-      if (e.target === this) { this.classList.remove('activo'); cerrarAutocompletes(); }
-    });
+ document.querySelectorAll('.fondo-modal').forEach(bd => {
+  bd.addEventListener('click', function (e) {
+    if (e.target === this) { this.classList.remove('activo'); cerrarAutocompletes(); }
   });
+});
 });
 
 function mostrarToast(msg) {
