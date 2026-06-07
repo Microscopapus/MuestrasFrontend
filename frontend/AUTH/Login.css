@@ -1,22 +1,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600&display=swap');
 
 :root {
+  /* ── Fondos ── */
   --fondo-pagina:   #081e1e;
   --fondo-panel:    #0c2424;
   --fondo-campo:    rgba(255,255,255,0.05);
 
+  /* ── Color principal ── */
   --color-primario: #00c9b1;
 
+  /* ── Textos ── */
   --texto-principal: #e2f8f5;
   --texto-apagado:   rgba(226,248,245,0.45);
 
+  /* ── Bordes ── */
   --borde-normal:   rgba(0,201,177,0.16);
   --borde-foco:     rgba(0,201,177,0.5);
 
+  /* ── Error ── */
   --error-fondo:    rgba(220,60,60,0.1);
   --error-borde:    rgba(220,60,60,0.3);
   --error-texto:    #ff8a80;
 
+  /* ── Forma ── */
   --radio-borde:    13px;
 }
 
@@ -262,18 +268,46 @@ h4.enlace-auth-texto a:hover { opacity: 0.75; }
 }
 
 @media (max-width: 768px) {
-  body { height: auto; overflow: auto; }
-  .auth-wrap { grid-template-columns: 1fr; height: auto; min-height: 100vh; }
-  .auth-img  { display: none; }
-  .auth-panel {
-    min-height: 100vh;
-    padding: clamp(32px, 6vh, 56px) clamp(22px, 6vw, 44px);
+  /* El body y wrap ocupan exactamente el viewport, sin scroll */
+  body {
+    height: 100dvh;
+    overflow: hidden;
   }
-  .auth-card { max-width: 100%; }
-  .auth-logo img { height: clamp(90px, 18vw, 140px); }
+  .auth-wrap {
+    grid-template-columns: 1fr;
+    height: 100dvh;
+  }
+  .auth-img { display: none; }
+
+  /* El panel ocupa toda la altura disponible */
+  .auth-panel {
+    height: 100dvh;
+    align-items: stretch;        /* el card se estira verticalmente */
+    padding: 0;
+  }
+
+  /* El card ocupa toda la altura del panel y distribuye su espacio */
+  .auth-card {
+    max-width: 100%;
+    height: 100%;
+    justify-content: space-between;   /* distribuye el espacio sobrante entre secciones */
+    padding: clamp(28px, 6dvh, 52px) clamp(22px, 6vw, 44px);
+    gap: 0;                            /* gap lo maneja space-between */
+  }
+
+  /* Logo escala con la altura real del dispositivo */
+  .auth-logo img { height: clamp(72px, 14dvh, 130px); }
+
+  /* Cada sección interna mantiene su propio espaciado interno */
+  .auth-heading { gap: clamp(4px, 0.8dvh, 8px); }
+  .auth-form    { gap: clamp(10px, 2dvh, 18px); }
+  .campo        { gap: clamp(5px, 0.8dvh, 9px); }
+
+  .campo input  { padding: clamp(11px, 1.8dvh, 16px) 16px; }
+  .btn-auth     { padding: clamp(12px, 2dvh, 16px); }
+  .btn-google   { padding: clamp(11px, 1.8dvh, 15px); }
 }
 
 @media (max-width: 380px) {
-  .auth-panel { padding: 28px 18px; }
-  h1.auth-titulo { font-size: 1.85rem; }
+  h1.auth-titulo { font-size: 1.75rem; }
 }
