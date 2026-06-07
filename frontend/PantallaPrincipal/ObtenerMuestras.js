@@ -26,7 +26,6 @@ const res = await fetch(`${API.muestras}?page=1&size=20`, { headers: authHeaders
     mostrarPantalla('pantalla-error');
     return;
   }
-
   await Promise.all([cargarFavoritos(), cargarCategorias()]);
   buildGrid();
   mostrarPantalla('pantalla-contenido');

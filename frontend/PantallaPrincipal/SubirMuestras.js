@@ -76,19 +76,18 @@ async function subirMuestra() {
   fd.append('Descripcion', desc);
   if (crearCatId !== null) fd.append('Categorias', crearCatId);
 
-  let idMuestraCreada = null;
-
   try {
     const res  = await fetch(API.subirMuestra, { method: 'POST', headers: authHeaders(), body: fd });
     const json = await res.json();
     if (!json.success) throw new Error(json.mensaje);
-    idMuestraCreada = json.data?.id ?? json.data?.idMuestra ?? json.data?.Id ?? null;
+
     mostrarToast('Muestra creada');
-    return idMuestraCreada;
+    cerrarModal('modal-crear');   // ← cierra el modal (ajusta el nombre a tu función real)
+    await cargarMuestras();       // ← recarga el catálogo completo
   } catch (err) {
     mostrarToast('Error al crear: ' + err.message);
-    return;
   }
+}
 
   // Subir imágenes asociadas
   // FIX: selector actualizado
