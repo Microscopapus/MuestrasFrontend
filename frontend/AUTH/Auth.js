@@ -93,7 +93,6 @@ async function loginEmail() {
   if (!email || !password) { mostrarError('Por favor llena todos los campos.'); return; }
   if (!email.includes('@')) { mostrarError('Escribe un correo válido.'); return; }
 
-  // BUG 3 FIX: era setLoading(), ahora usa cargar()
   cargar(btn, true);
   try {
     const res  = await fetch(AUTH_API.login, {
